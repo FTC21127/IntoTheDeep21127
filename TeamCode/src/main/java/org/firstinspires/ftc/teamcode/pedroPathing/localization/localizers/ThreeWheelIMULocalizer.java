@@ -94,9 +94,9 @@ public class ThreeWheelIMULocalizer extends Localizer {
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
 
         // TODO: replace these with your encoder positions
-        leftEncoderPose = new Pose(-3, 5.7, 0);
-        rightEncoderPose = new Pose(-3, -5.7, 0);
-        strafeEncoderPose = new Pose(6.9, 1, Math.toRadians(90));
+        leftEncoderPose = new Pose(-18/25.4, 164.4/25.4, 0);
+        rightEncoderPose = new Pose(-18/25.4, -159.6/25.4, 0);
+        strafeEncoderPose = new Pose(-75/25.4, -35/25.4, Math.toRadians(90));
 
 
         // TODO: replace these with your encoder ports
