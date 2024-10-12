@@ -9,6 +9,9 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+
+
 @TeleOp
 public class SimpleMecanumBase extends OpMode {
     Motor m1, m2 , m3, m4;

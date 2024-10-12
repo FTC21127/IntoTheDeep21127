@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.fissionlib.util;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -23,7 +23,7 @@ public abstract class Mechanism {
     /**
      * OpMode context for a Mechanism class.
      */
-    protected LinearOpMode opMode;
+    protected OpMode opMode;
 
     /**
      * Initializes hardware on the robot. Gets and stores references to the robot configuration and
