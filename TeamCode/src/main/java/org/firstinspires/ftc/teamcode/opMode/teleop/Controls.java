@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.opMode.teleop;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic.Input;
 

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.teleop.Controls;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
 
 // cargo vrooooom

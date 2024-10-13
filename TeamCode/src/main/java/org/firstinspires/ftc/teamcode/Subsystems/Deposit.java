@@ -7,10 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.teleop.Controls;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
 /**Done(just tuning needed)*/
 
