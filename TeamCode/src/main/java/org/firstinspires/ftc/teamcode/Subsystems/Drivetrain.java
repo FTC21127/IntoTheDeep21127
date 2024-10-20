@@ -27,7 +27,7 @@ public class Drivetrain extends Mechanism {
     }
 
     // allows us to choose which type of driving we want
-    enum DRIVETYPE{
+    public enum DRIVETYPE{
         FIELD,
         ROBOT
     }

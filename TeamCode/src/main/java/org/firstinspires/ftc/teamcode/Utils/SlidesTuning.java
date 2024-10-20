@@ -32,11 +32,13 @@ public class SlidesTuning extends OpMode {
 
     @Override
     public void init() {
-        motor1 = new Motor(hardwareMap, "motor");
+        motor1 = new Motor(hardwareMap, "rightSlide");
+        motor1.setInverted(true);
         encoder = motor1.encoder;
         encoder.reset();
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        controller.setTolerance(5);
     }
 
     @Override
@@ -44,8 +46,8 @@ public class SlidesTuning extends OpMode {
         controller.setPID(p, i, d);
         controller.setSetPoint(encoder.getPosition());
         double pid = controller.calculate(target);
-        double power = pid + f;
-        motor1.set(-power);
+        double power = pid - f;
+        motor1.set(power);
         telemetry.addData("pos", motor1.getCurrentPosition());
         telemetry.addData("target", target);
         telemetry.addData("pid value from controller", pid);

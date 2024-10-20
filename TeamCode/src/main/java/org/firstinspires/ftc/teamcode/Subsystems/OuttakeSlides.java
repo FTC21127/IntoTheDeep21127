@@ -22,31 +22,34 @@ public class OuttakeSlides extends Mechanism {
 
     MotorEx slideR, slideL;
 
-    MotorGroup slides;
-
     // PID controller coefficients
-    private double p = 0.015, i = 0, d = 0.0001, f = 0;
+    private double p = 0.015, i = 0, d = 0.0001;
+    private double p1 = 0.015, i1 = 0, d1 = 0.0001;
 
     // Positions for slides
     //Just random values right now, will tune later.
     public static int REST_POS = 20;
     public static int INTAKE_POS = 0;
-    public static int LOW_BASKET = 250; //1
-    public static int HIGH_BASKET = 450; //2
-    public static int LOW_CHAMBER_SET = 155; //3
-    public static int HIGH_CHAMBER_SET = 220; //4
-    public static int HIGH_CHAMBER_SCORED = 210;
-    public static int LOW_CHAMBER_SCORED = 145;
+    public static int LOW_BASKET = 350; //0
+    public static int HIGH_BASKET = 800; //1
+    public static int LOW_CHAMBER_SET = 130; //2
+    public static int HIGH_CHAMBER_SET = 380; //3
+    public static int HIGH_CHAMBER_SCORED = 340;
+    public static int LOW_CHAMBER_SCORED = 100;
     public static int ABIT = 70;
-
-    public static int[] POSITIONS = {LOW_BASKET, HIGH_BASKET, LOW_CHAMBER_SET, HIGH_CHAMBER_SET};
 
     public static double target = 0;
     public static double power = 0;
+    public static double power1 = 0;
     public static double minPower = -0.3;
+
+    public boolean up = false, down = false;
+
+    public static int[] POSITIONS = {LOW_BASKET, HIGH_BASKET, LOW_CHAMBER_SET, HIGH_CHAMBER_SET};
 
     // PID controller initialization
     private final PIDController controller = new PIDController(p, i, d);
+    private final PIDController controller1 = new PIDController(p, i, d);
 
     public OuttakeSlides(OpMode opMode) {
         this.opMode = opMode;
@@ -60,17 +63,17 @@ public class OuttakeSlides extends Mechanism {
         slideR = new MotorEx(hwMap, "rightSlide",Motor.GoBILDA.RPM_1150);
         slideL.setInverted(true);
 
-        slides = new MotorGroup(slideL,slideR);
-        slides.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        slideL.resetEncoder();
+        slideR.resetEncoder();
+
         controller.setTolerance(5); // set tolerance for PID controller
     }
 
     public void setTarget(double target) {
         OuttakeSlides.target = target;
-    }
-
-    public double getPosition() {
-        return slides.getCurrentPosition();
     }
 
     public void goToPos(int pos) {
@@ -89,14 +92,19 @@ public class OuttakeSlides extends Mechanism {
         setTarget(target - ABIT);
     }
 
+    public void reset(){
+        slideL.resetEncoder();
+        slideR.resetEncoder();
+    }
+
     public void update() {
         // Check values for the PID controller and update the power
         controller.setSetPoint(target);
-        power = controller.calculate(getPosition());
-        if (power < minPower) {
-            power = minPower;
-        }
-        slides.set(power);
+        controller1.setSetPoint(target);
+        power = controller.calculate(slideR.getCurrentPosition());
+        power1 = controller1.calculate(slideL.getCurrentPosition());
+        slideR.set(power);
+        slideL.set(-power1);
     }
 
     @Override
@@ -110,6 +118,21 @@ public class OuttakeSlides extends Mechanism {
             goToPos(2);
         } else if (GamepadStatic.isButtonPressed(gamepad, Controls.HIGH_SPECIMEN)) {
             goToPos(3);
+        }
+
+        if (GamepadStatic.isButtonPressed(gamepad, Controls.UP_A_BIT)) {
+            if (!up) {
+                upABit();
+                up = true;
+            } else {
+                up = false;
+            }
+        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.DOWN_A_BIT)) {
+            if (!down)
+                downABit();
+            down = true;
+        } else {
+            down = false;
         }
     }
 }
