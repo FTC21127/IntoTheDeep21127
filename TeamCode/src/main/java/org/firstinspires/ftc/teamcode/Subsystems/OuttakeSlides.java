@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
@@ -108,7 +109,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     @Override
-    public void loop(Gamepad gamepad) {
+    public void loop(FoozPad gamepad) {
         update();
         if (GamepadStatic.isButtonPressed(gamepad, Controls.LOW_BASKET)) {
             goToPos(0);
@@ -120,19 +121,10 @@ public class OuttakeSlides extends Mechanism {
             goToPos(3);
         }
 
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.UP_A_BIT)) {
-            if (!up) {
-                upABit();
-                up = true;
-            } else {
-                up = false;
-            }
-        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.DOWN_A_BIT)) {
-            if (!down)
-                downABit();
-            down = true;
-        } else {
-            down = false;
+        if (GamepadStatic.wasJustPressed(gamepad, Controls.UP_A_BIT)) {
+            upABit();
+        } else if (GamepadStatic.wasJustPressed(gamepad, Controls.DOWN_A_BIT)) {
+            downABit();
         }
     }
 }

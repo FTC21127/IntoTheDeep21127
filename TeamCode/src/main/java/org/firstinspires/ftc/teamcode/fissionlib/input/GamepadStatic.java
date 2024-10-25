@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.fissionlib.input;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class GamepadStatic {
@@ -24,7 +26,7 @@ public class GamepadStatic {
         RIGHT_TRIGGER,
     }
 
-    public static boolean isButtonPressed(Gamepad gamepad, Input button) {
+    public static boolean isButtonPressed(FoozPad gamepad, Input button) {
         switch (button) {
             case DPAD_UP:
                 return gamepad.dpad_up;
@@ -58,10 +60,24 @@ public class GamepadStatic {
                 return gamepad.left_trigger > 0;
             case RIGHT_TRIGGER:
                 return gamepad.right_trigger > 0;
-            case NONE:
-                return false;
             default:
                 return false;
         }
+    }
+
+    public static boolean wasJustPressed(@NonNull FoozPad gp, GamepadStatic.Input input){
+        return GamepadStatic.isButtonPressed(gp.gamepad, input) && !GamepadStatic.isButtonPressed(gp.previous, input);
+    }
+
+    public static boolean wasJustReleased(@NonNull FoozPad gp, GamepadStatic.Input input){
+        return !GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input);
+    }
+
+    public static boolean isDown(@NonNull FoozPad gp, GamepadStatic.Input input){
+        return GamepadStatic.isButtonPressed(gp.gamepad, input);
+    }
+
+    public static boolean stateJustChanged(@NonNull FoozPad gp, GamepadStatic.Input input){
+        return GamepadStatic.isButtonPressed(gp.gamepad, input) != GamepadStatic.isButtonPressed(gp.previous, input);
     }
 }

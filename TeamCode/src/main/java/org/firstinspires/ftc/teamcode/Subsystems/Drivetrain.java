@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
@@ -58,7 +59,7 @@ public class Drivetrain extends Mechanism {
     }
 
     @Override
-    public void loop(Gamepad gamepad) {
+    public void loop(FoozPad gamepad) {
         // reset heading
         if (GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING1)&&GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING2)){
             setHeading(0);

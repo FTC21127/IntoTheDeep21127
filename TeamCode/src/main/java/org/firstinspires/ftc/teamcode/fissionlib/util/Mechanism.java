@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 
 
 /**
@@ -39,7 +40,7 @@ public abstract class Mechanism {
      * Implement when using only one gamepad, in slot 1
      * @param gamepad
      */
-    public void loop(Gamepad gamepad) { }
+    public void loop(FoozPad gamepad) { }
 
     /**
      * Manages multiple gamepad inputs and their corresponding mechanism responses
@@ -48,7 +49,7 @@ public abstract class Mechanism {
      * @param gamepad1
      * @param gamepad2
      */
-    public void loop(Gamepad gamepad1, Gamepad gamepad2) { }
+    public void loop(FoozPad gamepad1, FoozPad gamepad2) { }
 
     /**
      * Manages all telemetry data to driver phone or FTC Dashboard

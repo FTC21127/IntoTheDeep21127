@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
 import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 
 public class Scoring extends Mechanism {
@@ -26,15 +27,26 @@ public class Scoring extends Mechanism {
 
     private Command slidesUp = () -> slides.setTarget(slidesPos);
     private Command slidesIntake = () -> slides.setTarget(OuttakeSlides.INTAKE_POS);
-    private Command depositSample = () -> deposit.depositPos();
-    private Command grabSpecimen = () -> deposit.specimenPos();
+    private Command depositPos = () -> deposit.depositPos();
     private Command grabTransfer = () -> deposit.transferPos();
     private Command clawOpen = () -> deposit.openClaw();
     private Command clawClose = () -> deposit.closeClaw();
-    private Command eject = () -> deposit.eject();;
+    private Command eject = () -> deposit.eject();
 
-    private CommandSequence outtakeSample = new CommandSequence().addCommand(slidesUp).addCommand(depositSample).build();
-    private CommandSequence ejectSample = new CommandSequence().addCommand(slidesUp).addCommand(eject).addCommand(clawOpen).build();
+    private CommandSequence pickUpTransfer = new CommandSequence()
+            .addCommand(grabTransfer)
+            .addCommand(slidesIntake)
+            .addCommand(clawClose)
+            .build();
+    private CommandSequence ejectSample = new CommandSequence()
+            .addCommand(eject)
+            .addCommand(clawOpen).addWaitCommand(0.5)
+            .addCommand(grabTransfer)
+            .build();
+    private CommandSequence depositSample = new CommandSequence()
+            .addCommand(slidesUp)
+            .addCommand(depositPos)
+            .build();
 
     public Scoring(OpMode opMode) {
         this.opMode = opMode;
@@ -48,7 +60,7 @@ public class Scoring extends Mechanism {
     }
 
     @Override
-    public void loop(Gamepad gamepad1, Gamepad gamepad2) {
+    public void loop(FoozPad gamepad1, FoozPad gamepad2) {
         drive.loop(gamepad1);
         slides.update();
 
