@@ -17,7 +17,7 @@ public class SlideDev extends OpMode {
         slides = new OuttakeSlides(this);
         slides.init(hardwareMap);
         slides.restPos();
-        gp1 = new FoozPad((FoozPad) gamepad1);
+        gp1 = new FoozPad(gamepad1);
     }
 
     @Override

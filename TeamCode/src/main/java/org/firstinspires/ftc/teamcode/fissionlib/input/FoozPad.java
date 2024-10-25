@@ -6,20 +6,20 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class FoozPad extends Gamepad {
 
-    FoozPad previous;
-    FoozPad gamepad;
+    public Gamepad previous;
+    public Gamepad gamepad;
 
-    public FoozPad(FoozPad gamepad) {
+    public FoozPad(Gamepad gamepad) {
         this.gamepad = gamepad;
         copy(previous, this.gamepad);
     }
 
-    public FoozPad getGamepad() {
+    public Gamepad getGamepad() {
         return gamepad;
     }
 
     public void update() {
-        copy(previous, this.gamepad);
+        copy(previous, gamepad);
     }
 
     public void copy(Gamepad gp, Gamepad gamepad) {

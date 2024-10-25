@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 @TeleOp(name = "Claw Dev", group = "Dev")
 public class IntakeDev extends OpMode {
-    Intake intake = new Intake(this);
+    Intake intake = new Intake(this, Intake.COLOR.RED);
 
     @Override
     public void init() {

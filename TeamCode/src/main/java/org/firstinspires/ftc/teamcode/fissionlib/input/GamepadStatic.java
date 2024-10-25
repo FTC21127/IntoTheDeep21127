@@ -23,10 +23,10 @@ public class GamepadStatic {
         LEFT_STICK_BUTTON,
         RIGHT_STICK_BUTTON,
         LEFT_TRIGGER,
-        RIGHT_TRIGGER,
+        RIGHT_TRIGGER
     }
 
-    public static boolean isButtonPressed(FoozPad gamepad, Input button) {
+    public static boolean isButtonPressed(Gamepad gamepad, Input button) {
         switch (button) {
             case DPAD_UP:
                 return gamepad.dpad_up;
@@ -71,10 +71,6 @@ public class GamepadStatic {
 
     public static boolean wasJustReleased(@NonNull FoozPad gp, GamepadStatic.Input input){
         return !GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input);
-    }
-
-    public static boolean isDown(@NonNull FoozPad gp, GamepadStatic.Input input){
-        return GamepadStatic.isButtonPressed(gp.gamepad, input);
     }
 
     public static boolean stateJustChanged(@NonNull FoozPad gp, GamepadStatic.Input input){

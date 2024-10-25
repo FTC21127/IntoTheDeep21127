@@ -13,7 +13,7 @@ public class DepositDev extends OpMode {
     @Override
     public void init() {
         outtake.init(hardwareMap);
-        gp1 = new FoozPad((FoozPad) gamepad1);
+        gp1 = new FoozPad(gamepad1);
     }
 
     @Override

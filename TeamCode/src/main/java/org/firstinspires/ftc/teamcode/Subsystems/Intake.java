@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
+import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
 @Config
 public class Intake extends Mechanism {
@@ -25,6 +28,8 @@ public class Intake extends Mechanism {
     public static double SLIDE_COMPRESS = 0;
     public static double SLIDE_NEUTRAL = .5;
 
+    COLOR alliance;
+
     public enum COLOR{
         BLUE,
         RED,
@@ -32,8 +37,9 @@ public class Intake extends Mechanism {
         NONE
     }
 
-    public Intake(OpMode opMode1) {
+    public Intake(OpMode opMode1, COLOR alliance) {
         this.opMode = opMode1;
+        this.alliance = alliance;
     }
 
     @Override
@@ -58,9 +64,28 @@ public class Intake extends Mechanism {
         horizontalExtendenator.setPosition(pos);
     }
 
+    public void extendSlide(){
+        horizontalExtendenator.setPosition(SLIDE_NEUTRAL);
+    }
+
+    public void retractSlide(){
+        horizontalExtendenator.setPosition(SLIDE_COMPRESS);
+    }
+
+
+
+    @Override
+    public void telemetry(Telemetry telemetry) {
+        telemetry.addData("Color? ", sampleColor());
+    }
+
     @Override
     public void loop(FoozPad gamepad) {
-        
+        if (GamepadStatic.wasJustPressed(gamepad, Controls.GRAB)){
+            if (sampleColor().ordinal() == COLOR.RED.ordinal() || sampleColor().ordinal() == COLOR.YELLOW.ordinal()) closeClaw();
+        } else if (GamepadStatic.wasJustPressed(gamepad,Controls.PRIME_INTAKE)) {
+
+        }
     }
 
     public COLOR sampleColor(){

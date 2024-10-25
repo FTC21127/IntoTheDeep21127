@@ -22,8 +22,8 @@ public class DriveDepositDev extends OpMode {
         slides.init(hardwareMap);
         slides.restPos();
         deposit.depositPos();
-        gp1 = new FoozPad((FoozPad) gamepad1);
-        gp2 = new FoozPad((FoozPad) gamepad2);
+        gp1 = new FoozPad(gamepad1);
+        gp2 = new FoozPad(gamepad2);
     }
 
     @Override
