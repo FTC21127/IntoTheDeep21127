@@ -26,7 +26,7 @@ public class FollowerConstants {
     public static String leftFrontMotorName = "frontLeft";
     public static String leftRearMotorName = "backLeft";
     public static String rightFrontMotorName = "frontRight";
-    public static String rightRearMotorName = "backLeft";
+    public static String rightRearMotorName = "backRight";
 
     // This section is for setting the actual drive vector for the front left wheel, if the robot
     // is facing a heading of 0 radians with the wheel centered at (0,0)
@@ -83,7 +83,7 @@ public class FollowerConstants {
 
 
     // Mass of robot in kilograms
-    public static double mass = 10.65942;
+    public static double mass = 10.48;
 
     // Centripetal force to power scaling
     public static double centripetalScaling = 0.0005;
