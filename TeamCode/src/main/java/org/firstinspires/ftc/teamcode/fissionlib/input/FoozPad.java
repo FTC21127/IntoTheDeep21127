@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.fissionlib.input;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class FoozPad extends Gamepad {
@@ -11,7 +9,7 @@ public class FoozPad extends Gamepad {
 
     public FoozPad(Gamepad gamepad) {
         this.gamepad = gamepad;
-        copy(previous, this.gamepad);
+        previous = gamepad;
     }
 
     public Gamepad getGamepad() {
