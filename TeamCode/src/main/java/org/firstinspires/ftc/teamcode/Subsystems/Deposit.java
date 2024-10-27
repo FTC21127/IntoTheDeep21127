@@ -34,13 +34,13 @@ public class Deposit extends Mechanism {
     @Override
     public void init(HardwareMap hwMap) {
         wrist1 = new SimpleServo(hwMap,"wRight", 0,90);
-        wrist2 = new SimpleServo(hwMap,"wLeft", -90,0);
+        wrist2 = new SimpleServo(hwMap,"wLeft", 0,90);
         claw = new SimpleServo(hwMap,"outtakeClaw", -5,40);
     }
 
     private void setPos(double pos){
         wrist1.setPosition(pos);
-        wrist2.setPosition(pos);
+        wrist2.setPosition(1-pos);
     }
 
     public void depositPos(){
@@ -69,13 +69,13 @@ public class Deposit extends Mechanism {
 
     @Override
     public void loop(FoozPad gamepad) {
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.RELEASE)) {
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RELEASE)) {
             openClaw();
-        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.GRAB)){
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB)){
             closeClaw();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_LEFT)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
             depositPos();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_RIGHT)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
             transferPos();
         }
     }

@@ -61,16 +61,16 @@ public class Drivetrain extends Mechanism {
     @Override
     public void loop(FoozPad gamepad) {
         // reset heading
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING1)&&GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING2)){
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RESET_HEADING1)&&GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RESET_HEADING2)){
             setHeading(0);
         }
 
         switch (type) {
             case ROBOT: // robot centric
-                base.driveRobotCentric(gamepad.left_stick_x, gamepad.left_stick_y, -gamepad.right_stick_x);
+                base.driveRobotCentric(gamepad.gamepad.left_stick_x, -gamepad.gamepad.left_stick_y, gamepad.gamepad.right_stick_x/2);
                 break;
             case FIELD: // field centric
-                base.driveFieldCentric(gamepad.left_stick_x, gamepad.left_stick_y, -gamepad.right_stick_x, getHeading());
+                base.driveFieldCentric(gamepad.gamepad.left_stick_x, gamepad.gamepad.left_stick_y, -gamepad.gamepad.right_stick_x, getHeading());
                 break;
         }
     }

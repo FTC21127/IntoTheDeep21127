@@ -13,12 +13,11 @@ public class Controls {
     public static Input LOCK_SPECIMEN = Input.LEFT_BUMPER;
     public static Input ClIMB_SET = Input.RIGHT_BUMPER;
     public static Input CLIMB = Input.LEFT_BUMPER;
-    public static Input DOWN_A_BIT = Input.DPAD_LEFT;
-    public static Input UP_A_BIT = Input.DPAD_RIGHT;
     public static Input FORWARD_A_BIT = Input.DPAD_UP;
     public static Input BACK_A_BIT = Input.DPAD_DOWN;
     public static Input EJECT = Input.START;
     public static Input[] SLIDES = {LOW_BASKET, HIGH_BASKET, LOW_SPECIMEN, HIGH_SPECIMEN};
     public static Input RESET_HEADING1 = Input.START;
     public static Input RESET_HEADING2 = Input.BACK;
+    public static Input GRAB_SPECIMEN = Input.DPAD_UP;
 }

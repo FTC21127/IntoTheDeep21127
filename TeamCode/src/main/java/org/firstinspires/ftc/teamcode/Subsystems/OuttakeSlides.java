@@ -9,12 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
-/**Done (probably)*/
+/**
+ * Done
+ */
 @Config   // @Config here is just gonna be used for easy tuning via FTC Dashboard
 public class OuttakeSlides extends Mechanism {
 
@@ -29,22 +32,19 @@ public class OuttakeSlides extends Mechanism {
 
     // Positions for slides
     //Just random values right now, will tune later.
-    public static int REST_POS = 20;
+    public static int REST_POS = 70;
     public static int INTAKE_POS = 0;
     public static int LOW_BASKET = 350; //0
     public static int HIGH_BASKET = 800; //1
-    public static int LOW_CHAMBER_SET = 130; //2
-    public static int HIGH_CHAMBER_SET = 380; //3
-    public static int HIGH_CHAMBER_SCORED = 340;
-    public static int LOW_CHAMBER_SCORED = 100;
+    public static int LOW_CHAMBER_SET = 150; //2
+    public static int HIGH_CHAMBER_SET = 420; //3
+    public static int CHAMBER_SCORED = 110;
     public static int ABIT = 70;
 
     public static double target = 0;
     public static double power = 0;
     public static double power1 = 0;
     public static double minPower = -0.3;
-
-    public boolean up = false, down = false;
 
     public static int[] POSITIONS = {LOW_BASKET, HIGH_BASKET, LOW_CHAMBER_SET, HIGH_CHAMBER_SET};
 
@@ -98,6 +98,16 @@ public class OuttakeSlides extends Mechanism {
         slideR.resetEncoder();
     }
 
+    public void lock(){
+        if (target == HIGH_CHAMBER_SET || target == LOW_CHAMBER_SET) {
+            setTarget(target - CHAMBER_SCORED);
+        }
+    }
+
+    public void grabSpecimen(){
+        setTarget(REST_POS);
+    }
+
     public void update() {
         // Check values for the PID controller and update the power
         controller.setSetPoint(target);
@@ -109,22 +119,25 @@ public class OuttakeSlides extends Mechanism {
     }
 
     @Override
+    public void telemetry(Telemetry telemetry) {
+        telemetry.addData("Target= ", target);
+    }
+
+    @Override
     public void loop(FoozPad gamepad) {
         update();
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.LOW_BASKET)) {
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOW_BASKET)) {
             goToPos(0);
-        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.HIGH_BASKET)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.HIGH_BASKET)) {
             goToPos(1);
-        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.LOW_SPECIMEN)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOW_SPECIMEN)) {
             goToPos(2);
-        } else if (GamepadStatic.isButtonPressed(gamepad, Controls.HIGH_SPECIMEN)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.HIGH_SPECIMEN)) {
             goToPos(3);
-        }
-
-        if (GamepadStatic.wasJustPressed(gamepad, Controls.UP_A_BIT)) {
-            upABit();
-        } else if (GamepadStatic.wasJustPressed(gamepad, Controls.DOWN_A_BIT)) {
-            downABit();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOCK_SPECIMEN)) {
+            lock();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB_SPECIMEN)) {
+            grabSpecimen();
         }
     }
 }

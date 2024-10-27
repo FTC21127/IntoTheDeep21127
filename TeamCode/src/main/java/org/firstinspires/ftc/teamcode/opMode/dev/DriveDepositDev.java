@@ -28,8 +28,12 @@ public class DriveDepositDev extends OpMode {
 
     @Override
     public void loop() {
+        gp2.update();
+        gp1.update();
         base.loop(gp1);
         deposit.loop(gp2);
         slides.loop(gp2);
+        slides.telemetry(telemetry);
+        telemetry.addData("",gp2.previous.a);
     }
 }
