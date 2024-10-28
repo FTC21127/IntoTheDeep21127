@@ -13,10 +13,13 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
+
 @Config
 public class Intake extends Mechanism {
 
-    ServoEx horizontalExtendenator, v4b, claw;
+    ServoEx horizontalExtendenator;
+    ServoEx v4b;
+    ServoEx claw;
     NormalizedColorSensor color; // give color values in range from 0 - 1
 
     //Positions to be tuned
@@ -46,8 +49,8 @@ public class Intake extends Mechanism {
     public void init(HardwareMap hwMap) {
         color = hwMap.get(NormalizedColorSensor.class, "color");
         claw = new SimpleServo(hwMap,"intakeClaw", 0,40);
-        v4b = new SimpleServo(hwMap,"v4b",0,160);
-        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
+        v4b = new SimpleServo(hwMap,"v4b",0,120);
+//        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
 
         color.setGain(35);
     }
@@ -58,6 +61,18 @@ public class Intake extends Mechanism {
 
     public void openClaw(){
         claw.setPosition(RELEASE);
+    }
+
+    public void barDown(){
+        v4b.setPosition(BAR_DOWN);
+    }
+
+    public void barNeutral(){
+        v4b.setPosition(BAR_NEUTRAL);
+    }
+
+    public void barTransfer(){
+        v4b.setPosition(BAR_TRANSFER);
     }
 
     public void setSlidePos(double pos){
@@ -71,7 +86,6 @@ public class Intake extends Mechanism {
     public void retractSlide(){
         horizontalExtendenator.setPosition(SLIDE_COMPRESS);
     }
-
 
 
     @Override

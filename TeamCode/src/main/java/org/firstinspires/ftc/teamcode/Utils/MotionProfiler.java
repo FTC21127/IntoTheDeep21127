@@ -27,7 +27,6 @@ public class MotionProfiler {
 
 
 
-
         return MAX_VELO;
     }
 }

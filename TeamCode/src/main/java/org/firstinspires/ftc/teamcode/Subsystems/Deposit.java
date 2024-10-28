@@ -25,7 +25,7 @@ public class Deposit extends Mechanism {
     public static double DEPOSIT_POS = 1;
     public static double EJECT_SAMPLE = 0.7;
     public double GRAB = 0;
-    public double RELEASE = 1;
+    public double RELEASE = .375;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;

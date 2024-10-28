@@ -34,6 +34,7 @@ public class DriveDepositDev extends OpMode {
         deposit.loop(gp2);
         slides.loop(gp2);
         slides.telemetry(telemetry);
-        telemetry.addData("",gp2.previous.a);
+        telemetry.addData("gamepad: ",gp2.gamepad.a);
+        telemetry.addData("previous: ",gp2.previous.a);
     }
 }

@@ -32,8 +32,8 @@ public class OuttakeSlides extends Mechanism {
 
     // Positions for slides
     //Just random values right now, will tune later.
-    public static int REST_POS = 70;
-    public static int INTAKE_POS = 0;
+    public static int REST_POS = 90;
+    public static int INTAKE_POS = 25;
     public static int LOW_BASKET = 350; //0
     public static int HIGH_BASKET = 800; //1
     public static int LOW_CHAMBER_SET = 150; //2
@@ -85,6 +85,10 @@ public class OuttakeSlides extends Mechanism {
         setTarget(REST_POS);
     }
 
+    public void intakePos(){
+        setTarget(INTAKE_POS);
+    }
+
     public void upABit() {
         setTarget(target + ABIT);
     }
@@ -105,7 +109,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void grabSpecimen(){
-        setTarget(REST_POS);
+        setTarget(INTAKE_POS);
     }
 
     public void update() {
