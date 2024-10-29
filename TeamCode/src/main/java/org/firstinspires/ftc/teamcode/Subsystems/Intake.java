@@ -52,7 +52,7 @@ public class Intake extends Mechanism {
         v4b = new SimpleServo(hwMap,"intakeArm",0,120);
 //        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
 
-        color.setGain(35);
+//        color.setGain(35);
     }
 
     public void closeClaw(){
