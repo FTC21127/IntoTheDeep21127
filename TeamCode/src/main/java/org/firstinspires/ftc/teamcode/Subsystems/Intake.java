@@ -89,9 +89,7 @@ public class Intake extends Mechanism {
 
 
     @Override
-    public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Color? ", sampleColor());
-    }
+    public void telemetry(Telemetry telemetry) {}
 
     @Override
     public void loop(FoozPad gamepad) {

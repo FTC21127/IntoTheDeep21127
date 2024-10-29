@@ -22,6 +22,5 @@ public class IntakeDev extends OpMode {
     public void loop() {
         foozPad.update();
         intake.loop(foozPad);
-        telemetry.addData("Colour: ", intake.sampleColor());
     }
 }
