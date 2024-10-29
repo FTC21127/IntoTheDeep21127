@@ -7,9 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.teleop.Controls;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
 
 // cargo vrooooom
@@ -27,7 +28,7 @@ public class Drivetrain extends Mechanism {
     }
 
     // allows us to choose which type of driving we want
-    enum DRIVETYPE{
+    public enum DRIVETYPE{
         FIELD,
         ROBOT
     }
@@ -58,18 +59,18 @@ public class Drivetrain extends Mechanism {
     }
 
     @Override
-    public void loop(Gamepad gamepad) {
+    public void loop(FoozPad gamepad) {
         // reset heading
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING1)&&GamepadStatic.isButtonPressed(gamepad, Controls.RESET_HEADING2)){
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RESET_HEADING1)&&GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RESET_HEADING2)){
             setHeading(0);
         }
 
         switch (type) {
             case ROBOT: // robot centric
-                base.driveRobotCentric(gamepad.left_stick_x, gamepad.left_stick_y, -gamepad.right_stick_x);
+                base.driveRobotCentric(gamepad.gamepad.left_stick_x, -gamepad.gamepad.left_stick_y, gamepad.gamepad.right_stick_x/2);
                 break;
             case FIELD: // field centric
-                base.driveFieldCentric(gamepad.left_stick_x, gamepad.left_stick_y, -gamepad.right_stick_x, getHeading());
+                base.driveFieldCentric(gamepad.gamepad.left_stick_x, gamepad.gamepad.left_stick_y, -gamepad.gamepad.right_stick_x, getHeading());
                 break;
         }
     }

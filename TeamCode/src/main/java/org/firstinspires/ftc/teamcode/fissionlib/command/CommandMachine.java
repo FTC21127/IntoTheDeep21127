@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fissionlib.command;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class CommandMachine {
         currentCommandIndex = 0;
     }
 
-    public void run(Gamepad gamepad) {
+    public void run(FoozPad gamepad) {
         CommandSequenceTrigger currentCommand = commandSequences.get(currentCommandIndex);
 
         if (GamepadStatic.isButtonPressed(gamepad, currentCommand.triggerCondition)) {

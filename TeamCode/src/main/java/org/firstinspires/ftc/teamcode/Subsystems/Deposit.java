@@ -4,13 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.teleop.Controls;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
 /**Done(just tuning needed)*/
 
@@ -24,10 +23,9 @@ public class Deposit extends Mechanism {
     //Positions to be tuned
     public static double TRANSFER_POS = 0;
     public static double DEPOSIT_POS = 1;
-    public static double SPECIMEN_POS = 0.8;
     public static double EJECT_SAMPLE = 0.7;
     public double GRAB = 0;
-    public double RELEASE = 1;
+    public double RELEASE = .375;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;
@@ -35,14 +33,14 @@ public class Deposit extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        wrist1 = new SimpleServo(hwMap,"wrist1", -20,90);
-        wrist2 = new SimpleServo(hwMap,"wrist2", -90,20);
+        wrist1 = new SimpleServo(hwMap,"wRight", 0,90);
+        wrist2 = new SimpleServo(hwMap,"wLeft", 0,90);
         claw = new SimpleServo(hwMap,"outtakeClaw", -5,40);
     }
 
     private void setPos(double pos){
         wrist1.setPosition(pos);
-        wrist2.setPosition(pos-70);
+        wrist2.setPosition(1-pos);
     }
 
     public void depositPos(){
@@ -51,10 +49,6 @@ public class Deposit extends Mechanism {
 
     public void transferPos(){
         setPos(TRANSFER_POS);
-    }
-
-    public void specimenPos(){
-        setPos(SPECIMEN_POS);
     }
 
     public void eject(){
@@ -74,9 +68,15 @@ public class Deposit extends Mechanism {
     }
 
     @Override
-    public void loop(Gamepad gamepad) {
-        if (GamepadStatic.isButtonPressed(gamepad, Controls.RELEASE)) {
+    public void loop(FoozPad gamepad) {
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RELEASE)) {
             openClaw();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB)){
+            closeClaw();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
+            depositPos();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
+            transferPos();
         }
     }
 }
