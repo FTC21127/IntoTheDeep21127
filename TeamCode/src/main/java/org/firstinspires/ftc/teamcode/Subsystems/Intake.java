@@ -49,7 +49,7 @@ public class Intake extends Mechanism {
     public void init(HardwareMap hwMap) {
 //        color = hwMap.get(NormalizedColorSensor.class, "color");
         claw = new SimpleServo(hwMap,"intakeClaw", 0,40);
-        v4b = new SimpleServo(hwMap,"v4b",0,120);
+        v4b = new SimpleServo(hwMap,"intakeArm",0,120);
 //        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
 
         color.setGain(35);
