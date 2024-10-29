@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.opMode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,10 +12,10 @@ public class mechaTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize motors
-        frontLeft = hardwareMap.get(DcMotor.class, "front_left");
-        frontRight = hardwareMap.get(DcMotor.class, "front_right");
-        backLeft = hardwareMap.get(DcMotor.class, "back_left");
-        backRight = hardwareMap.get(DcMotor.class, "back_right");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         // Set motor directions if necessary
         frontRight.setDirection(DcMotor.Direction.REVERSE);
