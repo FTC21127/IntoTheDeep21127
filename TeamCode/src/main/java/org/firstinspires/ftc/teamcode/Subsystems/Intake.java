@@ -47,7 +47,7 @@ public class Intake extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        color = hwMap.get(NormalizedColorSensor.class, "color");
+//        color = hwMap.get(NormalizedColorSensor.class, "color");
         claw = new SimpleServo(hwMap,"intakeClaw", 0,40);
         v4b = new SimpleServo(hwMap,"v4b",0,120);
 //        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
@@ -95,10 +95,16 @@ public class Intake extends Mechanism {
 
     @Override
     public void loop(FoozPad gamepad) {
-        if (GamepadStatic.wasJustPressed(gamepad, Controls.GRAB)){
-            if (sampleColor().ordinal() == COLOR.RED.ordinal() || sampleColor().ordinal() == COLOR.YELLOW.ordinal()) closeClaw();
-        } else if (GamepadStatic.wasJustPressed(gamepad,Controls.PRIME_INTAKE)) {
-
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB)){
+            closeClaw();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad,Controls.PRIME_INTAKE)) {
+            barDown();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RELEASE)) {
+            openClaw();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)){
+            barTransfer();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
+            barNeutral();
         }
     }
 

@@ -17,7 +17,5 @@ public class Controls {
     public static Input BACK_A_BIT = Input.DPAD_DOWN;
     public static Input EJECT = Input.START;
     public static Input[] SLIDES = {LOW_BASKET, HIGH_BASKET, LOW_SPECIMEN, HIGH_SPECIMEN};
-    public static Input RESET_HEADING1 = Input.START;
-    public static Input RESET_HEADING2 = Input.BACK;
     public static Input GRAB_SPECIMEN = Input.DPAD_UP;
 }

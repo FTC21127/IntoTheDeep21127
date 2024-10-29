@@ -29,6 +29,7 @@ public class Scoring extends Mechanism {
 
     private Command slidesUp = () -> slides.setTarget(slidesPos);
     private Command slidesIntake = () -> slides.setTarget(OuttakeSlides.INTAKE_POS);
+    private Command slideRest = () -> slides.restPos();
     private Command depositPos = () -> deposit.depositPos();
     private Command grabTransfer = () -> deposit.transferPos();
     private Command outtakeRelease = () -> deposit.openClaw();
@@ -39,7 +40,6 @@ public class Scoring extends Mechanism {
     private Command dropV4b = () -> intake.barDown();
     private Command neutralV4b = () -> intake.barNeutral();
     private Command transferV4b = () -> intake.barTransfer();
-    private Command slideRest = () -> slides.restPos();
 
     private CommandSequence pickUpTransfer = new CommandSequence()
             .addCommand(grabTransfer)
@@ -97,11 +97,11 @@ public class Scoring extends Mechanism {
 
                 break;
 
-            case SCORING:
+            case TRANSFER:
 
                 break;
 
-            case TRANSFER:
+            case SCORING:
 
                 break;
         }
