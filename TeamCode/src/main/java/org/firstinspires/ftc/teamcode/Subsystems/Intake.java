@@ -23,9 +23,9 @@ public class Intake extends Mechanism {
     NormalizedColorSensor color; // give color values in range from 0 - 1
 
     //Positions to be tuned
-    public static double BAR_DOWN = 0;
-    public static double BAR_TRANSFER = 1;
-    public static double BAR_NEUTRAL = 0.8;
+    public static double BAR_DOWN = 0.93;
+    public static double BAR_TRANSFER = 0.5;
+    public static double BAR_NEUTRAL = 0.0;
     public double GRIP = 0;
     public double RELEASE = 1;
     public static double SLIDE_COMPRESS = 0;
@@ -49,7 +49,7 @@ public class Intake extends Mechanism {
     public void init(HardwareMap hwMap) {
 //        color = hwMap.get(NormalizedColorSensor.class, "color");
         claw = new SimpleServo(hwMap,"intakeClaw", 0,40);
-        v4b = new SimpleServo(hwMap,"intakeArm",0,120);
+        v4b = new SimpleServo(hwMap,"intakeArm",-20,100);
 //        horizontalExtendenator = new SimpleServo(hwMap, "intakeSlides", 0, 110);
 
 //        color.setGain(35);
