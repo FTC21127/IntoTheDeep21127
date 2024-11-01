@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -27,15 +27,14 @@ public class OuttakeSlides extends Mechanism {
     MotorEx slideR, slideL;
 
     // PID controller coefficients
-    private double p = 0.015, i = 0, d = 0.0001;
-    private double p1 = 0.015, i1 = 0, d1 = 0.0001;
+    private double p = 0.015, i = 0, d = 0.0001, f = 0.01;
 
     // Positions for slides
     //Just random values right now, will tune later.
     public static int REST_POS = 90;
-    public static int INTAKE_POS = 25;
-    public static int LOW_BASKET = 350; //0
-    public static int HIGH_BASKET = 800; //1
+    public static int INTAKE_POS = 15;
+    public static int LOW_BASKET = 500; //0
+    public static int HIGH_BASKET = 1000; //1
     public static int LOW_CHAMBER_SET = 150; //2
     public static int HIGH_CHAMBER_SET = 420; //3
     public static int CHAMBER_SCORED = 110;
@@ -49,8 +48,8 @@ public class OuttakeSlides extends Mechanism {
     public static int[] POSITIONS = {LOW_BASKET, HIGH_BASKET, LOW_CHAMBER_SET, HIGH_CHAMBER_SET};
 
     // PID controller initialization
-    private final PIDController controller = new PIDController(p, i, d);
-    private final PIDController controller1 = new PIDController(p, i, d);
+    private final PIDFController controller = new PIDFController(p, i, d,f);
+    private final PIDFController controller1 = new PIDFController(p, i, d,f);
 
     public OuttakeSlides(OpMode opMode) {
         this.opMode = opMode;
@@ -108,16 +107,15 @@ public class OuttakeSlides extends Mechanism {
         }
     }
 
-    public void grabSpecimen(){
-        setTarget(INTAKE_POS);
-    }
-
     public void update() {
         // Check values for the PID controller and update the power
         controller.setSetPoint(target);
         controller1.setSetPoint(target);
         power = controller.calculate(slideR.getCurrentPosition());
         power1 = controller1.calculate(slideL.getCurrentPosition());
+        // set a max velocity for the motors
+        // if (power<minPower) power = minPower;
+        // if (power1>-minPower) power = minPower;
         slideR.set(power);
         slideL.set(-power1);
     }
@@ -141,7 +139,7 @@ public class OuttakeSlides extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOCK_SPECIMEN)) {
             lock();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB_SPECIMEN)) {
-            grabSpecimen();
+            intakePos();
         }
     }
 }

@@ -21,9 +21,9 @@ public class Deposit extends Mechanism {
     ServoEx claw, wrist1, wrist2;
 
     //Positions to be tuned
-    public static double TRANSFER_POS = 0;
-    public static double DEPOSIT_POS = 1;
-    public static double EJECT_SAMPLE = 0.7;
+    public static double TRANSFER_POS = 1;
+    public static double DEPOSIT_POS = 0;
+    public static double BASKET_POS = 0.2;
     public double GRAB = 0;
     public double RELEASE = .375;
 
@@ -51,8 +51,8 @@ public class Deposit extends Mechanism {
         setPos(TRANSFER_POS);
     }
 
-    public void eject(){
-        setPos(EJECT_SAMPLE);
+    public void basketPos(){
+        setPos(BASKET_POS);
     }
 
     public double getPos(){

@@ -67,7 +67,7 @@ public class Drivetrain extends Mechanism {
     @Override
     public void loop(FoozPad gamepad) {
         gamepad.update();
-        follower.setTeleOpMovementVectors(-gamepad.gamepad.left_stick_y, -gamepad.gamepad.left_stick_x, -gamepad.gamepad.right_stick_x);
+        follower.setTeleOpMovementVectors(-gamepad.gamepad.left_stick_y, -gamepad.gamepad.left_stick_x, -gamepad.gamepad.right_stick_x/2);
         follower.update();
     }
 }
