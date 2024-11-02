@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.opMode.dev;
+package org.firstinspires.ftc.teamcode.opMode.auton;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 /**
@@ -31,34 +31,53 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 public class driveToSample extends LinearOpMode {
     private Telemetry telemetryA;
 
-
     private Follower follower;
 
     private Path first;
     private Path second;
 
+    private PathChain test;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        follower = new Follower(hardwareMap);
+
+        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(12, -24, Point.CARTESIAN)));
+        first.setTangentHeadingInterpolation();
+        second = new Path(new BezierLine(new Point(12, -24, Point.CARTESIAN), new Point(16, -24, Point.CARTESIAN)));
+        second.setConstantHeadingInterpolation(0);
+
+        test = follower.pathBuilder().addPath(first).addPath(second).build();
+
+        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        waitForStart();
+
+//      follower.followPath(first);
+//      whatever you need to put inbetween ig
+        follower.followPath(first, true);
+        follower.update();
+        do {
+            follower.update();
+        } while (follower.isBusy());
+        follower.followPath(second, false);
+        follower.update();
+        do {
+            follower.update();
+            telemetryA.addData("is busy: ", true);
+            telemetryA.update();
+        } while (follower.isBusy());
+        telemetryA.addData("is busy: ", "NO");
+        telemetryA.update();
+
+        //pic up shit
+
+    }
+
     /**
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
      * initializes the FTC Dashboard telemetry.
      */
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-        follower = new Follower(hardwareMap);
-
-        first = new Path(new BezierLine(new Point(0, 49, Point.CARTESIAN), new Point(24, 16, Point.CARTESIAN)));
-        first.setTangentHeadingInterpolation();
-        second = new Path(new BezierLine(new Point(24, 16, Point.CARTESIAN), new Point(31, 16, Point.CARTESIAN)));
-        second.setConstantHeadingInterpolation(0);
 
 
-        follower.followPath(first);
-        // whatever you need to put inbetween ig
-        follower.followPath(second);
-        //pic up shit
-
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        telemetryA.update();
-    }
 }

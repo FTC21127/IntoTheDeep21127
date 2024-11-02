@@ -128,7 +128,10 @@ public class Scoring extends Mechanism {
                 break;
 
             case TRANSFER:
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad , Controls.PRIME_INTAKE)) {state = State.INTAKE; break;}
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad , Controls.PRIME_INTAKE)) {
+                    primeIntakeSequence.trigger();
+                    state = State.INTAKE;
+                }
 
 
                 if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_TRANSFER)){

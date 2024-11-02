@@ -59,9 +59,9 @@ public class OuttakeSlides extends Mechanism {
     public void init(HardwareMap hwMap) {
 
         // HardwareMap and init for other stuff
-        slideL= new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_1150);
-        slideR = new MotorEx(hwMap, "rightSlide",Motor.GoBILDA.RPM_1150);
-        slideL.setInverted(true);
+        slideL= new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_435);
+        slideR = new MotorEx(hwMap, "rightSlide",Motor.GoBILDA.RPM_435);
+
 
         slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -110,14 +110,14 @@ public class OuttakeSlides extends Mechanism {
     public void update() {
         // Check values for the PID controller and update the power
         controller.setSetPoint(target);
-        controller1.setSetPoint(target);
+        controller1.setSetPoint(-target);
         power = controller.calculate(slideR.getCurrentPosition());
         power1 = controller1.calculate(slideL.getCurrentPosition());
         // set a max velocity for the motors
         // if (power<minPower) power = minPower;
         // if (power1>-minPower) power = minPower;
         slideR.set(power);
-        slideL.set(-power1);
+        slideL.set(power1);
     }
 
     @Override
