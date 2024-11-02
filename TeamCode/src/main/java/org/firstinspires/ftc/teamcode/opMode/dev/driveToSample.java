@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opMode.auton;
+package org.firstinspires.ftc.teamcode.opMode.dev;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "g2Sample", group = "Autonomous Pathing")
+@Autonomous (name = "g2Sample", group = "1Dev")
 public class driveToSample extends LinearOpMode {
     private Telemetry telemetryA;
 

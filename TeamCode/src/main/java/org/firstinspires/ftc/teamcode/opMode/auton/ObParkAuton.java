@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous
-public class ParkAuton extends OpMode {
+@Autonomous(name = "Observation Park", group = "!park")
+public class ObParkAuton extends OpMode {
     private Telemetry telemetryA;
 
     private Follower follower;
@@ -21,17 +21,21 @@ public class ParkAuton extends OpMode {
     public void init() {
         follower = new Follower(hardwareMap);
 
-        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(5, -20, Point.CARTESIAN)));
+        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(10, -24, Point.CARTESIAN)));
         first.setConstantHeadingInterpolation(0);
 
-        follower.followPath(first);
+        follower.followPath(first, true);
+    }
+
+    @Override
+    public void start() {
+        do {
+            follower.update();
+        } while (follower.isBusy());
     }
 
     @Override
     public void loop() {
-        follower.update();
-        if (!follower.isBusy()){
-            stop();
-        }
+
     }
 }
