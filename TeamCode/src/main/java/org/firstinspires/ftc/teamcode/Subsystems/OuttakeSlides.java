@@ -31,13 +31,13 @@ public class OuttakeSlides extends Mechanism {
 
     // Positions for slides
     //Just random values right now, will tune later.
-    public static int REST_POS = 90;
-    public static int INTAKE_POS = 15;
-    public static int LOW_BASKET = 500; //0
-    public static int HIGH_BASKET = 1000; //1
-    public static int LOW_CHAMBER_SET = 150; //2
-    public static int HIGH_CHAMBER_SET = 420; //3
-    public static int CHAMBER_SCORED = 110;
+    public static int REST_POS = 100;
+    public static int INTAKE_POS = 60;
+    public static int LOW_BASKET = 850; //0
+    public static int HIGH_BASKET = 1650; //1
+    public static int LOW_CHAMBER_SET = 0; //2
+    public static int HIGH_CHAMBER_SET = 650; //3
+    public static int CHAMBER_SCORED = 150;
     public static int ABIT = 70;
 
     public static double target = 0;

@@ -48,11 +48,19 @@ public class Scoring extends Mechanism {
     private final Command transferV4b = () -> intake.barTransfer();
 
     private CommandSequence depositTransferSequence = new CommandSequence()
+            .addCommand(outtakeRelease)
             .addCommand(grabTransfer)
+            .addWaitCommand(1)
             .addCommand(slidesIntake)
             .build();
+    private CommandSequence restSequence = new CommandSequence()
+            .addCommand(outtakeRelease)
+            .addCommand(slideRest)
+            .build();
     private CommandSequence specimenPickUpSequence = new CommandSequence()
+            .addCommand(outtakeRelease)
             .addCommand(depositPos)
+            .addWaitCommand(1)
             .addCommand(slideRest)
             .build();
     private CommandSequence ejectSampleSequence = new CommandSequence()
@@ -72,6 +80,8 @@ public class Scoring extends Mechanism {
     private CommandSequence depositSample = new CommandSequence()
             .addCommand(depositPos)
             .addCommand(outtakeRelease)
+            .addWaitCommand(.8)
+            .addCommand(grabTransfer)
             .build();
     private CommandSequence depositSpecimen = new CommandSequence()
             .addCommand(basketPos)
@@ -85,11 +95,11 @@ public class Scoring extends Mechanism {
             .build();
     private CommandSequence transferIntakeSequence = new CommandSequence()
             .addCommand(intakeGrab)
-            .addWaitCommand(0.3)
+            .addWaitCommand(0.5)
             .addCommand(transferV4b)
-            .addWaitCommand(1)
+            .addWaitCommand(1.5)
             .addCommand(intakeOpen)
-            .addWaitCommand(0.6)
+            .addWaitCommand(1)
             .addCommand(neutralV4b)
             .addCommand(intakeGrab)
             .build();
@@ -161,7 +171,8 @@ public class Scoring extends Mechanism {
                     } else {
                         depositSpecimen.trigger();
                     }
-                    specimenPickUpSequence.trigger();
+
+                    state = State.INTAKE;
                 }
                 break;
         }

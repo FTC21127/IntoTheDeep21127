@@ -74,9 +74,11 @@ public class Deposit extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB)){
             closeClaw();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
-            depositPos();
+            basketPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
             transferPos();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
+            depositPos();
         }
     }
 }

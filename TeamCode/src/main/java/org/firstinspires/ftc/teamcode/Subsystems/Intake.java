@@ -23,11 +23,11 @@ public class Intake extends Mechanism {
     NormalizedColorSensor color; // give color values in range from 0 - 1
 
     //Positions to be tuned
-    public static double BAR_DOWN = 0.05;
-    public static double BAR_TRANSFER = 0.7;
+    public static double BAR_DOWN = 0.0525;
+    public static double BAR_TRANSFER = 0.67;
     public static double BAR_NEUTRAL = 0.5;
     public static double GRIP = .075;
-    public static double RELEASE = .3;
+    public static double RELEASE = .35;
     public static double SLIDE_COMPRESS = 0;
     public static double SLIDE_NEUTRAL = .5;
 
