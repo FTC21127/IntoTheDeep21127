@@ -26,6 +26,7 @@ public class Intake extends Mechanism {
     public static double BAR_DOWN = 0.0525;
     public static double BAR_TRANSFER = 0.67;
     public static double BAR_NEUTRAL = 0.5;
+    public static double BAR_FOLD = 0.7;
     public static double GRIP = .075;
     public static double RELEASE = .35;
     public static double SLIDE_COMPRESS = 0;
@@ -38,6 +39,10 @@ public class Intake extends Mechanism {
         RED,
         YELLOW,
         NONE
+    }
+
+    public Intake(OpMode opMode1){
+        this(opMode1,COLOR.RED);
     }
 
     public Intake(OpMode opMode1, COLOR alliance) {
@@ -73,6 +78,10 @@ public class Intake extends Mechanism {
 
     public void barTransfer(){
         v4b.setPosition(BAR_TRANSFER);
+    }
+
+    public void barFold(){
+        v4b.setPosition(BAR_FOLD);
     }
 
     public void setSlidePos(double pos){

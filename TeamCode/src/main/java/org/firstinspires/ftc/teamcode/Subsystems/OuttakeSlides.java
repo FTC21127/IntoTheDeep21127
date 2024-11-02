@@ -27,7 +27,7 @@ public class OuttakeSlides extends Mechanism {
     MotorEx slideR, slideL;
 
     // PID controller coefficients
-    private double p = 0.015, i = 0, d = 0.0001, f = 0.01;
+    private double p = 0.015, i = 0, d = 0.0001, f = 0.02;
 
     // Positions for slides
     //Just random values right now, will tune later.
@@ -38,6 +38,8 @@ public class OuttakeSlides extends Mechanism {
     public static int LOW_CHAMBER_SET = 0; //2
     public static int HIGH_CHAMBER_SET = 650; //3
     public static int CHAMBER_SCORED = 150;
+    public static int LEVEL_1_ASCENT = 900;
+    public static int HANG = 0;
     public static int ABIT = 70;
 
     public static double target = 0;
@@ -94,6 +96,14 @@ public class OuttakeSlides extends Mechanism {
 
     public void downABit() {
         setTarget(target - ABIT);
+    }
+
+    public void primeAscent(){
+        setTarget(LEVEL_1_ASCENT);
+    }
+
+    public void ascent(){
+        setTarget(HANG);
     }
 
     public void reset(){

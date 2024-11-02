@@ -24,33 +24,42 @@ public class Scoring extends Mechanism {
     private boolean isBarTransfer = false;
     private boolean isBasket = false;
     private boolean intakeGrabbed = false;
+    private boolean isClimb = false;
     private int LB, HB, LC, HC;
 
     private enum State {
         INTAKE,
         TRANSFER,
-        SCORING
+        SCORING,
+        CLIMB
     }
 
+    // Slide Commands
     private final Command slidesUp = () -> slides.setTarget(slidesPos);
     private final Command slidesIntake = () -> slides.intakePos();
     private final Command slideRest = () -> slides.restPos();
     private final Command lockSpecimen = () -> slides.lock();
+    private final Command primeLevel1Ascent = () -> slides.primeAscent();
+    private final Command Level1Ascent = () -> slides.ascent();
+    // Deposit Commands
     private final Command depositPos = () -> deposit.depositPos();
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
+    // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
     private final Command dropV4b = () -> intake.barDown();
     private final Command neutralV4b = () -> intake.barNeutral();
     private final Command transferV4b = () -> intake.barTransfer();
+    private final Command climbV4b = () -> intake.barFold();
 
+    // Transfer Slide Command Sequences
     private CommandSequence depositTransferSequence = new CommandSequence()
             .addCommand(outtakeRelease)
             .addCommand(grabTransfer)
-            .addWaitCommand(1)
+            .addWaitCommand(.4)
             .addCommand(slidesIntake)
             .build();
     private CommandSequence restSequence = new CommandSequence()
@@ -63,6 +72,7 @@ public class Scoring extends Mechanism {
             .addWaitCommand(1)
             .addCommand(slideRest)
             .build();
+    // Non-transfer Slide Command Sequences
     private CommandSequence ejectSampleSequence = new CommandSequence()
             .addCommand(depositPos)
             .addWaitCommand(0.4)
@@ -89,6 +99,7 @@ public class Scoring extends Mechanism {
             .addCommand(outtakeRelease)
             .addWaitCommand(.5)
             .build();
+    // Intake Command Sequences
     private CommandSequence primeIntakeSequence = new CommandSequence()
             .addCommand(dropV4b)
             .addCommand(intakeOpen)
@@ -102,6 +113,16 @@ public class Scoring extends Mechanism {
             .addWaitCommand(1)
             .addCommand(neutralV4b)
             .addCommand(intakeGrab)
+            .build();
+    // Ascend Command Sequences
+    private CommandSequence primeAscent = new CommandSequence()
+            .addCommand(basketPos)
+            .addCommand(primeLevel1Ascent)
+            .addWaitCommand(.5)
+            .addCommand(climbV4b)
+            .build();
+    private CommandSequence ascend = new CommandSequence()
+            .addCommand(Level1Ascent)
             .build();
 
 
@@ -125,6 +146,8 @@ public class Scoring extends Mechanism {
     public void loop(FoozPad gamepad1, FoozPad gamepad2) {
         drive.loop(gamepad1);
         slides.update();
+
+        if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET)) state = State.CLIMB;
 
         switch (state){
             case INTAKE:
@@ -171,7 +194,20 @@ public class Scoring extends Mechanism {
                     } else {
                         depositSpecimen.trigger();
                     }
-
+                    restSequence.trigger();
+                    state = State.INTAKE;
+                }
+                break;
+            case CLIMB:
+                if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET)) {
+                    primeAscent.trigger();
+                    isClimb = true;
+                } else if (isClimb && GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB)){
+                    ascend.trigger();
+                }
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad , Controls.PRIME_INTAKE)) {
+                    primeIntakeSequence.trigger();
+                    isClimb = false;
                     state = State.INTAKE;
                 }
                 break;

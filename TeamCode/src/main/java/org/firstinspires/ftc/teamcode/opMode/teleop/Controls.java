@@ -11,7 +11,7 @@ public class Controls {
     public static Input GRAB = Input.RIGHT_STICK_BUTTON;
     public static Input RELEASE = Input.RIGHT_BUMPER;
     public static Input LOCK_SPECIMEN = Input.LEFT_BUMPER;
-    public static Input ClIMB_SET = Input.RIGHT_BUMPER;
+    public static Input CLIMB_SET = Input.DPAD_LEFT;
     public static Input CLIMB = Input.LEFT_BUMPER;
     public static Input EJECT = Input.START;
     public static Input[] SLIDES = {LOW_BASKET, HIGH_BASKET, LOW_SPECIMEN, HIGH_SPECIMEN};
