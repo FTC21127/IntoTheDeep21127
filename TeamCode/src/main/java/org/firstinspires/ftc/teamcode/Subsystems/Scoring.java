@@ -77,6 +77,7 @@ public class Scoring extends Mechanism {
             .addCommand(basketPos)
             .addWaitCommand(.5)
             .addCommand(outtakeRelease)
+            .addWaitCommand(.5)
             .build();
     private CommandSequence primeIntakeSequence = new CommandSequence()
             .addCommand(dropV4b)
