@@ -55,8 +55,8 @@ public class ThreeWheelLocalizer extends Localizer {
     private Pose rightEncoderPose;
     private Pose strafeEncoderPose;
     private double totalHeading;
-    public static double FORWARD_TICKS_TO_INCHES = 0.00154513518;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
-    public static double STRAFE_TICKS_TO_INCHES = 0.00197128;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
+    public static double FORWARD_TICKS_TO_INCHES = 0.00196575010676553163;//8192 * 1.37795 * 2 * Math.PI * 0.5008239963;
+    public static double STRAFE_TICKS_TO_INCHES = 0.0019623722209283645;//8192 * 1.37795 * 2 * Math.PI * 0.5018874659;
     public static double TURN_TICKS_TO_RADIANS = 0.0021365887403;//8192 * 1.37795 * 2 * Math.PI * 0.5;
 
     /**
