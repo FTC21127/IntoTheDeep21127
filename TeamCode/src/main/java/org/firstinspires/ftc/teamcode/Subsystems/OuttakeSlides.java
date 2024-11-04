@@ -34,7 +34,7 @@ public class OuttakeSlides extends Mechanism {
     public static int REST_POS = 140;
     public static int INTAKE_POS = 100;
     public static int LOW_BASKET = 770; //0
-    public static int HIGH_BASKET = 1750; //1
+    public static int HIGH_BASKET = 1600; //1
     public static int LOW_CHAMBER_SET = 0; //2
     public static int HIGH_CHAMBER_SET = 560; //3
     public static int CHAMBER_SCORED = 250;
@@ -130,7 +130,7 @@ public class OuttakeSlides extends Mechanism {
         // set a max velocity for the motors
         // if (power<minPower) power = minPower;
         // if (power1>-minPower) power = minPower;
-        slideR.set(power);
+        slideR.set(-power);
         slideL.set(power1);
     }
 
