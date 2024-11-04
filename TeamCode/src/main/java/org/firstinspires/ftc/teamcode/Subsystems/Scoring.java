@@ -62,8 +62,10 @@ public class Scoring extends Mechanism {
             .addWaitCommand(.4)
             .addCommand(slidesIntake)
             .build();
-    private CommandSequence restSequence = new CommandSequence()
+    private CommandSequence slidesDown = new CommandSequence()
+            .addCommand(grabTransfer)
             .addCommand(outtakeRelease)
+            .addWaitCommand(1)
             .addCommand(slideRest)
             .build();
     private CommandSequence specimenPickUpSequence = new CommandSequence()
@@ -88,16 +90,16 @@ public class Scoring extends Mechanism {
             .addCommand(basketPos)
             .build();
     private CommandSequence depositSample = new CommandSequence()
-            .addCommand(depositPos)
+            .addCommand(basketPos)
             .addCommand(outtakeRelease)
-            .addWaitCommand(.8)
-            .addCommand(grabTransfer)
             .build();
     private CommandSequence depositSpecimen = new CommandSequence()
             .addCommand(basketPos)
             .addWaitCommand(.5)
+            .addCommand(depositPos)
+            .addWaitCommand(.7)
             .addCommand(outtakeRelease)
-            .addWaitCommand(.5)
+            .addCommand(lockSpecimen)
             .build();
     // Intake Command Sequences
     private CommandSequence primeIntakeSequence = new CommandSequence()
@@ -194,7 +196,7 @@ public class Scoring extends Mechanism {
                     } else {
                         depositSpecimen.trigger();
                     }
-                    restSequence.trigger();
+                    slidesDown.trigger();
                     state = State.INTAKE;
                 }
                 break;

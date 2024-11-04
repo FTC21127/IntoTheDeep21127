@@ -31,16 +31,16 @@ public class OuttakeSlides extends Mechanism {
 
     // Positions for slides
     //Just random values right now, will tune later.
-    public static int REST_POS = 100;
-    public static int INTAKE_POS = 60;
-    public static int LOW_BASKET = 850; //0
-    public static int HIGH_BASKET = 1650; //1
+    public static int REST_POS = 140;
+    public static int INTAKE_POS = 100;
+    public static int LOW_BASKET = 770; //0
+    public static int HIGH_BASKET = 1750; //1
     public static int LOW_CHAMBER_SET = 0; //2
-    public static int HIGH_CHAMBER_SET = 650; //3
-    public static int CHAMBER_SCORED = 150;
-    public static int LEVEL_1_ASCENT = 900;
+    public static int HIGH_CHAMBER_SET = 560; //3
+    public static int CHAMBER_SCORED = 250;
+    public static int LEVEL_1_ASCENT = 910;
     public static int HANG = 0;
-    public static int ABIT = 70;
+    public static int ABIT = 100;
 
     public static double target = 0;
     public static double power = 0;
@@ -61,8 +61,8 @@ public class OuttakeSlides extends Mechanism {
     public void init(HardwareMap hwMap) {
 
         // HardwareMap and init for other stuff
-        slideL= new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_435);
-        slideR = new MotorEx(hwMap, "rightSlide",Motor.GoBILDA.RPM_435);
+        slideL= new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_312);
+        slideR = new MotorEx(hwMap, "rightSlide",Motor.GoBILDA.RPM_312);
 
 
         slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -111,6 +111,10 @@ public class OuttakeSlides extends Mechanism {
         slideR.resetEncoder();
     }
 
+    public boolean isDone(){
+        return controller.atSetPoint();
+    }
+
     public void lock(){
         if (target == HIGH_CHAMBER_SET || target == LOW_CHAMBER_SET) {
             setTarget(target - CHAMBER_SCORED);
@@ -133,6 +137,8 @@ public class OuttakeSlides extends Mechanism {
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Target= ", target);
+        telemetry.addData("Pos1= ", slideR.getCurrentPosition());
+        telemetry.addData("Pos2= ", slideL.getCurrentPosition());
     }
 
     @Override

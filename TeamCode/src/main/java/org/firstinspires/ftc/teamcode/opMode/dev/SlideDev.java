@@ -22,7 +22,9 @@ public class SlideDev extends OpMode {
 
     @Override
     public void loop() {
+        gp1.update();
         slides.update();
         slides.loop(gp1);
+        slides.telemetry(telemetry);
     }
 }

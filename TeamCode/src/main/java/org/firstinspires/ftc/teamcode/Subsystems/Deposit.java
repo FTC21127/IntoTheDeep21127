@@ -24,6 +24,7 @@ public class Deposit extends Mechanism {
     public static double TRANSFER_POS = 1;
     public static double DEPOSIT_POS = 0;
     public static double BASKET_POS = 0.2;
+    public static double SPECIMEN_POS = 0.1;
     public double GRAB = 0;
     public double RELEASE = .375;
 
@@ -53,6 +54,10 @@ public class Deposit extends Mechanism {
 
     public void basketPos(){
         setPos(BASKET_POS);
+    }
+
+    public void specimenPos(){
+        setPos(SPECIMEN_POS);
     }
 
     public double getPos(){
