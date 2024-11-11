@@ -14,7 +14,7 @@ public class DriveDepositDev extends OpMode {
     Drivetrain base = new Drivetrain(this);
     Deposit deposit = new Deposit(this);
     OuttakeSlides slides = new OuttakeSlides(this);
-    Intake intake = new Intake(this, Intake.COLOR.RED);
+//    Intake intake = new Intake(this, Intake.COLOR.RED);
     FoozPad gp1, gp2;
 
     @Override
@@ -22,7 +22,7 @@ public class DriveDepositDev extends OpMode {
         base.init(hardwareMap);
         deposit.init(hardwareMap);
         slides.init(hardwareMap);
-        intake.init(hardwareMap);
+//        intake.init(hardwareMap);
         slides.restPos();
         deposit.depositPos();
         gp1 = new FoozPad(gamepad1);
@@ -36,7 +36,7 @@ public class DriveDepositDev extends OpMode {
         base.loop(gp1);
         deposit.loop(gp2);
         slides.loop(gp2);
-        intake.loop(gp2);
+//        intake.loop(gp2);
         slides.telemetry(telemetry);
         telemetry.addData("gamepad: ",gp2.gamepad.a);
         telemetry.addData("previous: ",gp2.previous.a);

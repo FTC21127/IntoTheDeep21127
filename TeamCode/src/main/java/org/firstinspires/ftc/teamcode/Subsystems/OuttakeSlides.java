@@ -31,12 +31,12 @@ public class OuttakeSlides extends Mechanism {
 
     // Positions for slides
     //Just random values right now, will tune later.
-    public static int REST_POS = 140;
+    public static int REST_POS = 75;
     public static int INTAKE_POS = 100;
-    public static int LOW_BASKET = 770; //0
-    public static int HIGH_BASKET = 1600; //1
-    public static int LOW_CHAMBER_SET = 0; //2
-    public static int HIGH_CHAMBER_SET = 560; //3
+    public static int LOW_BASKET = 825; //0
+    public static int HIGH_BASKET = 1625; //1
+    public static int LOW_CHAMBER_SET = 225; //2
+    public static int HIGH_CHAMBER_SET = 825; //3
     public static int CHAMBER_SCORED = 250;
     public static int LEVEL_1_ASCENT = 910;
     public static int HANG = 0;
@@ -130,7 +130,7 @@ public class OuttakeSlides extends Mechanism {
         // set a max velocity for the motors
         // if (power<minPower) power = minPower;
         // if (power1>-minPower) power = minPower;
-        slideR.set(-power);
+        slideR.set(power);
         slideL.set(power1);
     }
 
@@ -155,7 +155,7 @@ public class OuttakeSlides extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOCK_SPECIMEN)) {
             lock();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB_SPECIMEN)) {
-            intakePos();
+            restPos();
         }
     }
 }

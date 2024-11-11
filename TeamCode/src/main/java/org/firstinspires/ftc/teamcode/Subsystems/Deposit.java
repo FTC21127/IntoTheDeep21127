@@ -21,12 +21,12 @@ public class Deposit extends Mechanism {
     ServoEx claw, wrist1, wrist2;
 
     //Positions to be tuned
-    public static double TRANSFER_POS = 1;
-    public static double DEPOSIT_POS = 0;
-    public static double BASKET_POS = 0.2;
+    public static double TRANSFER_POS = 0;
+    public static double DEPOSIT_POS = 0.38;
+    public static double BASKET_POS = 0.55;
     public static double SPECIMEN_POS = 0.1;
-    public double GRAB = 0;
-    public double RELEASE = .375;
+    public static double GRAB = 0.05;
+    public static double RELEASE = .325;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;
@@ -74,16 +74,19 @@ public class Deposit extends Mechanism {
 
     @Override
     public void loop(FoozPad gamepad) {
-        if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RELEASE)) {
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
             openClaw();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB)){
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)){
             closeClaw();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_RIGHT)) {
             basketPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
             transferPos();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
             depositPos();
+        }
+        if (getPos()==DEPOSIT_POS){
+            gamepad.gamepad.rumble(.5,.5,1);
         }
     }
 }
