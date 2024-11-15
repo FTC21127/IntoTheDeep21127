@@ -61,6 +61,11 @@ public class SimpleMecanumBase extends OpMode {
         x = x * (1+gamepad1.right_trigger*.4) * (1-gamepad1.left_trigger);
         r = r * (1+gamepad1.right_trigger*.4) * (1-gamepad1.left_trigger);
 
+        if (gamepad1.a){
+            x = 1;
+            r = 0.5;
+        }
+
         follower.setTeleOpMovementVectors(y, x, r);
         follower.update();
     }

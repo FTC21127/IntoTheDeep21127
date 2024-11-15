@@ -65,18 +65,18 @@ public class MotionProfiler {
 
     //every loop to get target velocity
     public double getTargetVel(double currentPos) {
-        //traveledDist = Math.abs(currentPos-startPos) + offsetDist; //offsetDist is to prevent power from permanently being 0
-        System.out.println(accelDist);
-
-
         if (Math.abs(traveledDist) < accelDist + offsetDist || (sign == -1 && traveledDist > accelDist * sign) || (sign == 1 && traveledDist < accelDist)) {
 
             return maxAccel * (-startVel + Math.sqrt(startVel * startVel + 4 * maxAccel * sign * currentPos)) / (2 * maxAccel * sign) * sign + startVel;
 
         } else if (Math.abs(traveledDist) < cruiseDist + offsetDist) {
+
             return maxVel * sign;
+
         } else if (Math.abs(traveledDist) < decelThreshold + offsetDist) {
+
             return maxAccel * (-startVel + Math.sqrt(startVel * startVel + 4 * maxAccel * sign * (distance - traveledDist))) / (2 * maxAccel * sign) * sign;
+
         } else {
             return 0;
         }
