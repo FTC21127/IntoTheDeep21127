@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opMode.dev;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
@@ -14,14 +15,14 @@ public class FoozPadDev extends OpMode {
     @Override
     public void init() {
         foozPad1 = new FoozPad(gamepad1);
+        gamepad1.setLedColor((double) 159 /255, (double) 135 /255, (double) 211 /255, Gamepad.LED_DURATION_CONTINUOUS);
     }
 
     @Override
     public void loop() {
-        if (GamepadStatic.wasJustPressed(foozPad1, GamepadStatic.Input.A)) y = true;
         foozPad1.update();
         telemetry.addData("Current: ", foozPad1.gamepad.a);
         telemetry.addData("Previous: ", foozPad1.previous.a);
-        telemetry.addData("y: ", true);
+        if (foozPad1.gamepad.a && foozPad1.previous.a) telemetry.addData("IT ","WORKS (KINDA)");
     }
 }

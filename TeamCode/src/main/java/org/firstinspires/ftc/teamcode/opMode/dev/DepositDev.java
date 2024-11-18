@@ -19,5 +19,6 @@ public class DepositDev extends OpMode {
     @Override
     public void loop() {
         outtake.loop(gp1);
+        gp1.update();
     }
 }

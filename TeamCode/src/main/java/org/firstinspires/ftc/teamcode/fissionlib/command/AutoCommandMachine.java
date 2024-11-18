@@ -21,7 +21,7 @@ public class AutoCommandMachine {
 
     public boolean hasCompleted() { return hasCompleted; }
 
-    public void reset() { currentCommandIndex = 0; }
+    public void reset() { currentCommandIndex = 0; hasCompleted = false;}
 
     public void run(boolean driveIsBusy) {
         CommandSequence currentCommand = commandSequences.get(currentCommandIndex);

@@ -40,7 +40,7 @@ public class CommandSequence {
     }
 
     public void run() {
-        hasCompleted = false;
+        this.hasCompleted = false;
         commandThread = new Thread(commandRunnable);
         commandThread.start();
     }

@@ -23,13 +23,13 @@ public class BucketParkAuton extends OpMode {
 
     private Follower follower;
 
-    private Path first, second, third, fourth, five;
+    private Path first, third, fourth, five;
 
     private Intake claw = new Intake(this);
     private OuttakeSlides slides = new OuttakeSlides(this);
     private Deposit deposit = new Deposit(this);
 
-    Timing.Timer timer = new Timing.Timer(1, TimeUnit.SECONDS);
+    Timing.Timer timer = new Timing.Timer(1500, TimeUnit.MILLISECONDS);
 
     // Slide Commands
     private final Command slidesIntake = () -> slides.intakePos();
@@ -54,18 +54,17 @@ public class BucketParkAuton extends OpMode {
             .addCommand(outtakeGrab)
             .addWaitCommand(.5)
             .addCommand(slideUp)
-            .addWaitCommand(0.2)
             .addCommand(basketPos)
             .build();
 
     private CommandSequence depositSample = new CommandSequence()
-            .addCommand(basketPos)
             .addCommand(outtakeRelease)
-            .addWaitCommand(.2)
+            .addWaitCommand(.4)
             .addCommand(grabTransfer)
             .addWaitCommand(1)
-            .addCommand(outtakeRelease)
-            .addCommand(slidesIntake)
+            .addCommand(slideRest)
+            .addWaitCommand(.5)
+            .addCommand(outtakeGrab)
             .build();
 
     @Override
@@ -74,13 +73,10 @@ public class BucketParkAuton extends OpMode {
         slides.init(hardwareMap);
         deposit.init(hardwareMap);
         follower = new Follower(hardwareMap);
-        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(10, 10, Point.CARTESIAN)));
+        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(11, 11, Point.CARTESIAN)));
         first.setConstantHeadingInterpolation(0);
-        
-        second = new Path(new BezierLine(first.getLastControlPoint(), new Point(11, 11, Point.CARTESIAN)));
-        second.setConstantHeadingInterpolation(Math.toRadians(360-45));
 
-        third = new Path(new BezierLine(second.getLastControlPoint(), new Point(5, 16, Point.CARTESIAN)));
+        third = new Path(new BezierLine(first.getLastControlPoint(), new Point(4, 18, Point.CARTESIAN)));
         third.setConstantHeadingInterpolation(Math.toRadians(360-45));
 
         fourth = new Path(new BezierLine(third.getLastControlPoint(), new Point(49, 10, Point.CARTESIAN)));
@@ -89,27 +85,21 @@ public class BucketParkAuton extends OpMode {
         five = new Path(new BezierLine(fourth.getLastControlPoint(), new Point(49, 1, Point.CARTESIAN)));
         five.setConstantHeadingInterpolation(Math.toRadians(90));
         follower.followPath(first, true);
+        deposit.transferPos();
         claw.barNeutral();
     }
 
     @Override
     public void start() {
-        deposit.basketPos();
-        slides.restPos();
-        deposit.openClaw();
-        do {
-            slides.update();
-            follower.update();
-        } while (follower.isBusy());
-        follower.followPath(second);
-        deposit.transferPos();
-        deposit.openClaw();
         slides.intakePos();
+        deposit.openClaw();
         do {
             slides.update();
             follower.update();
         } while (follower.isBusy());
         depositSequence.trigger();
+        timer.start();
+        while (timer.elapsedTime()<750);
         follower.followPath(third);
         do {
             slides.update();

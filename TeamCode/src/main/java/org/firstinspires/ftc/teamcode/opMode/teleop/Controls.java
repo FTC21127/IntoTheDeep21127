@@ -7,8 +7,8 @@ public class Controls {
     public static Input HIGH_BASKET = Input.B;
     public static Input LOW_SPECIMEN = Input.A;
     public static Input HIGH_SPECIMEN = Input.Y;
-    public static Input PRIME_INTAKE = Input.LEFT_STICK_BUTTON;
-    public static Input GRAB = Input.LEFT_BUMPER;
+    public static Input PRIME_INTAKE = Input.LEFT_BUMPER;
+    public static Input GRAB = Input.LEFT_STICK_BUTTON;
     public static Input RELEASE = Input.RIGHT_BUMPER;
     public static Input LOCK_SPECIMEN = Input.DPAD_LEFT;
     public static Input CLIMB_SET = Input.DPAD_LEFT;

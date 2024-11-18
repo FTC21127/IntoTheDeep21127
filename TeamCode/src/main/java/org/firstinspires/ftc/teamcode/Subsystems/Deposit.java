@@ -11,8 +11,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
 
-/**Done(just tuning needed)*/
-
+//Done
 //added to allow tuning in ftc dashboard
 @Config
 public class Deposit extends Mechanism {
@@ -21,12 +20,14 @@ public class Deposit extends Mechanism {
     ServoEx claw, wrist1, wrist2;
 
     //Positions to be tuned
-    public static double TRANSFER_POS = 0;
+    public static double TRANSFER_POS = 0.05;
     public static double DEPOSIT_POS = 0.38;
     public static double BASKET_POS = 0.55;
-    public static double SPECIMEN_POS = 0.1;
+    public static double SPECIMEN_POS = 0.40;
+    public static double SPECIMEN_SCORE_POS = 0.25;
     public static double GRAB = 0.05;
-    public static double RELEASE = .325;
+    public static double SHIFT = 0.1;
+    public static double RELEASE = .315;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;
@@ -60,6 +61,10 @@ public class Deposit extends Mechanism {
         setPos(SPECIMEN_POS);
     }
 
+    public void specimenScorePos(){
+        setPos(SPECIMEN_SCORE_POS);
+    }
+
     public double getPos(){
         return wrist1.getPosition();
     }
@@ -70,6 +75,10 @@ public class Deposit extends Mechanism {
 
     public void openClaw(){
         claw.setPosition(RELEASE);
+    }
+
+    public void clawShift(){
+        claw.setPosition(SHIFT);
     }
 
     @Override
@@ -86,7 +95,7 @@ public class Deposit extends Mechanism {
             depositPos();
         }
         if (getPos()==DEPOSIT_POS){
-            gamepad.gamepad.rumble(.5,.5,1);
+            gamepad.gamepad.rumble(2);
         }
     }
 }

@@ -65,12 +65,16 @@ public class GamepadStatic {
         }
     }
 
-    public static boolean wasJustPressed(FoozPad gp, Input input){
+    public static boolean wasJustPressed(@NonNull FoozPad gp, Input input){
         return GamepadStatic.isButtonPressed(gp.gamepad, input) && !GamepadStatic.isButtonPressed(gp.previous, input);
     }
 
     public static boolean wasJustReleased(@NonNull FoozPad gp, Input input){
         return !GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input);
+    }
+
+    public static boolean beenPressed(@NonNull FoozPad gp, Input input){
+        return GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input);
     }
 
     public static boolean stateJustChanged(@NonNull FoozPad gp, Input input){
