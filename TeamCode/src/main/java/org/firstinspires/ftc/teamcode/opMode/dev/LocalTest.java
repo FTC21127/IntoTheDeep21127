@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 /**
@@ -27,40 +26,26 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "g2Sample", group = "1Dev")
-public class driveToSample extends LinearOpMode {
+@Autonomous (name = "Pedropath test", group = "dev")
+public class LocalTest extends LinearOpMode {
     private Telemetry telemetryA;
 
     private Follower follower;
 
-    private Path first;
-    private Path second;
-
-    private PathChain test;
-
+    private Path path;
+    
     @Override
     public void runOpMode() throws InterruptedException {
         follower = new Follower(hardwareMap);
 
-        first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(12, -24, Point.CARTESIAN)));
-        first.setTangentHeadingInterpolation();
-        second = new Path(new BezierLine(new Point(12, -24, Point.CARTESIAN), new Point(16, -24, Point.CARTESIAN)));
-        second.setConstantHeadingInterpolation(0);
-
-        test = follower.pathBuilder().addPath(first).addPath(second).build();
-
+        path = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(24, 0, Point.CARTESIAN)));
+        path.setTangentHeadingInterpolation();
+        
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         waitForStart();
 
-//      follower.followPath(first);
-//      whatever you need to put inbetween ig
-        follower.followPath(first, true);
-        follower.update();
-        do {
-            follower.update();
-        } while (follower.isBusy());
-        follower.followPath(second, false);
+        follower.followPath(path, true);
         follower.update();
         do {
             follower.update();
@@ -74,7 +59,7 @@ public class driveToSample extends LinearOpMode {
 
     }
 
-    /**
+    /*
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
      * initializes the FTC Dashboard telemetry.
      */

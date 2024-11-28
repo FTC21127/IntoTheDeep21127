@@ -24,30 +24,29 @@ public class SlidesTuning extends OpMode {
             d = 0.0001,
             f = 0;
     public static double TICKSPERDEGREE = (1+(46/11.0)) * 28/360;
-    public static int target;
+    public static int target = 0;
+    public static int tolerance = 0;
 
-    private Motor motor1;
-    private Motor.Encoder encoder;
-
+    private Motor motor1, motor2;
 
     @Override
     public void init() {
         motor1 = new Motor(hardwareMap, "rightSlide");
-        motor1.setInverted(true);
-        encoder = motor1.encoder;
-        encoder.reset();
+        motor2 = new Motor(hardwareMap, "leftSlide");
+        motor1.resetEncoder();
+        motor2.resetEncoder();
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        controller.setTolerance(5);
     }
 
     @Override
     public void loop() {
+        controller.setTolerance(tolerance);
         controller.setPID(p, i, d);
-        controller.setSetPoint(encoder.getPosition());
-        double pid = controller.calculate(target);
-        double power = pid - f;
+        double pid = controller.calculate(motor1.getCurrentPosition(), target);
+        double power = pid + f;
         motor1.set(power);
+        motor2.set(-power);
         telemetry.addData("pos", motor1.getCurrentPosition());
         telemetry.addData("target", target);
         telemetry.addData("pid value from controller", pid);

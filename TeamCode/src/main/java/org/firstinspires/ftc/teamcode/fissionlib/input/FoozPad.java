@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class FoozPad extends Gamepad {
 
+    public Gamepad previousOfPrevious = new Gamepad();
     public Gamepad previous = new Gamepad();
     public Gamepad gamepad = new Gamepad();
     public Gamepad assignedPad;
@@ -11,6 +12,7 @@ public class FoozPad extends Gamepad {
     public FoozPad(Gamepad gamepad) {
         this.assignedPad = gamepad;
         this.gamepad.copy(assignedPad);
+        previous.copy(gamepad);
     }
 
     public Gamepad getGamepad() {
@@ -18,6 +20,7 @@ public class FoozPad extends Gamepad {
     }
 
     public void update() {
+         previousOfPrevious.copy(previous);
          previous.copy(gamepad);
          gamepad.copy(assignedPad);
     }

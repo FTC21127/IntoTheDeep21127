@@ -76,19 +76,13 @@ public class GamepadStatic {
     public static boolean beenPressed(@NonNull FoozPad gp, Input input){
         return GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input);
     }
+    //might fix goofy gamepad stuff idk man
+    public static boolean scuffedJustPressed(@NonNull FoozPad gp, Input input){
+        return GamepadStatic.isButtonPressed(gp.gamepad, input) && GamepadStatic.isButtonPressed(gp.previous, input) && ! GamepadStatic.isButtonPressed(gp.previousOfPrevious, input);
+    }
 
     public static boolean stateJustChanged(@NonNull FoozPad gp, Input input){
         return GamepadStatic.isButtonPressed(gp.gamepad, input) != GamepadStatic.isButtonPressed(gp.previous, input);
-    }
-    public static boolean triggerPressed(@NonNull FoozPad gp, Input input){
-        switch (input) {
-            case LEFT_TRIGGER:
-                return gp.gamepad.left_trigger>0;
-            case RIGHT_TRIGGER:
-                return gp.gamepad.right_trigger>0;
-            default:
-                return false;
-        }
     }
     public static boolean triggerPressed(@NonNull FoozPad gp, Input input, double threshold){
         switch (input) {
