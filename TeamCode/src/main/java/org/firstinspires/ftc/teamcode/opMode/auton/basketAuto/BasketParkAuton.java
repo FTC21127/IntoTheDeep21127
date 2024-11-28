@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opMode.auton;
+package org.firstinspires.ftc.teamcode.opMode.auton.basketAuto;
 
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "0 + 1 Low", group = "!Sample")
-public class BucketParkAuton extends OpMode {
+@Autonomous(name = "1 + 0' Low", group = "!basket", preselectTeleOp = "Robot")
+public class BasketParkAuton extends OpMode {
     private Telemetry telemetryA;
 
     private Follower follower;
@@ -34,7 +34,7 @@ public class BucketParkAuton extends OpMode {
     // Slide Commands
     private final Command slidesIntake = () -> slides.intakePos();
     private final Command slideRest = () -> slides.restPos();
-    private final Command slideUp = () -> slides.setTarget(OuttakeSlides.LOW_BASKET);
+    private final Command slideUp = () -> slides.setTarget(OuttakeSlides.HIGH_BASKET);
     private final Command lockSpecimen = () -> slides.lock();
     // Deposit Commands
     private final Command depositPos = () -> deposit.depositPos();
@@ -52,19 +52,20 @@ public class BucketParkAuton extends OpMode {
 
     private CommandSequence depositSequence = new CommandSequence()
             .addCommand(outtakeGrab)
-            .addWaitCommand(.5)
+            .addWaitCommand(.3)
             .addCommand(slideUp)
+            .addWaitCommand(.7)
             .addCommand(basketPos)
             .build();
 
     private CommandSequence depositSample = new CommandSequence()
             .addCommand(outtakeRelease)
-            .addWaitCommand(.4)
+            .addWaitCommand(.3)
             .addCommand(grabTransfer)
-            .addWaitCommand(1)
-            .addCommand(slideRest)
-            .addWaitCommand(.5)
+            .addWaitCommand(.3)
             .addCommand(outtakeGrab)
+            .addWaitCommand(.5)
+            .addCommand(slideRest)
             .build();
 
     @Override
@@ -76,8 +77,8 @@ public class BucketParkAuton extends OpMode {
         first = new Path(new BezierLine(new Point(0, 0, Point.CARTESIAN), new Point(11, 11, Point.CARTESIAN)));
         first.setConstantHeadingInterpolation(0);
 
-        third = new Path(new BezierLine(first.getLastControlPoint(), new Point(4, 18, Point.CARTESIAN)));
-        third.setConstantHeadingInterpolation(Math.toRadians(360-45));
+        third = new Path(new BezierLine(first.getLastControlPoint(), new Point(4, 20, Point.CARTESIAN)));
+        third.setConstantHeadingInterpolation(Math.toRadians(360-55));
 
         fourth = new Path(new BezierLine(third.getLastControlPoint(), new Point(49, 10, Point.CARTESIAN)));
         fourth.setConstantHeadingInterpolation(Math.toRadians(90));
@@ -93,13 +94,11 @@ public class BucketParkAuton extends OpMode {
     public void start() {
         slides.intakePos();
         deposit.openClaw();
+        depositSequence.trigger();
         do {
             slides.update();
             follower.update();
         } while (follower.isBusy());
-        depositSequence.trigger();
-        timer.start();
-        while (timer.elapsedTime()<750);
         follower.followPath(third);
         do {
             slides.update();
@@ -107,7 +106,7 @@ public class BucketParkAuton extends OpMode {
         } while (follower.isBusy());
         depositSample.trigger();
         timer.start();
-        while (!timer.done()){}
+        while (!timer.done()){slides.update();}
         follower.followPath(fourth);
         do {
             slides.update();

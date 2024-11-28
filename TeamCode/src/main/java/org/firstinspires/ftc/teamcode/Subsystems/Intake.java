@@ -5,13 +5,11 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.opMode.teleop.Controls;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.Controls;
 
 
 @Config
@@ -24,8 +22,8 @@ public class Intake extends Mechanism {
     //Positions to be tuned
     public static double BAR_DOWN = 0.1;
     public static double BAR_TRANSFER = 0.69;
-    public static double BAR_NEUTRAL = 0.55;
-    public static double BAR_FOLD = 0.77;
+    public static double BAR_NEUTRAL = 0.45;
+    public static double BAR_FOLD = 0.8;
     public static double GRIP = .03;
     public static double RELEASE = .5;
     public static double SLIDE_COMPRESS = 0;
