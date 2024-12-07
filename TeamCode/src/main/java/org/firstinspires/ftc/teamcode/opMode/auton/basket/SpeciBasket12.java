@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opMode.auton.basketAuto;
+package org.firstinspires.ftc.teamcode.opMode.auton.basket;
 
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import java.util.concurrent.TimeUnit;
 
 
-@Autonomous(name = "1 + 1' high", group = "!basket", preselectTeleOp = "Robot")
+@Autonomous(name = "1 + 2' high", group = "!basket", preselectTeleOp = "Robot")
 public class SpeciBasket12 extends OpMode {
 
     Timing.Timer timer = new Timing.Timer(500, TimeUnit.MILLISECONDS);
@@ -40,23 +40,27 @@ public class SpeciBasket12 extends OpMode {
     private Command basketCommand = () -> follower.followPath(basket1, true);
     private Command sample2Command = () -> follower.followPath(sample2, true);
     private Command basket2Command = () -> follower.followPath(basket2, true);
+    private Command parkCommand = () -> follower.followPath(park);
     private final Command busyTrue = () -> busy = true;
     private final Command busyFalse = () -> busy = false;
     private final Command highSlideError = () -> SLIDE_ERROR = 100;
+    private final Command lowSlideError = () -> SLIDE_ERROR = 10;
+    private final Command FORCE_STOP = this::requestOpModeStop;
 
     // Slide Commands
-    private final Command slidesIntake = () -> slides.intakePos();
+    private final Command slidesIntake = () -> slides.setTarget(OuttakeSlides.INTAKE_POS+10);
+    private final Command slideAscend = () -> slides.setTarget(1400);
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS+200);
     private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET-150);
     private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.basketPos();};
     private final Command lockSpecimen = () -> slides.lock();
-    private final Command atPos = () -> slides.isDone();
     // Deposit Commands
     private final Command depositPos = () -> deposit.depositPos();
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
     private final Command specimenPos = () -> deposit.specimenSetPos();
     private final Command specimenScorePos = () -> deposit.specimenScorePos();
+    private final Command initPos = () -> deposit.initPos();
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
     // Intake Commands
@@ -68,7 +72,7 @@ public class SpeciBasket12 extends OpMode {
 
     private CommandSequence initSequence = new CommandSequence()
             .addCommand(intakeGrab)
-            .addCommand(grabTransfer)
+            .addCommand(initPos)
             .addCommand(neutralV4b)
             .addCommand(slideRest)
             .build();
@@ -85,11 +89,12 @@ public class SpeciBasket12 extends OpMode {
             .addCommand(specimenScorePos)
             .addWaitCommand(.4)
             .addCommand(lockSpecimen)
-            .addWaitCommand(0.3)
+            .addWaitCommand(0.5)
             .addCommand(outtakeRelease)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move2 = new CommandSequence()
+            .addCommand(busyTrue)
             .addCommand(sample1Command)
             .addWaitCommand(.3)
             .addCommand(outtakeGrab)
@@ -99,9 +104,11 @@ public class SpeciBasket12 extends OpMode {
             .addCommand(dropV4b)
             .addWaitCommand(.5)
             .addCommand(intakeOpen)
+            .addCommand(busyFalse)
             .build();
     private CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
+            .addWaitCommand(.3)
             .addCommand(intakeGrab)
             .addWaitCommand(0.5)
             .addCommand(transferV4b)
@@ -119,16 +126,17 @@ public class SpeciBasket12 extends OpMode {
             .addWaitCommand(.6)
             .addCommand(outtakeGrab)
             .addCommand(highSlideError)
-            .addCommand(highSlideError)
-            .addWaitCommand(.6)
-            .addCommand(highBasket)
+            .addWaitCommand(.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move3 = new CommandSequence()
             .addCommand(busyTrue)
+            .addCommand(highSlideError)
+            .addCommand(highBasket)
+            .addWaitCommand(.8)
             .addCommand(basketCommand)
+            .addWaitCommand(.1)
             .addCommand(basketPos)
-            .addWaitCommand(.5)
             .addCommand(busyFalse)
             .build();
     private CommandSequence scoreBasket = new CommandSequence()
@@ -153,15 +161,30 @@ public class SpeciBasket12 extends OpMode {
             .build();
     private CommandSequence move5 = new CommandSequence()
             .addCommand(busyTrue)
+            .addCommand(highSlideError)
+            .addCommand(highBasket)
+            .addWaitCommand(.8)
             .addCommand(basket2Command)
+            .addWaitCommand(.1)
             .addCommand(basketPos)
-            .addWaitCommand(.5)
+            .addCommand(busyFalse)
+            .build();
+    private CommandSequence move6 = new CommandSequence()
+            .addCommand(busyTrue)
+            .addCommand(slideRest)
+            .addCommand(parkCommand)
+            .addCommand(initPos)
+            .addWaitCommand(.3)
             .addCommand(busyFalse)
             .build();
     private CommandSequence holdEnd = new CommandSequence()
-            .addCommand(slideRest)
+            .addCommand(lowSlideError)
+            .addCommand(slideAscend)
             .addCommand(busyTrue)
+            .addCommand(basketPos)
+            .addWaitCommand(.5)
             .addCommand(busyTrue)
+            .addCommand(FORCE_STOP)
             .build();
 
     private AutoCommandMachine commandMachine = new AutoCommandMachine()
@@ -175,6 +198,7 @@ public class SpeciBasket12 extends OpMode {
             .addCommandSequence(transferSequence)
             .addCommandSequence(move5)
             .addCommandSequence(scoreBasket)
+            .addCommandSequence(move6)
             .addCommandSequence(holdEnd)
             .build();
 
@@ -185,11 +209,12 @@ public class SpeciBasket12 extends OpMode {
         slides.init(hardwareMap);
         deposit.init(hardwareMap);
         follower = new Follower(hardwareMap);
+        slides.reset();
 
-        follower.setPose(new Pose(8.836, 80, Math.toRadians(180)));
+        follower.setPose(new Pose(8.1, 80, Math.toRadians(180)));
 
         specimen = new Path(new BezierLine(
-                new Point(8.836, 80, Point.CARTESIAN),
+                new Point(8.1, 80, Point.CARTESIAN),
                 new Point(36.500, 82.000, Point.CARTESIAN)));
         specimen.setConstantHeadingInterpolation(Math.toRadians(180));
         sample1 = new Path(new BezierCurve(
@@ -203,12 +228,17 @@ public class SpeciBasket12 extends OpMode {
         basket1.setConstantHeadingInterpolation(Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
                 new Point(30, 122, Point.CARTESIAN),
-                new Point(46.5, 130, Point.CARTESIAN)));
+                new Point(47, 130, Point.CARTESIAN)));
         sample2.setConstantHeadingInterpolation(Math.toRadians(0));
         basket2 = new Path(new BezierLine(
                 new Point(46.5, 130, Point.CARTESIAN),
                 new Point(30, 122, Point.CARTESIAN)));
         basket2.setConstantHeadingInterpolation(Math.toRadians(-45));
+        park = new Path(new BezierCurve(
+                new Point(30, 122, Point.CARTESIAN),
+                new Point(60, 140, Point.CARTESIAN),
+                new Point(70, 102 , Point.CARTESIAN)));
+        park.setConstantHeadingInterpolation(Math.toRadians(90));
 
         initSequence.trigger();
     }
@@ -217,7 +247,7 @@ public class SpeciBasket12 extends OpMode {
     public void init_loop() {
         slides.update();
         if (gamepad1.cross){
-            deposit.clawShift();
+            deposit.closeClaw();
         }
     }
 
@@ -236,9 +266,7 @@ public class SpeciBasket12 extends OpMode {
 
     @Override
     public void loop() {
-//        if (commandMachine.getCurrentCommandIndex() < 6) {
-            commandMachine.run(busy2 || busy);
-//        }
+        commandMachine.run(busy2 || busy);
         follower.update();
         slides.update();
         busy2 = follower.isBusy() || Math.abs(slides.getError())>SLIDE_ERROR;
@@ -249,62 +277,3 @@ public class SpeciBasket12 extends OpMode {
         telemetry.addData("current pos: ", follower.getPose());
     }
 }
-
-
-//public class GeneratedPath {
-//
-//  public GeneratedPath() {
-//    PathBuilder builder = new PathBuilder();
-//
-//    builder
-//      .addPath(
-//        // Line 1
-//        new BezierLine(
-//          new Point(7.708, 104.898, Point.CARTESIAN),
-//          new Point(13.347, 125.953, Point.CARTESIAN)
-//        )
-//      )
-//      .setConstantHeadingInterpolation(Math.toRadians(-45))
-//      .addPath(
-//        // Line 2
-//        new BezierLine(
-//          new Point(13.347, 125.953, Point.CARTESIAN),
-//          new Point(37.598, 121.441, Point.CARTESIAN)
-//        )
-//      )
-//      .setConstantHeadingInterpolation(Math.toRadians(0))
-//      .addPath(
-//        // Line 3
-//        new BezierLine(
-//          new Point(37.598, 121.441, Point.CARTESIAN),
-//          new Point(15.979, 131.593, Point.CARTESIAN)
-//        )
-//      )
-//      .setConstantHeadingInterpolation(Math.toRadians(-40))
-//      .addPath(
-//        // Line 4
-//        new BezierLine(
-//          new Point(15.979, 131.593, Point.CARTESIAN),
-//          new Point(37.034, 131.217, Point.CARTESIAN)
-//        )
-//      )
-//      .setConstantHeadingInterpolation(Math.toRadians(0))
-//      .addPath(
-//        // Line 5
-//        new BezierLine(
-//          new Point(37.034, 131.217, Point.CARTESIAN),
-//          new Point(14.475, 132.533, Point.CARTESIAN)
-//        )
-//      )
-//      .setConstantHeadingInterpolation(Math.toRadians(-45))
-//      .addPath(
-//        // Line 6
-//        new BezierCurve(
-//          new Point(14.475, 132.533, Point.CARTESIAN),
-//          new Point(62.789, 114.110, Point.CARTESIAN),
-//          new Point(63.540, 95.687, Point.CARTESIAN)
-//        )
-//      )
-//      .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90));
-//  }
-//}

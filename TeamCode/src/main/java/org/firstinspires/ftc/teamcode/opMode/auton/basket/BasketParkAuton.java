@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opMode.auton.basketAuto;
+package org.firstinspires.ftc.teamcode.opMode.auton.basket;
 
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "1 + 0' Low", group = "!basket", preselectTeleOp = "Robot")
+@Autonomous(name = "(Don't use) 1 + 0' Low", group = "basket", preselectTeleOp = "Robot")
 public class BasketParkAuton extends OpMode {
     private Telemetry telemetryA;
 

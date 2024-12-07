@@ -1,24 +1,28 @@
 package org.firstinspires.ftc.teamcode.opMode.auton.park;
 
+import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous(name = "Ascent Park", group = "!park", preselectTeleOp = "Robot")
+import java.util.concurrent.TimeUnit;
+
+@Autonomous(name = "Ascent Park", group = "#park", preselectTeleOp = "Robot")
 public class AcParkAuton extends OpMode {
-    private Telemetry telemetryA;
 
     private Follower follower;
-
+    private Timing.Timer timer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
     private Path first, second;
 
     private Intake claw = new Intake(this);
+    private OuttakeSlides slides = new OuttakeSlides(this);
 
     @Override
     public void init() {
@@ -43,6 +47,12 @@ public class AcParkAuton extends OpMode {
         do {
             follower.update();
         } while (follower.isBusy());
+        slides.setTarget(OuttakeSlides.REST_POS + 400);
+        timer.start();
+        while (!timer.done()){
+            slides.update();
+        }
+        requestOpModeStop();
     }
 
     @Override

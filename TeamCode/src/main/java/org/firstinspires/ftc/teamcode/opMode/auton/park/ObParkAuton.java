@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
-@Autonomous(name = "Observation Park", group = "!park", preselectTeleOp = "Robot")
+@Autonomous(name = "Observation Park", group = "#park", preselectTeleOp = "Robot")
 public class ObParkAuton extends OpMode {
     private Telemetry telemetryA;
 
