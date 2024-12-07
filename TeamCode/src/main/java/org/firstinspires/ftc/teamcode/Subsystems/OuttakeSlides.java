@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.hardware.SensorDistance;
+import com.arcrobotics.ftclib.hardware.SensorDistanceEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
@@ -26,6 +31,8 @@ public class OuttakeSlides extends Mechanism {
 
     MotorEx slideR, slideL;
 
+    Rev2mDistanceSensor resetSensor;
+
     //Use voltage sensor
     private VoltageSensor voltage;
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
@@ -34,15 +41,15 @@ public class OuttakeSlides extends Mechanism {
     private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
 
     // Positions for slides
-    public static int REST_POS = 100;
+    public static int REST_POS = 95;
     public static int INTAKE_POS = 30;
     public static int LOW_BASKET = 2000; //0
     public static int HIGH_BASKET = 3800; //1
     public static int LOW_CHAMBER_SET = 400; //2
     public static int HIGH_CHAMBER_SET = 1500; //3
-    public static int CHAMBER_SCORED = 400;
+    public static int CHAMBER_SCORED = 500;
     public static int LEVEL_1_ASCENT = 2000;
-    public static int HANG = 0;
+    public static int HANG = -800;
     public static int ABIT = 100;
 
     public static double target = 0;
@@ -60,7 +67,7 @@ public class OuttakeSlides extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-
+        resetSensor = hwMap.get(Rev2mDistanceSensor.class, "slideReset");
         slideR = new MotorEx(hwMap, "rightSlide", Motor.GoBILDA.RPM_312);
         slideL = new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_312);
         voltage = hwMap.get(VoltageSensor.class, "Control Hub");
@@ -68,15 +75,15 @@ public class OuttakeSlides extends Mechanism {
         slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        reset();
-
         controller.setTolerance(5); // set tolerance for PID controller
     }
 
     public void downUntil() {
-        setTarget(-9999);
+        resetSensor.getDistance(DistanceUnit.CM);
+
+        setTarget(-1750);
         time.start();
-        while (voltage.getVoltage() > 11 && !time.done()) { //12V is the minimum required to work fully
+        while (voltage.getVoltage() > 11 && !time.done() && resetSensor.getDistance(DistanceUnit.CM)>8) { //12V is the minimum required to work fully
             update();
         }
         reset();
@@ -92,7 +99,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void restPos() {
-        setTarget(REST_POS);
+        setTarget(REST_POS-10);
     }
 
     public void intakePos(){
@@ -153,6 +160,7 @@ public class OuttakeSlides extends Mechanism {
         telemetry.addData("Pos1= ", slideR.getCurrentPosition());
         telemetry.addData("is thingy work?", devBool);
         telemetry.addData("Current voltage: ", voltage.getVoltage());
+        telemetry.addData("Distance (CM): ", resetSensor.getDistance(DistanceUnit.CM));
     }
 
     @Override

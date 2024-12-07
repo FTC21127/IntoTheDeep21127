@@ -24,19 +24,21 @@ public class Deposit extends Mechanism {
     //Specimen Score: 0.15
     //Deposit: 0.275
     public static double TRANSFER_POS = 1;
-    public static double DEPOSIT_POS = 0.17;
+    public static double INIT_POS = .75;
+    public static double STRAIGHT_UP_POS = .5;
+    public static double DEPOSIT_POS = 0.16;
     public static double BASKET_POS = 0.3;
     public static double SPECIMEN_POS = 0.25;
-    public static double SPECIMEN_SCORE_POS = 0.1;
+    public static double SPECIMEN_SCORE_POS = 0.09;
 
 //    public static double TRANSFER_POS = 0.07;
 //    public static double DEPOSIT_POS = 0.37;
 //    public static double BASKET_POS = 0.54;
 //    public static double SPECIMEN_POS = 0.47;
 //    public static double SPECIMEN_SCORE_POS = 0.27;
-    public static double GRAB = 0.035;
-    public static double SHIFT = 0.08;
-    public static double RELEASE = .315;
+    public static double GRAB = 0.478;
+    public static double SHIFT = 0.455;
+    public static double RELEASE = .3;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;
@@ -60,6 +62,14 @@ public class Deposit extends Mechanism {
 
     public void transferPos(){
         setPos(TRANSFER_POS);
+    }
+
+    public void initPos(){
+        setPos(INIT_POS);
+    }
+
+    public void goofyBasketPos(){
+        setPos(STRAIGHT_UP_POS);
     }
 
     public void basketPos(){

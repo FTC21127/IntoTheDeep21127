@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
@@ -22,28 +21,16 @@ public class Drivetrain2 extends Mechanism {
     // Use FTCLib's built in mecanum drivetrain class
     private Follower follower;
 
+    private double Tp = 1;
+
     private DcMotorEx leftFront;
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
 
-    public Drivetrain2(OpMode OpMode, DRIVETYPE drivetype) {
-        this.type = drivetype;
+    public Drivetrain2(OpMode OpMode) {
         this.opMode = OpMode;
     }
-
-    // allows us to choose which type of driving we want
-    public enum DRIVETYPE{
-        FIELD(false),
-        ROBOT(true);
-        boolean isRobot;
-
-        DRIVETYPE(boolean isRobot) {
-            this.isRobot = isRobot;
-        }
-    }
-
-    DRIVETYPE type = DRIVETYPE.ROBOT;
 
     @Override
     public void init(HardwareMap hwMap) {
@@ -62,6 +49,10 @@ public class Drivetrain2 extends Mechanism {
         follower.startTeleopDrive();
     }
 
+    public void setTp(double tp) {
+        Tp = tp;
+    }
+
     @Override
     public void loop(FoozPad gamepad) {
         gamepad.update();
@@ -70,10 +61,10 @@ public class Drivetrain2 extends Mechanism {
         double r = -gamepad.gamepad.right_stick_x * .4;
 
         y = y * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
+        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger) * Tp;
         x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
 
-        follower.setTeleOpMovementVectors(y, x, r, type.isRobot);
+        follower.setTeleOpMovementVectors(y, x , r + x/6);
         follower.update();
     }
 }

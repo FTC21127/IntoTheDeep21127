@@ -21,6 +21,8 @@ public class Drivetrain extends Mechanism {
     // Use FTCLib's built in mecanum drivetrain class
     private Follower follower;
 
+    private double Tp = 1;
+
     private DcMotorEx leftFront;
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
@@ -58,6 +60,10 @@ public class Drivetrain extends Mechanism {
         follower.startTeleopDrive();
     }
 
+    public void setTp(double tp) {
+        Tp = tp;
+    }
+
     @Override
     public void loop(FoozPad gamepad) {
         gamepad.update();
@@ -67,9 +73,13 @@ public class Drivetrain extends Mechanism {
 
         y = y * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
         x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
+        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger) * Tp;
 
-        follower.setTeleOpMovementVectors(y, x, r);
+        if (gamepad.gamepad.circle){
+            follower.setTeleOpMovementVectors(0, 0, .75);
+        } else {
+            follower.setTeleOpMovementVectors(y, x, r);
+        }
         follower.update();
     }
 }

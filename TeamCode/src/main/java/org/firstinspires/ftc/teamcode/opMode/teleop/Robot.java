@@ -29,7 +29,7 @@ public class Robot extends OpMode {
 
     @Override
     public void start() {
-        bot.resetSlide();
+
     }
 
     @Override
