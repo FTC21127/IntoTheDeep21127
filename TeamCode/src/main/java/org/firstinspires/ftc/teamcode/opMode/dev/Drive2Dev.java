@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 
 @TeleOp(group = "dev")
 public class Drive2Dev extends OpMode {
-    Drivetrain2 drivetrain2 = new Drivetrain2(this, Drivetrain2.DRIVETYPE.FIELD);
+    Drivetrain2 drivetrain2 = new Drivetrain2(this);
     FoozPad gp1;
     @Override
     public void init() {

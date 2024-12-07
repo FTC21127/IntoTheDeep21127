@@ -1,28 +1,27 @@
 package org.firstinspires.ftc.teamcode.Utils;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+@TeleOp
 public class Example extends OpMode {
 
-    // Actual motor that runs
-    DcMotor driveMotor;
-    // Pseudo "motor" used to track position, don't set power to this one.
-    DcMotor trackingEncoder;
+   Servo servo;
 
     @Override
     public void init() {
-        // Set the address of both motor objects to "exampleMotor"
-        driveMotor = hardwareMap.get(DcMotor.class, "exampleMotor");
-        trackingEncoder = hardwareMap.get(DcMotor.class, "exampleMotor");
+      servo = hardwareMap.get(Servo.class, "horizontalExtendi");
     }
 
     @Override
     public void loop() {
-        //run driveMotor however you want
-        driveMotor.setPower(gamepad1.left_stick_y);
-        // tracking motor's position is from the encoder port
-        telemetry.addData("position: ", trackingEncoder.getCurrentPosition());
+        if(gamepad1.cross){
+            servo.setPosition(0);
+        } else if (gamepad1.circle) {
+            servo.setPosition(.75);
+        }
     }
 }
 
