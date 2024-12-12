@@ -64,7 +64,7 @@ public class Drivetrain2 extends Mechanism {
         r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger) * Tp;
         x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
 
-        follower.setTeleOpMovementVectors(y, x , r + x/6);
+        follower.setTeleOpMovementVectors(y, x , r + -gamepad.gamepad.left_stick_x/6);
         follower.update();
     }
 }
