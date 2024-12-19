@@ -40,7 +40,7 @@ public class FoozPadUtils {
     public enum FoozPadRumble {
         INCORRECT_COLOR(
                 new RumbleEffect.Builder()
-                        .addStep(.5,.5,500)
+                        .addStep(1,1,500)
                         .build()
         );
 

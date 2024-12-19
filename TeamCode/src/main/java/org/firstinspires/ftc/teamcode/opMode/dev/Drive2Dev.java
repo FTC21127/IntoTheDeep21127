@@ -1,21 +1,19 @@
 package org.firstinspires.ftc.teamcode.opMode.dev;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.FoozPadUtils.*;
 
-@TeleOp(name = "Intake Dev", group = "Dev")
-public class IntakeDev extends OpMode {
-    Intake intake = new Intake(this);
+@TeleOp(name = "Drive2 Dev", group = "Dev")
+public class Drive2Dev extends OpMode {
+    Drivetrain drive = new Drivetrain(this);
     FoozPad foozPad;
-
     @Override
     public void init() {
-        intake.init(hardwareMap);
+        drive.init(hardwareMap);
         foozPad = new FoozPad(gamepad1);
         foozPad.runLedEffect(FoozPadColors.NURAZ_DEFAULT.colorPattern);
     }
@@ -23,6 +21,6 @@ public class IntakeDev extends OpMode {
     @Override
     public void loop() {
         foozPad.update();
-        intake.loop(foozPad);
+        drive.loop(foozPad);
     }
 }
