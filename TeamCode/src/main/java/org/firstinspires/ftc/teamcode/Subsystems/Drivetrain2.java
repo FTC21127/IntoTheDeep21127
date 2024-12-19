@@ -1,31 +1,43 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.*;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftFrontMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftRearMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightFrontMotorName;
+import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.rightRearMotorName;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
-import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.opMode.teleop.ControlsM3;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 
 // cargo vrooooom
-public class Drivetrain extends Mechanism {
+public class Drivetrain2 extends Mechanism {
 
     private Follower follower;
-
+    private IMU imu;
     private DcMotorEx leftFront;
     private DcMotorEx leftRear;
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
 
-    public Drivetrain(OpMode OpMode) {
+    double headingOffset = 0;
+    double desiredHeading = 0;
+
+    public Drivetrain2(OpMode OpMode) {
         this.opMode = OpMode;
+    }
+
+    // allows us to choose which type of driving we want
+    public enum DRIVETYPE{
+        FIELD,
+        ROBOT
     }
 
     @Override
@@ -36,6 +48,10 @@ public class Drivetrain extends Mechanism {
         leftRear = hwMap.get(DcMotorEx.class, leftRearMotorName);
         rightRear = hwMap.get(DcMotorEx.class, rightRearMotorName);
         rightFront = hwMap.get(DcMotorEx.class, rightFrontMotorName);
+        imu = hwMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT)));
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,13 +72,7 @@ public class Drivetrain extends Mechanism {
         x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
         r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
 
-        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_CLOCKWISE)){
-            follower.setTeleOpMovementVectors(0, 0, 1);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_COUNTER)){
-            follower.setTeleOpMovementVectors(0, 0, -1);
-        } else {
-            follower.setTeleOpMovementVectors(y, x, r);
-        }
+        follower.setTeleOpMovementVectors(y, x, r);
         follower.update();
     }
 }

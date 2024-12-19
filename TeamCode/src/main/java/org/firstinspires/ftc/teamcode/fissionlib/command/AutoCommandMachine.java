@@ -2,13 +2,18 @@ package org.firstinspires.ftc.teamcode.fissionlib.command;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
 public class AutoCommandMachine {
 
     private ArrayList<CommandSequence> commandSequences = new ArrayList<>();
     private int currentCommandIndex;
     private boolean hasCompleted = false;
 
-    public AutoCommandMachine() { this.currentCommandIndex = 0; }
+    public AutoCommandMachine() {
+        this.currentCommandIndex = 0;
+        commandSequences.add(new CommandSequence().build());
+    }
 
     public AutoCommandMachine addCommandSequence(CommandSequence commandSequence) {
         commandSequences.add(commandSequence);
@@ -21,18 +26,18 @@ public class AutoCommandMachine {
 
     public boolean hasCompleted() { return hasCompleted; }
 
-    public void reset() { currentCommandIndex = 0; hasCompleted = false;}
+    public void reset() { currentCommandIndex = 0; }
 
     public void run(boolean driveIsBusy) {
         CommandSequence currentCommand = commandSequences.get(currentCommandIndex);
 
         if (currentCommand.hasCompleted && !driveIsBusy) {
-            currentCommand.trigger();
-            if (currentCommandIndex == commandSequences.size()-1) {
+            currentCommandIndex++;
+            if (currentCommandIndex == commandSequences.size()) {
                 currentCommandIndex = 0;
                 hasCompleted = true;
             } else {
-                currentCommandIndex++;
+                commandSequences.get(currentCommandIndex).trigger();
             }
         }
     }

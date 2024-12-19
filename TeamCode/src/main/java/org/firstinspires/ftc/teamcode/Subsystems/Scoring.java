@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
+import org.firstinspires.ftc.teamcode.opMode.auton.utils.Colors;
 
 
 public class Scoring extends Mechanism {
@@ -19,7 +20,7 @@ public class Scoring extends Mechanism {
 
     private int slidesPos = 0;
     private State state = State.INTAKE;
-    private Intake.COLOR color;
+    private Colors color;
     private boolean isBasket = false;
     private boolean intakeGrabbed = false;
     private boolean intakeOut = false;
@@ -50,7 +51,7 @@ public class Scoring extends Mechanism {
 
 
 
-    public Scoring(OpMode opMode, Intake.COLOR color) {
+    public Scoring(OpMode opMode, Colors color) {
         this.opMode = opMode;
         this.color = color;
     }
