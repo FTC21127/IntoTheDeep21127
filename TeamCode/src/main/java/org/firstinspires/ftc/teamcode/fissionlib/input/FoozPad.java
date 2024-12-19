@@ -6,7 +6,7 @@ public class FoozPad extends Gamepad {
 
     public Gamepad previous = new Gamepad();
     public Gamepad gamepad = new Gamepad();
-    public Gamepad assignedPad;
+    private Gamepad assignedPad;
 
     public FoozPad(Gamepad gamepad) {
         this.assignedPad = gamepad;
@@ -20,6 +20,16 @@ public class FoozPad extends Gamepad {
     public void update() {
          previous.copy(gamepad);
          gamepad.copy(assignedPad);
+    }
+
+    @Override
+    public void runLedEffect(LedEffect effect) {
+        assignedPad.runLedEffect(effect);
+    }
+
+    @Override
+    public void runRumbleEffect(RumbleEffect effect) {
+        assignedPad.runRumbleEffect(effect);
     }
 
     public void copy(Gamepad gamepad) {
