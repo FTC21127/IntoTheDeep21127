@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
-import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
-import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.auton.utils.Colors;
 

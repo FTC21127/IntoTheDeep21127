@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftFrontMotorName;
 import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.leftRearMotorName;
@@ -70,13 +70,13 @@ public class Drivetrain2 extends Mechanism {
     public void loop(FoozPad gamepad) {
         gamepad.update();
 
-        double y = -gamepad.gamepad.left_stick_y / 2;
-        double x = -gamepad.gamepad.left_stick_x * .4;
-        double r = -gamepad.gamepad.right_stick_x * .4;
+        double y = -gamepad.gamepad.left_stick_y * .8;
+        double x = -gamepad.gamepad.left_stick_x * .65;
+        double r = -gamepad.gamepad.right_stick_x * .5;
 
-        y = y * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
+        y = y * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
+        x = x * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
+        r = r * (1-gamepad.gamepad.left_trigger);
 
         if (gamepad.gamepad.right_stick_x == 0 && !GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_COUNTER) && !GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_CLOCKWISE)){
             follower.setTeleOpMovementVectors(y, x, -headingController.calculate());

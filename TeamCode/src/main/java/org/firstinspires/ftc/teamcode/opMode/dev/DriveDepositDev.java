@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode.opMode.dev;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Deposit;
-import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.OuttakeSlides;
+import org.firstinspires.ftc.teamcode.subsystems.Deposit;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 
 @TeleOp(group = "Dev")

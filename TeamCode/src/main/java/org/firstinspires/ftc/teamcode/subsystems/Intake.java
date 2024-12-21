@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import static org.firstinspires.ftc.teamcode.opMode.teleop.Utils.FoozPadUtils.FoozPadRumble.*;
 
@@ -39,6 +39,7 @@ public class Intake extends Mechanism {
 
     public static double c_OPEN = 0.5;
     public static double c_CLOSE = 0.6;
+    public static double c_SHIFT = 0.55;
     public static double extendy_NEUTRAL = 0.5;
     public static double extendy_IN = 0;
     public static double maxExtendy = 0.7;
@@ -66,8 +67,9 @@ public class Intake extends Mechanism {
         return intakeState;
     }
 
-    public void setDif_ROLL(double dif_ROLL) {
-        Intake.dif_ROLL = Math.min(Math.max(-.1,dif_ROLL),.1);
+    public void setDif_ROLL(double degrees) {
+        degrees /= 90;
+        Intake.dif_ROLL = Math.min(Math.max(-.1,degrees),.1);
     }
 
     public void extendNeutral(){
@@ -109,6 +111,9 @@ public class Intake extends Mechanism {
     public void openClaw(){
         claw.setPosition(c_OPEN);
     }
+    public void shiftClaw(){
+        claw.setPosition(c_SHIFT);
+    }
 
     @Override
     public void init(HardwareMap hwMap) {
@@ -126,7 +131,7 @@ public class Intake extends Mechanism {
 
     @Override
     public void loop(FoozPad gamepad) {
-        if (isPickup||isSearch) setDif_ROLL(gamepad.gamepad.right_stick_x/10);
+        if (isPickup||isSearch) dif_ROLL = gamepad.gamepad.right_stick_x/10;
         if (isExtended && gamepad.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL + gamepad.gamepad.left_stick_y/2.2);
         diffyRight.setPosition(1 - dif_PITCH + dif_ROLL/10);
         diffyLeft.setPosition(dif_PITCH + dif_ROLL/10);

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opMode.dev;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.FoozPadUtils.*;
 
