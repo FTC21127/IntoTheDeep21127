@@ -24,10 +24,10 @@ public class Basket04 extends OpMode {
     Deposit outtake = new Deposit(this);
     Follower base;
 
-    Pose START_POSE = new Pose(7.5, 112, Math.toRadians(-90));
+    Pose START_POSE = new Pose(7, 102.5, Math.toRadians(-90));
     Path preload, sample1, basket1, sample2, basket2, sample3, basket3;
 
-    boolean busy;
+    boolean busy = false;
 
     Command preloadCommand = () -> base.followPath(preload);
     Command sample1Command = () -> base.followPath(sample1);
@@ -39,7 +39,8 @@ public class Basket04 extends OpMode {
 
     Command extendIntake = this::samplePickUp;
     Command extendIntakeSideWays = this::samplePickUp3rd;
-    Command retractIntake = this::grabSample;
+    Command retractIntake1 = this::grabSample;
+    Command retractIntake2 = this::grabSample2;
     Command depositTransfer = this::transferRelease;
     Command outtakeReset = this::retractOuttake;
 
@@ -63,10 +64,12 @@ public class Basket04 extends OpMode {
     CommandSequence pickUp1 = new CommandSequence()
             .addCommand(closeIntake)
             .addWaitCommand(.1)
-            .addCommand(retractIntake)
+            .addCommand(retractIntake1)
             .build();
     CommandSequence move1 = new CommandSequence()
             .addCommand(basket1Command)
+            .addWaitCommand(.1)
+            .addCommand(retractIntake2)
             .addWaitCommand(.2)
             .addCommand(closeOuttake)
             .addWaitCommand(0.1)
@@ -83,10 +86,12 @@ public class Basket04 extends OpMode {
     CommandSequence pickUp2 = new CommandSequence()
             .addCommand(closeIntake)
             .addWaitCommand(.1)
-            .addCommand(retractIntake)
+            .addCommand(retractIntake1)
             .build();
     CommandSequence move2 = new CommandSequence()
             .addCommand(basket2Command)
+            .addWaitCommand(.1)
+            .addCommand(retractIntake2)
             .addWaitCommand(.2)
             .addCommand(closeOuttake)
             .addWaitCommand(0.1)
@@ -103,10 +108,12 @@ public class Basket04 extends OpMode {
     CommandSequence pickUp3 = new CommandSequence()
             .addCommand(closeIntake)
             .addWaitCommand(.1)
-            .addCommand(retractIntake)
+            .addCommand(retractIntake1)
             .build();
     CommandSequence move3 = new CommandSequence()
             .addCommand(basket3Command)
+            .addWaitCommand(.1)
+            .addCommand(retractIntake2)
             .addWaitCommand(.2)
             .addCommand(closeOuttake)
             .addWaitCommand(0.1)
@@ -141,37 +148,37 @@ public class Basket04 extends OpMode {
         base.setPose(START_POSE);
 
         preload = new Path(new BezierLine(
-                new Point(7.500, 112.000, Point.CARTESIAN),
-                new Point(14, 127.5, Point.CARTESIAN)));
+                new Point(7, 102.5, Point.CARTESIAN),
+                new Point(15, 131, Point.CARTESIAN)));
         preload.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45));
         sample1 = new Path(new BezierLine(
-                new Point(14, 127.5, Point.CARTESIAN),
-                new Point(24.000, 120.000, Point.CARTESIAN)));
+                new Point(15, 131, Point.CARTESIAN),
+                new Point(24.000, 118, Point.CARTESIAN)));
         sample1.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0));
         basket1 = new Path(new BezierLine(
-                new Point(24.000, 120.000, Point.CARTESIAN),
-                new Point(14.361, 128.262, Point.CARTESIAN)));
+                new Point(24.000, 118, Point.CARTESIAN),
+                new Point(15, 131, Point.CARTESIAN)));
         basket1.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
-                new Point(14.361, 128.262, Point.CARTESIAN),
-                new Point(24.000, 130.000, Point.CARTESIAN)));
+                new Point(15, 131, Point.CARTESIAN),
+                new Point(24.000, 128, Point.CARTESIAN)));
         sample2.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0));
         basket2 = new Path(new BezierLine(
-                new Point(24.000, 130.000, Point.CARTESIAN),
-                new Point(14.361, 128.066, Point.CARTESIAN)));
+                new Point(24.000, 128, Point.CARTESIAN),
+                new Point(14.361, 130, Point.CARTESIAN)));
         basket2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45));
         sample3 = new Path(new BezierCurve(
-                new Point(14.361, 128.066, Point.CARTESIAN),
+                new Point(14.361, 130, Point.CARTESIAN),
                 new Point(24.000, 110.164, Point.CARTESIAN),
-                new Point(45.639, 120.590, Point.CARTESIAN)));
+                new Point(45, 120, Point.CARTESIAN)));
         sample3.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90));
         basket3 = new Path(new BezierLine(
-                new Point(45.639, 120.590, Point.CARTESIAN),
-                new Point(14.361, 128.262, Point.CARTESIAN)));
+                new Point(45, 120, Point.CARTESIAN),
+                new Point(15, 130, Point.CARTESIAN)));
         basket3.setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(-45));
 
-        diffy.diffyNeutral();
-        outtake.transferPos();
+        diffy.diffyTransfer();
+        outtake.initPos();
     }
 
     @Override
@@ -194,6 +201,7 @@ public class Basket04 extends OpMode {
         autoMachine.run(busy);
         base.update();
         slides.update();
+        diffy.autoUpdate();
         busy = base.isBusy() || !slides.isDone();
         telemetry.addData("is busy", busy);
         telemetry.addData("follower busy? ", busy);
@@ -215,9 +223,14 @@ public class Basket04 extends OpMode {
     }
 
     public void grabSample(){
-        diffy.diffyTransfer();
+        diffy.diffyInterposed();
         diffy.shiftClaw();
         diffy.retractExtendy();
+    }
+
+    public void grabSample2(){
+        diffy.closeClaw();
+        diffy.diffyTransfer();
         slides.intakePos();
         outtake.transferPos();
         outtake.openClaw();
@@ -225,7 +238,7 @@ public class Basket04 extends OpMode {
 
     public void transferRelease(){
         diffy.openClaw();
-        diffy.diffyNeutral();
+        diffy.diffyInterposed();
         outtake.basketPos();
         slides.setTarget(OuttakeSlides.HIGH_BASKET);
     }

@@ -40,15 +40,15 @@ public class Intake extends Mechanism {
     public static double c_OPEN = 0.5;
     public static double c_CLOSE = 0.6;
     public static double c_SHIFT = 0.55;
-    public static double extendy_NEUTRAL = 0.5;
     public static double extendy_IN = 0;
     public static double maxExtendy = 0.7;
+    public static double extendy_NEUTRAL = maxExtendy/2;
     public static double dif_TRANSFER = 1;
-    public static double dif_NEUTRAL = .9;
+    public static double dif_INTERPOSED = .9;
     public static double dif_DOWN = 0.375;
     public static double dif_SEARCH = 0.45;
     public static double dif_ROLL = 0;
-    public double dif_PITCH = dif_NEUTRAL;
+    public double dif_PITCH = dif_TRANSFER;
 
     public boolean isPickup = false;
     public boolean isSearch = false;
@@ -100,8 +100,9 @@ public class Intake extends Mechanism {
         intakeState = DiffyState.TRANSFER;
     }
 
-    public void diffyNeutral(){
-        dif_PITCH = dif_NEUTRAL;
+    public void diffyInterposed(){
+        dif_PITCH = dif_INTERPOSED;
+        dif_ROLL = 0;
         intakeState = DiffyState.NEUTRAL;
     }
 
@@ -124,6 +125,13 @@ public class Intake extends Mechanism {
         colorSensor = new IntakeSenor(opMode, alliance);
     }
 
+    public void teleControl(FoozPad gp){
+        if (isSearch) dif_ROLL = gp.gamepad.right_stick_x/10;
+        if (isExtended && gp.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL * (1 + gp.gamepad.left_stick_y*.9));
+        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
+        diffyLeft.setPosition(dif_PITCH + dif_ROLL);
+    }
+
     public void autoUpdate(){
         diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
         diffyLeft.setPosition(dif_PITCH + dif_ROLL);
@@ -133,12 +141,12 @@ public class Intake extends Mechanism {
     public void loop(FoozPad gamepad) {
         if (isPickup||isSearch) dif_ROLL = gamepad.gamepad.right_stick_x/10;
         if (isExtended && gamepad.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL + gamepad.gamepad.left_stick_y/2.2);
-        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL/10);
-        diffyLeft.setPosition(dif_PITCH + dif_ROLL/10);
-        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.GRAB)){
+        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
+        diffyLeft.setPosition(dif_PITCH + dif_ROLL);
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)){
             if (colorSensor.isAllowed()){
                 closeClaw();
-                diffyNeutral();
+                diffyInterposed();
                 retractExtendy();
                 isSearch = false;
                 isPickup = false;
@@ -146,7 +154,7 @@ public class Intake extends Mechanism {
             } else {
                 gamepad.runRumbleEffect(INCORRECT_COLOR.rumblePattern);
             }
-        } else if (GamepadStatic.wasJustPressed(gamepad, ControlsM3.SEARCH)) {
+        } else if (GamepadStatic.wasJustPressed(gamepad, GamepadStatic.Input.DPAD_LEFT)) {
             if (!isExtended){
                 extendNeutral();
                 isExtended = true;

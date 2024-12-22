@@ -19,13 +19,15 @@ public class Deposit extends Mechanism {
     ServoEx claw, wrist1, wrist2;
 
     //Positions to be tuned
-    public static double TRANSFER_POS = 0.05;
-    public static double DEPOSIT_POS = 0.38;
-    public static double BASKET_POS = 0.55;
-    public static double SPECIMEN_POS = 0.40;
-    public static double SPECIMEN_SCORE_POS = 0.25;
+    public static double TRANSFER_POS = 1;
+    public static double INIT_POS = .75;
+    public static double STRAIGHT_UP_POS = .5;
+    public static double BASKET_POS = 0.35;
+    public static double SPECIMEN_SCORE_POS = 0.09;
+    public static double SPECIMEN_SET_POS = .25;
+    public static double SPECIMEN_GRAB_POS = 0.6;
+
     public static double GRAB = 0.05;
-    public static double SHIFT = 0.1;
     public static double RELEASE = .315;
 
     public Deposit(OpMode OpMode) {
@@ -44,8 +46,8 @@ public class Deposit extends Mechanism {
         wrist2.setPosition(1-pos);
     }
 
-    public void depositPos(){
-        setPos(DEPOSIT_POS);
+    public void initPos(){
+        setPos(INIT_POS);
     }
 
     public void transferPos(){
@@ -57,11 +59,15 @@ public class Deposit extends Mechanism {
     }
 
     public void specimenPos(){
-        setPos(SPECIMEN_POS);
+        setPos(SPECIMEN_SET_POS);
     }
 
     public void specimenScorePos(){
         setPos(SPECIMEN_SCORE_POS);
+    }
+
+    public void specimenGrabPos(){
+        setPos(SPECIMEN_GRAB_POS);
     }
 
     public double getPos(){
@@ -75,11 +81,7 @@ public class Deposit extends Mechanism {
     public void openClaw(){
         claw.setPosition(RELEASE);
     }
-
-    public void clawShift(){
-        claw.setPosition(SHIFT);
-    }
-
+    
     @Override
     public void loop(FoozPad gamepad) {
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
@@ -91,9 +93,9 @@ public class Deposit extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_DOWN)) {
             transferPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)) {
-            depositPos();
+            initPos();
         }
-        if (getPos()==DEPOSIT_POS){
+        if (getPos()==INIT_POS){
             gamepad.gamepad.rumble(2);
         }
     }
