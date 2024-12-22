@@ -21,7 +21,7 @@ public class Intake extends Mechanism {
 
     //Positions to be tuned
     public static double BAR_DOWN = 0.12;
-    public static double BARPICKUP = 0.09;
+    public static double BARPICKUP = 0.1;
     public static double BAR_TRANSFER = 0.68;
     public static double BAR_NEUTRAL = 0.45;
     public static double BAR_FOLD = .7;
