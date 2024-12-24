@@ -3,50 +3,81 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
+import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.auton.utils.Colors;
 import org.firstinspires.ftc.teamcode.opMode.teleop.ControlsM3;
 
-
 public class Scoring extends Mechanism {
 
-    private Drivetrain drive = new Drivetrain(opMode);
-    private OuttakeSlides slides = new OuttakeSlides(opMode);
-    private Deposit deposit = new Deposit(opMode);
+    private final Drivetrain drive = new Drivetrain(opMode);
+    private final OuttakeSlides slides = new OuttakeSlides(opMode);
+    private final Deposit deposit = new Deposit(opMode);
     private Intake diffy;
 
     private int slidesPos = 0;
     private State state = State.INTAKE;
-    private Colors color;
+    private final Colors color;
     private boolean isBasket = false;
-    private boolean diffyGrabbed = false;
-    private boolean diffyOut = false;
-    private boolean isClimb = false;
-    private int LB, HB, LC, HC;
 
-    private enum State {
+    public enum State {
         INTAKE,
         TRANSFER,
         SCORING,
         CLIMB
     }
 
-    // Slide Commands
+    //Intake commands
+    Command diffyDown = diffy::diffyDown;
+    Command diffyInterpose = diffy::diffyInterposed;
+    Command diffyGrab = diffy::closeClaw;
+    Command diffyRetract = diffy::retractExtendy;
+    Command diffyTransfer = diffy::diffyTransfer;
+    Command difftShift = diffy::shiftClaw;
+    // Deposit commands
+    Command depositGrab = deposit::closeClaw;
+    Command depositRelease = deposit::openClaw;
+    Command depositSpecimen = deposit::specimenScorePos;
+    // Slide commands
+    Command specimenLock = slides::lock;
 
-    // Deposit Commands
-
-    // Intake Commands
-
-    // Transfer Slide Command Sequences
-
-    // Non-transfer Slide Command Sequences
-
-    // Intake Command Sequences
-
-    // Ascend Command Sequences
-
+    CommandSequence retractIntake = new CommandSequence()
+            .addCommand(diffyDown)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(.2)
+            .addCommand(difftShift)
+            .addWaitCommand(.2)
+            .addCommand(diffyInterpose)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.3)
+            .addCommand(diffyGrab)
+            .addCommand(diffyTransfer)
+            .build();
+    CommandSequence basketSet = new CommandSequence()
+            .addCommand(depositGrab)
+            .addWaitCommand(.2)
+            .addCommand(this::mBasketSet)
+            .build();
+    CommandSequence specimenSet = new CommandSequence()
+            .addCommand(depositGrab)
+            .addWaitCommand(.2)
+            .addCommand(this::mSpecimenSet)
+            .build();
+    CommandSequence basketRelease = new CommandSequence()
+            .addCommand(depositRelease)
+            .addWaitCommand(.3)
+            .addCommand(this::mSlideRest)
+            .build();
+    CommandSequence specimenRelease = new CommandSequence()
+            .addCommand(depositSpecimen)
+            .addWaitCommand(.3)
+            .addCommand(specimenLock)
+            .addWaitCommand(.2)
+            .addCommand(this::mSlideRest)
+            .build();
 
 
     public Scoring(OpMode opMode, Colors color) {
@@ -54,9 +85,13 @@ public class Scoring extends Mechanism {
         this.color = color;
     }
 
+    public State getState() {
+        return state;
+    }
+
     @Override
     public void init(HardwareMap hwMap) {
-        diffy = new Intake(opMode,color);
+        diffy = new Intake(opMode, color);
         drive.init(hwMap);
         slides.init(hwMap);
         deposit.init(hwMap);
@@ -67,20 +102,21 @@ public class Scoring extends Mechanism {
     public void loop(FoozPad gamepad1, FoozPad gamepad2) {
         slides.update();
 
-        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.INTAKE)){
-            if (state != State.INTAKE){
+        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.INTAKE)) {
+            if (state != State.INTAKE) {
                 mIntakeExtend();
                 state = State.INTAKE;
             }
         } else if (state == State.INTAKE) {
-            //TODO: add retract seqeunce
+            retractIntake.trigger();
             state = State.TRANSFER;
         }
-        if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsM3.CLIMB_SET)){
+        if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsM3.CLIMB_SET)) {
+            mClimbSet();
             state = State.CLIMB;
         }
 
-        switch (state){
+        switch (state) {
             case INTAKE:
                 diffy.teleControl(gamepad2);
                 break;
@@ -89,51 +125,71 @@ public class Scoring extends Mechanism {
                     if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SLIDES[i])) {
                         state = State.SCORING;
                         slidesPos = OuttakeSlides.POSITIONS[i];
-                        isBasket = i==1 || i==0;
-                        if (isBasket); //TODO: put in commmand sequences
-                        else ;
+                        isBasket = i == 1 || i == 0;
+                        if (isBasket) basketSet.trigger();
+                        else specimenSet.trigger();
+                        break;
                     }
                 }
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SPECIMEN_POS)){
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SPECIMEN_POS)) {
                     mSpecimenPickUp();
                 }
                 break;
             case SCORING:
                 for (int i = 0; i < 4; i++) {
                     if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SLIDES[i])) {
-                        state = State.SCORING;
                         slidesPos = OuttakeSlides.POSITIONS[i];
-                        isBasket = i==1 || i==0;
-                        if (isBasket); //TODO: put in commmand initialization
-                        else ;
+                        isBasket = i == 1 || i == 0;
+                        if (isBasket) basketSet.trigger();
+                        else specimenSet.trigger();
                     }
                 }
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.RELEASE)) {
+                    if (isBasket) basketRelease.trigger();
+                    else specimenRelease.trigger();
+                    state = State.TRANSFER;
+                }
+                break;
+            case CLIMB:
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.CLIMB))
+                    slides.ascent();
                 break;
         }
 
 
     }
 
-    public void mIntakeExtend(){
+    public void mIntakeExtend() {
         diffy.extendNeutral();
         diffy.diffySearch();
         diffy.openClaw();
     }
 
-    public void mSpecimenSet(){
+    public void mSpecimenPickUp() {
+        slides.restPos(); // or something, idk rlly
+        deposit.specimenGrabPos();
+        deposit.openClaw();
+    }
+
+    public void mSpecimenSet() {
         slides.setTarget(slidesPos);
         deposit.specimenPos();
     }
 
-    public void mBasketSet(){
+    public void mBasketSet() {
         slides.setTarget(slidesPos);
         deposit.basketPos();
     }
 
-    public void mSpecimenPickUp(){
-        slides.restPos(); // or something, idk rlly
-        deposit.specimenGrabPos();
+    public void mSlideRest(){
+        slides.intakePos();
         deposit.openClaw();
+        deposit.transferPos();
+    }
+
+    public void mClimbSet(){
+        slides.primeAscent();
+        deposit.initPos();
     }
 
 }
