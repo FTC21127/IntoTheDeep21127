@@ -15,7 +15,8 @@ public class ControlsM3 {
     public static final Input[] SLIDES = {LOW_BASKET, HIGH_BASKET, LOW_SPECIMEN, HIGH_SPECIMEN};
     // base / climb controls
     public static final Input SPIN_CLOCKWISE = Input.X;
-    public static final Input SPIN_COUNTER = Input.A;
+    public static final Input SPIN_COUNTER = Input.B;
+    public static final Input FLIP = Input.Y;
     public static final Input CLIMB_SET = Input.DPAD_LEFT;
     public static final Input CLIMB = Input.LEFT_BUMPER;
 }

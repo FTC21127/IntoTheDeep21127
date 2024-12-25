@@ -90,6 +90,9 @@ public class Drivetrain2 extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_COUNTER)) {
             follower.setTeleOpMovementVectors(0, 0, -1);
         }
+        if (GamepadStatic.wasJustPressed(gamepad, ControlsM3.FLIP)){
+            headingController.setSetPoint(desiredHeading-180);
+        }
         follower.update();
     }
 }
