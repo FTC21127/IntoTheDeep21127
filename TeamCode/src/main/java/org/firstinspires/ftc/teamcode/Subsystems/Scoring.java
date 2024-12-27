@@ -86,7 +86,7 @@ public class Scoring extends Mechanism {
             .addCommand(outtakeGrab)
             .addWaitCommand(.2)
             .addCommand(depositPos)
-            .addWaitCommand(0.4)
+            .addWaitCommand(0.3)
             .addCommand(outtakeRelease)
             .build();
     private CommandSequence depositSequence = new CommandSequence() // grabs sample from bucket and goes to the set basket height

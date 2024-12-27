@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
+import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
@@ -67,18 +68,20 @@ public class Drivetrain extends Mechanism {
     @Override
     public void loop(FoozPad gamepad) {
         gamepad.update();
-        double y = -gamepad.gamepad.left_stick_y / 2;
-        double x = -gamepad.gamepad.left_stick_x * .4;
-        double r = -gamepad.gamepad.right_stick_x * .4;
+        double y = -gamepad.gamepad.left_stick_y * .8;
+        double x = -gamepad.gamepad.left_stick_x * .65;
+        double r = -gamepad.gamepad.right_stick_x * .5;
 
-        y = y * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        x = x * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger);
-        r = r * (1+gamepad.gamepad.right_trigger*.4) * (1-gamepad.gamepad.left_trigger) * Tp;
+        y = y * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
+        x = x * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
+        r = r * (1-gamepad.gamepad.left_trigger) * Tp;
 
-        if (gamepad.gamepad.circle){
-            follower.setTeleOpMovementVectors(0, 0, .75);
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.X)) {
+            follower.setTeleOpMovementVectors(0, 0, 1);
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.B)) {
+            follower.setTeleOpMovementVectors(0, 0, -1);
         } else {
-            follower.setTeleOpMovementVectors(y, x, r);
+            follower.setTeleOpMovementVectors(y, x,r);
         }
         follower.update();
     }
