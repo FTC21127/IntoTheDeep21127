@@ -28,11 +28,6 @@ public class Robot extends OpMode {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void loop() {
         bot.loop(gp1, gp2);
         telemetry.addData("Trigger? ", gp2.gamepad.right_trigger +  gp2.gamepad.left_trigger);
