@@ -70,7 +70,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void downUntil() {
-        setTarget(-1750);
+        setSlidePower(-.2);
         time.start();
         while (voltage.getVoltage() > 11 && !time.done()) { //12V is the minimum required to work fully
             update();

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.opMode.teleop.ControlsM3;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 
