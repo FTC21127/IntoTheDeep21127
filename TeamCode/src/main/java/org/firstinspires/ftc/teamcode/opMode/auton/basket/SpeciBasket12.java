@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opMode.auton.basket;
 
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Deposit;
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 
 import java.util.concurrent.TimeUnit;
 
-
+@Disabled
 @Autonomous(name = "1 + 2' high", group = "!basket", preselectTeleOp = "Robot")
 public class SpeciBasket12 extends OpMode {
 

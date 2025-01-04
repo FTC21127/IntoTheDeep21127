@@ -29,46 +29,39 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
  * @version 1.0, 3/12/2024
  */
 @Config
-@Autonomous (name = "Pedropath test", group = "dev")
+@Autonomous(name = "Pedropath test", group = "dev")
 public class LocalTest extends LinearOpMode {
     private Telemetry telemetryA;
 
     private Follower follower;
 
     private PathChain path;
-    
+
     @Override
     public void runOpMode() throws InterruptedException {
         follower = new Follower(hardwareMap);
 
         path = new PathBuilder()
                 .addPath(new BezierCurve(
-                        new Point(38.350, 62.225, Point.CARTESIAN),
-                        new Point(2.632, 42.674, Point.CARTESIAN),
-                        new Point(93.619, 32.898, Point.CARTESIAN),
-                        new Point(61.097, 22.747, Point.CARTESIAN)))
-                .setLinearHeadingInterpolation(Math.toRadians(181), Math.toRadians(0))
-                .addPath(new BezierLine(
-                        new Point(61.097, 22.747, Point.CARTESIAN),
-                        new Point(16.731, 23.311, Point.CARTESIAN)))
+                        new Point(8.100, 37.000, Point.CARTESIAN),
+                        new Point(62.000, 37.000, Point.CARTESIAN),
+                        new Point(62.000, 29.000, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(new BezierCurve(
-                        new Point(16.731, 23.311, Point.CARTESIAN),
-                        new Point(68.616, 32.522, Point.CARTESIAN),
-                        new Point(58.277, 12.595, Point.CARTESIAN)))
+                        new Point(62.000, 29.000, Point.CARTESIAN),
+                        new Point(50.000, 24.000, Point.CARTESIAN),
+                        new Point(24.000, 24.000, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addPath(new BezierLine(
-                        new Point(58.277, 12, Point.CARTESIAN),
-                        new Point(15.791, 12, Point.CARTESIAN)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addPath(new BezierLine(
-                        new Point(15.791, 12, Point.CARTESIAN),
-                        new Point(18.047, 35.718, Point.CARTESIAN)))
+                .addPath(new BezierCurve(
+                        new Point(24.000, 24.000, Point.CARTESIAN),
+                        new Point(76.000, 30.000, Point.CARTESIAN),
+                        new Point(76.000, 10.000, Point.CARTESIAN),
+                        new Point(24.000, 13.000, Point.CARTESIAN)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        follower.setPose(new Pose(38.350, 62.225, Math.toRadians(181)));
+        follower.setPose(new Pose(8.1, 37, Math.toRadians(0)));
 
         waitForStart();
 
