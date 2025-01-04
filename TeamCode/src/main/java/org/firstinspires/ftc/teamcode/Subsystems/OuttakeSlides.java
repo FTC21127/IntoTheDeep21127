@@ -38,15 +38,15 @@ public class OuttakeSlides extends Mechanism {
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
+    private final double p = 0.018, i = 0, d = 0.001, f = 0;
 
     // Positions for slides
     public static int REST_POS = 95;
-    public static int INTAKE_POS = 30;
+    public static int INTAKE_POS = 10;
     public static int LOW_BASKET = 2000; //0
     public static int HIGH_BASKET = 3800; //1
     public static int LOW_CHAMBER_SET = 400; //2
-    public static int HIGH_CHAMBER_SET = 1500; //3
+    public static int HIGH_CHAMBER_SET = 1450; //3
     public static int CHAMBER_SCORED = 500;
     public static int LEVEL_1_ASCENT = 2000;
     public static int HANG = -800;
@@ -81,13 +81,13 @@ public class OuttakeSlides extends Mechanism {
     public void downUntil() {
         resetSensor.getDistance(DistanceUnit.CM);
 
-        setTarget(-1750);
+        setSlidePower(-.2);
         time.start();
-        while (voltage.getVoltage() > 11 && !time.done() && resetSensor.getDistance(DistanceUnit.CM)>8) { //12V is the minimum required to work fully
+        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 8) { //12V is the minimum required to work fully
             update();
         }
         reset();
-        restPos();
+        intakePos();
     }
 
     public void setTarget(double target) {
@@ -99,7 +99,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void restPos() {
-        setTarget(REST_POS-10);
+        setTarget(REST_POS);
     }
 
     public void intakePos(){
@@ -175,7 +175,7 @@ public class OuttakeSlides extends Mechanism {
             goToPos(2);
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.HIGH_SPECIMEN)) {
             goToPos(3);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.LOCK_SPECIMEN)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.RELEASE)) {
             lock();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, Controls.GRAB_SPECIMEN)) {
             restPos();

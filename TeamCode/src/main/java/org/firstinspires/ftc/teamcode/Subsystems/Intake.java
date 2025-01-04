@@ -22,7 +22,8 @@ public class Intake extends Mechanism {
     //Positions to be tuned
     public static double BAR_DOWN = 0.12;
     public static double BARPICKUP = 0.1;
-    public static double BAR_TRANSFER = 0.68;
+    public static double AUTON_DOWN = 0.11;
+    public static double BAR_TRANSFER = 0.689;
     public static double BAR_NEUTRAL = 0.45;
     public static double BAR_FOLD = .7;
     public static double GRIP = .5;
@@ -65,6 +66,10 @@ public class Intake extends Mechanism {
 
     public void barDown(){
         v4b.setPosition(BAR_DOWN);
+    }
+
+    public void autonDown(){
+        v4b.setPosition(AUTON_DOWN);
     }
 
     public void barPickUp(){

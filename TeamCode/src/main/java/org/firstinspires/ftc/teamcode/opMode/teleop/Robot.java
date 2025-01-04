@@ -27,6 +27,8 @@ public class Robot extends OpMode {
         gp1.assignedPad.runLedEffect(FoozPadColors.NURAZ_DEFAULT.colorPattern);
     }
 
+
+
     @Override
     public void loop() {
         bot.loop(gp1, gp2);
@@ -38,6 +40,7 @@ public class Robot extends OpMode {
                 gp2.assignedPad.runLedEffect(SARAH_INTAKE.colorPattern);
             } else if (bot.state.equals(Scoring.State.SCORING)) {
                 gp2.assignedPad.runLedEffect(SARAH_OUTTAKE.colorPattern);
+                gp1.assignedPad.runLedEffect(FoozPadColors.NURAZ_DEFAULT.colorPattern);
             } else {
                 gp2.assignedPad.setLedColor(1,1,1, Gamepad.LED_DURATION_CONTINUOUS);
             }

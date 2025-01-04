@@ -10,7 +10,6 @@ public class Controls {
     public static Input PRIME_INTAKE = Input.LEFT_BUMPER;
     public static Input GRAB = Input.LEFT_STICK_BUTTON;
     public static Input RELEASE = Input.RIGHT_BUMPER;
-    public static Input LOCK_SPECIMEN = Input.DPAD_LEFT;
     public static Input CLIMB_SET = Input.DPAD_LEFT;
     public static Input CLIMB = Input.LEFT_BUMPER;
     public static Input EJECT = Input.DPAD_LEFT;

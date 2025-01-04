@@ -23,7 +23,7 @@ public class Deposit extends Mechanism {
     //Specimen: 0.34
     //Specimen Score: 0.15
     //Deposit: 0.275
-    public static double TRANSFER_POS = 1;
+    public static double TRANSFER_POS = .97;
     public static double INIT_POS = .75;
     public static double STRAIGHT_UP_POS = .5;
     public static double DEPOSIT_POS = 0.16;
