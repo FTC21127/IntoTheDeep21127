@@ -31,14 +31,14 @@ public class OuttakeSlides extends Mechanism {
 
     MotorEx slideR, slideL;
 
-    Rev2mDistanceSensor resetSensor;
+    public Rev2mDistanceSensor resetSensor;
 
     //Use voltage sensor
-    private VoltageSensor voltage;
+    public VoltageSensor voltage;
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    private final double p = 0.018, i = 0, d = 0.001, f = 0;
+    private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
 
     // Positions for slides
     public static int REST_POS = 95;
@@ -55,6 +55,7 @@ public class OuttakeSlides extends Mechanism {
     public static double target = 0;
     public static double power = 0;
     public boolean devBool = false;
+    public boolean reset = true;
 
     public static int[] POSITIONS = {LOW_BASKET, HIGH_BASKET, LOW_CHAMBER_SET, HIGH_CHAMBER_SET};
 
@@ -79,15 +80,30 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void downUntil() {
+        reset = false;
         resetSensor.getDistance(DistanceUnit.CM);
-
-        setSlidePower(-.2);
+        setSlidePower(-.3);
         time.start();
-        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 8) { //12V is the minimum required to work fully
-            update();
+        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
         }
         reset();
         intakePos();
+        reset = true;
+    }
+
+    public void downUntil(OpMode mode, FoozPad gp, HardwareMap hwMap) {
+        resetSensor.getDistance(DistanceUnit.CM);
+        Drivetrain dt = new Drivetrain(mode);
+        dt.init(hwMap);
+        gp.update();
+        setSlidePower(-.4);
+        time.start();
+        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.4) { //12V is the minimum required to work fully
+            gp.update();
+            dt.loop(gp);
+        }
+        reset();
+        restPos();
     }
 
     public void setTarget(double target) {

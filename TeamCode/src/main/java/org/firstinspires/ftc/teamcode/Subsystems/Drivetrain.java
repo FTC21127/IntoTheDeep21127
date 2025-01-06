@@ -70,7 +70,7 @@ public class Drivetrain extends Mechanism {
         gamepad.update();
         double y = -gamepad.gamepad.left_stick_y * .8;
         double x = -gamepad.gamepad.left_stick_x * .65;
-        double r = -gamepad.gamepad.right_stick_x * .5;
+        double r = -gamepad.gamepad.right_stick_x * .4;
 
         y = y * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
         x = x * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
