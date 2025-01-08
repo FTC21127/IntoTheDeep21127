@@ -43,7 +43,6 @@ public class Robot extends OpMode {
 
     @Override
     public void loop() {
-        bot.loop(gp1, gp2);
         gp1.update();
         gp2.update();
         if (!bot.state.equals(previousState)) {
@@ -57,5 +56,6 @@ public class Robot extends OpMode {
             }
         }
         previousState = bot.getState();
+        bot.loop(gp1, gp2);
     }
 }

@@ -68,6 +68,7 @@ public class Scoring extends Mechanism {
     // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
+    private final Command intermediateV4b = () -> intake.barIntermediateDown();
     private final Command dropV4b = () -> intake.barDown();
     private final Command pickUpV4b = () -> intake.barPickUp();
     private final Command neutralV4b = () -> intake.barNeutral();
@@ -99,7 +100,7 @@ public class Scoring extends Mechanism {
             .addCommand(outtakeGrab)
             .addWaitCommand(.2)
             .addCommand(depositPos)
-            .addWaitCommand(0.3)
+            .addWaitCommand(0.35)
             .addCommand(outtakeRelease)
             .build();
     private CommandSequence depositSequence = new CommandSequence() // grabs sample from bucket and goes to the set basket height
@@ -138,8 +139,10 @@ public class Scoring extends Mechanism {
             .build();
     // Intake Command Sequences
     private CommandSequence primeIntakeSequence = new CommandSequence() // drop down the intake
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
             .build();
     private CommandSequence retractIntake = new CommandSequence() // pickup the sample and put into the bucket
@@ -147,8 +150,10 @@ public class Scoring extends Mechanism {
             .addWaitCommand(0.1)
             .addCommand(pickUpV4b)
             .addWaitCommand(0.3)
+            .addCommand(neutralV4b)
+            .addWaitCommand(.4)
             .addCommand(transferV4b)
-            .addWaitCommand(1)
+            .addWaitCommand(.4)
             .addCommand(intakeOpen)
             .addWaitCommand(.4)
             .addCommand(neutralV4b)

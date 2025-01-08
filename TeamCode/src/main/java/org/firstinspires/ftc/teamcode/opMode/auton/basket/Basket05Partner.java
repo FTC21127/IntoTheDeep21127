@@ -55,9 +55,9 @@ public class Basket05Partner extends OpMode {
     // Slide Commands
     private final Command slidesIntake = () -> slides.setTarget(OuttakeSlides.INTAKE_POS - 10);
     private final Command intakeRest = () -> slides.setTarget(OuttakeSlides.INTAKE_POS + 20);
-    private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
     private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.goofyBasketPos();};
+    private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
     // Deposit Commands
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
@@ -69,6 +69,7 @@ public class Basket05Partner extends OpMode {
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
     private final Command dropV4b = () -> intake.autonDown();
+    private final Command intermediateV4b = () -> intake.barIntermediateDown();
     private final Command pickupV4b = () -> intake.barPickUp();
     private final Command neutralV4b = () -> intake.barNeutral();
     private final Command transferV4b = () -> intake.barTransfer();
@@ -89,7 +90,7 @@ public class Basket05Partner extends OpMode {
     private CommandSequence scoreBasket = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basketPos)
-            .addWaitCommand(.08)
+            .addWaitCommand(.15)
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
             .addWaitCommand(.2)
@@ -99,8 +100,10 @@ public class Basket05Partner extends OpMode {
     private CommandSequence move2 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample1Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
             .addWaitCommand(.3)
@@ -109,17 +112,17 @@ public class Basket05Partner extends OpMode {
     private CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(intakeRest)
-            .addWaitCommand(0.1)
+            .addCommand(pickupV4b)
             .addCommand(intakeGrab)
-            .addWaitCommand(0.5)
+            .addWaitCommand(0.4)
             .addCommand(transferV4b)
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
-            .addWaitCommand(1)
+            .addWaitCommand(0.8)
             .addCommand(intakeOpen)
             .addWaitCommand(.2)
             .addCommand(neutralV4b)
-            .addWaitCommand(.3)
+            .addWaitCommand(.1)
             .addCommand(grabTransfer)
             .addCommand(intakeGrab)
             .addWaitCommand(.1)
@@ -144,11 +147,13 @@ public class Basket05Partner extends OpMode {
     private CommandSequence move4 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample2Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move5 = new CommandSequence()
@@ -163,11 +168,13 @@ public class Basket05Partner extends OpMode {
     private CommandSequence move6 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample3Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move7 = new CommandSequence()
@@ -201,8 +208,10 @@ public class Basket05Partner extends OpMode {
     private CommandSequence move8 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample4Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
             .addWaitCommand(.3)
@@ -219,14 +228,14 @@ public class Basket05Partner extends OpMode {
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
             .addWaitCommand(1)
+            .addCommand(basket4Command)
             .addCommand(intakeOpen)
             .addWaitCommand(.2)
             .addCommand(neutralV4b)
-            .addWaitCommand(.3)
+            .addWaitCommand(.1)
             .addCommand(grabTransfer)
             .addCommand(intakeGrab)
             .addCommand(slidesIntake)
-            .addCommand(basket4Command)
             .addWaitCommand(.4)
             .addCommand(highSlideError)
             .addCommand(outtakeGrab)
@@ -240,14 +249,14 @@ public class Basket05Partner extends OpMode {
     private CommandSequence scoreBasket4 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basketPos)
-            .addWaitCommand(.08)
-            .addCommand(parkCommand)
+            .addWaitCommand(.1)
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
-            .addWaitCommand(.2)
             .addCommand(basketSet)
-            .addWaitCommand(.3)
-            .addCommand(slideRest)
+            .addCommand(slideAscend)
+            .addWaitCommand(.1)
+            .addCommand(parkCommand)
+            .addWaitCommand(.4)
             .addCommand(basketPos)
             .addCommand(busyFalse)
             .build();
@@ -257,7 +266,6 @@ public class Basket05Partner extends OpMode {
             .addCommand(basketPos)
             .addWaitCommand(.5)
             .addCommand(busyTrue)
-            .addCommand(FORCE_STOP)
             .build();
 
     private AutoCommandMachine commandMachine = new AutoCommandMachine()
@@ -293,47 +301,47 @@ public class Basket05Partner extends OpMode {
 
         preload = new Path(new BezierLine(
                 new Point(6.9, 102, Point.CARTESIAN),
-                new Point(18, 127, Point.CARTESIAN))); 
+                new Point(19, 127, Point.CARTESIAN)));
         preload.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-50));
         sample1 = new Path(new BezierLine(
-                new Point(18, 126, Point.CARTESIAN),
+                new Point(19, 127, Point.CARTESIAN),
                 new Point(38, 126.5, Point.CARTESIAN)));
         sample1.setLinearHeadingInterpolation(Math.toRadians(-50), Math.toRadians(-10));
         basket1 = new Path(new BezierLine(
                 new Point(38, 126.5, Point.CARTESIAN),
-                new Point(20, 126, Point.CARTESIAN)));
+                new Point(21, 125, Point.CARTESIAN)));
         basket1.setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
-                new Point(20, 126, Point.CARTESIAN),
-                new Point(38.5, 134, Point.CARTESIAN)));
+                new Point(21, 125, Point.CARTESIAN),
+                new Point(38.5, 134.5, Point.CARTESIAN)));
         sample2.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0));
         basket2 = new Path(new BezierLine(
-                new Point(38.5, 134, Point.CARTESIAN),
-                new Point(20, 126, Point.CARTESIAN)));
+                new Point(38.5, 134.5, Point.CARTESIAN),
+                new Point(20.5, 125, Point.CARTESIAN)));
         basket2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45));
         sample3 = new Path(new BezierCurve(
-                new Point(20, 126, Point.CARTESIAN),
+                new Point(20.5, 125, Point.CARTESIAN),
                 new Point(34, 120, Point.CARTESIAN),
-                new Point(40, 140, Point.CARTESIAN)));
+                new Point(40.5, 140.5, Point.CARTESIAN)));
         sample3.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(30));
         basket3 = new Path(new BezierLine(
-                new Point(40, 140, Point.CARTESIAN),
-                new Point(20, 127, Point.CARTESIAN)));
+                new Point(40.5, 140.5, Point.CARTESIAN),
+                new Point(20.5, 126.5, Point.CARTESIAN)));
         basket3.setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-45));
 
         sample4 = new Path(new BezierLine(
-                new Point(20, 127, Point.CARTESIAN),
-                new Point(13, 85, Point.CARTESIAN)));
+                new Point(21, 127, Point.CARTESIAN),
+                new Point(14, 85, Point.CARTESIAN)));
         sample4.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(-90));
         basket4 = new Path(new BezierLine(
-                new Point(13, 85, Point.CARTESIAN),
-                new Point(20, 127, Point.CARTESIAN)));
+                new Point(14, 85, Point.CARTESIAN),
+                new Point(21, 126, Point.CARTESIAN)));
         basket4.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45));
 
         park = new Path(new BezierLine(
-                new Point(20, 127, Point.CARTESIAN),
-                new Point(50, 110 , Point.CARTESIAN)));
-        park.setTangentHeadingInterpolation();
+                new Point(21, 126, Point.CARTESIAN),
+                new Point(70, 120 , Point.CARTESIAN)));
+        park.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90));
 
         initSequence.trigger();
     }

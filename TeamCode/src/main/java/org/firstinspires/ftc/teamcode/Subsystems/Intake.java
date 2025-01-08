@@ -20,13 +20,14 @@ public class Intake extends Mechanism {
     ServoEx claw;
 
     //Positions to be tuned
-    public static double BAR_DOWN = 0.135;
-    public static double BARPICKUP = 0.1;
-    public static double AUTON_DOWN = 0.11;
-    public static double BAR_TRANSFER = 0.689 ;
-    public static double BAR_NEUTRAL = 0.45;
-    public static double BAR_FOLD = .7;
-    public static double GRIP = .5;
+    public static double BAR_DOWN = 0.93;
+    public static double BAR_Intermediate_DOWN = 0.7;
+    public static double BARPICKUP = 1;
+    public static double AUTON_DOWN = 0.93;
+    public static double BAR_TRANSFER = 0.05 ;
+    public static double BAR_NEUTRAL = 0.36;
+    public static double BAR_FOLD = 0;
+    public static double GRIP = 0.5;
     public static double RELEASE = .26;
     public static double SLIDE_COMPRESS = 0;
     public static double SLIDE_NEUTRAL = .5;
@@ -66,6 +67,10 @@ public class Intake extends Mechanism {
 
     public void barDown(){
         v4b.setPosition(BAR_DOWN);
+    }
+
+    public void barIntermediateDown(){
+        v4b.setPosition(BAR_Intermediate_DOWN);
     }
 
     public void autonDown(){
