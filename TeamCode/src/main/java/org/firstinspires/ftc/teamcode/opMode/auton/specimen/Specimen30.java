@@ -1,23 +1,23 @@
 package org.firstinspires.ftc.teamcode.opMode.auton.specimen;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.pathgen.Path;
+import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.fissionlib.command.AutoCommandMachine;
 import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
 import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
-import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 
 
-@Autonomous(name = "3 + 0'", group = "!specimen", preselectTeleOp = "Robot")
+@Autonomous(name = "3 + 0'", group = "!specimen", preselectTeleOp = "RedTele")
 public class Specimen30 extends OpMode {
 
     Intake diffy = new Intake(this);

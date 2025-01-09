@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants.*;
 
+import static com.pedropathing.follower.FollowerConstants.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
-import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import com.pedropathing.follower.Follower;
 
 
 // cargo vrooooom
