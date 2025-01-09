@@ -22,13 +22,14 @@ public class Specimen40 extends OpMode {
     OuttakeSlides slides = new OuttakeSlides(this);
     Intake diffy = new Intake(this);
 
-    private final double[] grabYPos = {};
+    private final double[] grabYPos = {38, 28, 18};
     private int sampleNumber = 1;
 
     private final Pose startPose = new Pose(7.48, 54.85, Math.toRadians(180));
     private final Pose preloadPose = new Pose(39, 61.5, Math.toRadians(180));
     private final Pose scorePose = new Pose(39, 66, Math.toRadians(180));
-    private final Pose grabPose = new Pose(39, grabYPos[sampleNumber-1], Math.toRadians(180));
+    private final Pose grabPose = new Pose(39, grabYPos[sampleNumber-1], Math.toRadians(-45));
+    private final Pose hpPose = new Pose(26, 30, Math.toRadians(-135));
 
 
 
