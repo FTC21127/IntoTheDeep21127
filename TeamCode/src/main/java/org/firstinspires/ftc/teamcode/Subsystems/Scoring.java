@@ -123,7 +123,7 @@ public class Scoring extends Mechanism {
             .build();
     private CommandSequence depositSample = new CommandSequence() // release sample and go down
             .addCommand(basketPos)
-            .addWaitCommand(.1)
+            .addWaitCommand(.175)
             .addCommand(outtakeRelease)
             .addWaitCommand(.2)
             .addCommand(grabTransfer)

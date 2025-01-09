@@ -57,12 +57,13 @@ public class Basket05Partner extends OpMode {
     private final Command intakeRest = () -> slides.setTarget(OuttakeSlides.INTAKE_POS + 20);
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
     private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.goofyBasketPos();};
-    private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
+    private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1300);
     // Deposit Commands
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
     private final Command initPos = () -> deposit.initPos();
     private final Command basketSet = () -> deposit.goofyBasketPos();
+    private final Command parkSet = () -> deposit.autoParkPos();
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
     // Intake Commands
@@ -257,13 +258,13 @@ public class Basket05Partner extends OpMode {
             .addWaitCommand(.1)
             .addCommand(parkCommand)
             .addWaitCommand(.4)
-            .addCommand(basketPos)
+            .addCommand(parkSet)
             .addCommand(busyFalse)
             .build();
     private CommandSequence holdEnd = new CommandSequence()
             .addCommand(lowSlideError)
             .addCommand(busyTrue)
-            .addCommand(basketPos)
+            .addCommand(parkSet)
             .addWaitCommand(.5)
             .addCommand(busyTrue)
             .build();
@@ -309,24 +310,24 @@ public class Basket05Partner extends OpMode {
         sample1.setLinearHeadingInterpolation(Math.toRadians(-50), Math.toRadians(-10));
         basket1 = new Path(new BezierLine(
                 new Point(38, 126.5, Point.CARTESIAN),
-                new Point(21, 125, Point.CARTESIAN)));
+                new Point(21, 126, Point.CARTESIAN)));
         basket1.setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
-                new Point(21, 125, Point.CARTESIAN),
+                new Point(21, 126, Point.CARTESIAN),
                 new Point(38.5, 134.5, Point.CARTESIAN)));
         sample2.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0));
         basket2 = new Path(new BezierLine(
                 new Point(38.5, 134.5, Point.CARTESIAN),
-                new Point(20.5, 125, Point.CARTESIAN)));
+                new Point(20.5, 126, Point.CARTESIAN)));
         basket2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45));
         sample3 = new Path(new BezierCurve(
-                new Point(20.5, 125, Point.CARTESIAN),
+                new Point(20.5, 126, Point.CARTESIAN),
                 new Point(34, 120, Point.CARTESIAN),
                 new Point(40.5, 140.5, Point.CARTESIAN)));
         sample3.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(30));
         basket3 = new Path(new BezierLine(
                 new Point(40.5, 140.5, Point.CARTESIAN),
-                new Point(20.5, 126.5, Point.CARTESIAN)));
+                new Point(20.5, 127, Point.CARTESIAN)));
         basket3.setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-45));
 
         sample4 = new Path(new BezierLine(
@@ -337,7 +338,7 @@ public class Basket05Partner extends OpMode {
                 new Point(14, 85, Point.CARTESIAN),
                 new Point(21, 126, Point.CARTESIAN)));
         basket4.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-45));
-
+//TODO: change basket 4 y pos
         park = new Path(new BezierLine(
                 new Point(21, 126, Point.CARTESIAN),
                 new Point(70, 120 , Point.CARTESIAN)));
