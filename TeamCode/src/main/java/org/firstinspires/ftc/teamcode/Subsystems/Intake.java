@@ -28,6 +28,7 @@ public class Intake extends Mechanism {
     public static double BAR_NEUTRAL = 0.36;
     public static double BAR_FOLD = 0;
     public static double GRIP = 0.5;
+    public static double clawNeutral = .33;
     public static double RELEASE = .26;
     public static double SLIDE_COMPRESS = 0;
     public static double SLIDE_NEUTRAL = .5;
@@ -63,6 +64,10 @@ public class Intake extends Mechanism {
 
     public void openClaw(){
         claw.setPosition(RELEASE);
+    }
+
+    public void neutralClaw(){
+        claw.setPosition(clawNeutral);
     }
 
     public void barDown(){
