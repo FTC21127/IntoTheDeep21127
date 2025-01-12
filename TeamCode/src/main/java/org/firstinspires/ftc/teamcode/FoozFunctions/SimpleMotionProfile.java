@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.FoozFunctions;
 
 public class SimpleMotionProfile {
 
-    private double power = 0;
-    private int target;
-    private double MAX_ACCEL;
-    private double MAX_VELO;
-    private int tolerance;
+    private double power = 0; // power value
+    private int target; // position you want to move to (in ticks)
+    private double MAX_ACCEL; // how much the controller speeds up per loop (~50hz)
+    private double MAX_VELO; // max speed (0-1)
+    private int tolerance; // margin of error (in ticks)
 
+    // input values (can be changed later)
     public SimpleMotionProfile(double MAX_ACCEL, double MAX_VELO, int tolerance, int target) {
         this.MAX_ACCEL = MAX_ACCEL;
         this.MAX_VELO = MAX_VELO;
@@ -15,10 +16,12 @@ public class SimpleMotionProfile {
         this.target = target;
     }
 
-    public SimpleMotionProfile(int tolerance, double MAX_VELO, double MAX_ACCEL) {
+    // input values without target
+    public SimpleMotionProfile(double MAX_ACCEL, double MAX_VELO, int tolerance) {
         this(MAX_ACCEL, MAX_VELO, tolerance, 0);
     }
 
+    // setters
     public void setTarget(int target) {
         this.target = target;
     }
@@ -35,6 +38,7 @@ public class SimpleMotionProfile {
         this.tolerance = tolerance;
     }
 
+    // input current position (sensor data) and your target position
     public double calculate(int currentPos, int targetPos){
         target = targetPos;
         double error = target - currentPos;
@@ -46,7 +50,7 @@ public class SimpleMotionProfile {
 
         return (power>MAX_VELO)?MAX_VELO: Math.max(power, -MAX_VELO);
     }
-
+    // input current position (sensor data)
     public double calculate(int currentPos){
        return calculate(currentPos, target);
     }
