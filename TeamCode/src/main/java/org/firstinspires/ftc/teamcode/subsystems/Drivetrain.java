@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-
-import static com.pedropathing.follower.FollowerConstants.*;
+import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +10,9 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+
 import com.pedropathing.follower.Follower;
 
 
@@ -19,29 +21,14 @@ public class Drivetrain extends Mechanism {
 
     private Follower follower;
 
-    private DcMotorEx leftFront;
-    private DcMotorEx leftRear;
-    private DcMotorEx rightFront;
-    private DcMotorEx rightRear;
-
     public Drivetrain(OpMode OpMode) {
         this.opMode = OpMode;
     }
 
     @Override
     public void init(HardwareMap hwMap) {
+        Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hwMap);
-
-        leftFront = hwMap.get(DcMotorEx.class, leftFrontMotorName);
-        leftRear = hwMap.get(DcMotorEx.class, leftRearMotorName);
-        rightRear = hwMap.get(DcMotorEx.class, rightRearMotorName);
-        rightFront = hwMap.get(DcMotorEx.class, rightFrontMotorName);
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         follower.startTeleopDrive();
     }
 

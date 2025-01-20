@@ -8,7 +8,7 @@ public class ControlsM3 {
     public static final Input RELEASE = Input.RIGHT_BUMPER;
     public static final Input INTAKE = Input.LEFT_BUMPER;
     public static final Input SPECIMEN_POS = Input.DPAD_UP;
-    public static final Input RESET = Input.DPAD_RIGHT;
+    public static final Input RESET = Input.DPAD_DOWN;
     public static final Input LOW_BASKET = Input.X;
     public static final Input HIGH_BASKET = Input.B;
     public static final Input LOW_SPECIMEN = Input.A;

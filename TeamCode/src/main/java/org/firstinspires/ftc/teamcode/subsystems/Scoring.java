@@ -16,12 +16,13 @@ public class Scoring extends Mechanism {
     private final Drivetrain drive = new Drivetrain(opMode);
     private final OuttakeSlides slides = new OuttakeSlides(opMode);
     private final Deposit deposit = new Deposit(opMode);
-    private Intake diffy;
+    private Intake diffy = new Intake(opMode);
 
     private int slidesPos = 0;
     private State state = State.INTAKE;
     private final Colors color;
     private boolean isBasket = false;
+    private boolean isTransfer = false;
 
     public enum State {
         INTAKE,
@@ -31,18 +32,25 @@ public class Scoring extends Mechanism {
     }
 
     //Intake commands
-    Command diffyDown = diffy::diffyDown;
-    Command diffyInterpose = diffy::diffyInterposed;
-    Command diffyGrab = diffy::closeClaw;
-    Command diffyRetract = diffy::retractExtendy;
-    Command diffyTransfer = diffy::diffyTransfer;
-    Command difftShift = diffy::shiftClaw;
+    Command diffyDown = () -> {diffy.diffyDown();};
+    Command diffyInterpose = () -> {diffy.diffyInterposed();};
+    Command diffyGrab = () -> {diffy.closeClaw();};
+    Command diffyRetract = () -> {diffy.retractExtendy();};
+    Command diffyTransfer = () -> {diffy.diffyTransfer();};
+    Command difftShift = () -> {diffy.shiftClaw();};
     // Deposit commands
     Command depositGrab = deposit::closeClaw;
     Command depositRelease = deposit::openClaw;
-    Command depositSpecimen = deposit::specimenScorePos;
-    // Slide commands
-    Command specimenLock = slides::lock;
+
+    CommandSequence yeetSample = new CommandSequence()
+            .addCommand(diffy::extendNeutral)
+            .addCommand(diffyInterpose)
+            .addWaitCommand(.5)
+            .addCommand(diffy::openClaw)
+            .addWaitCommand(.2)
+            .addCommand(diffyRetract)
+            .addCommand(diffyTransfer)
+            .build();
 
     CommandSequence retractIntake = new CommandSequence()
             .addCommand(diffyDown)
@@ -58,12 +66,14 @@ public class Scoring extends Mechanism {
             .build();
     CommandSequence basketSet = new CommandSequence()
             .addCommand(depositGrab)
-            .addWaitCommand(.2)
+            .addWaitCommand(.5)
+            .addCommand(diffy::openClaw)
             .addCommand(this::mBasketSet)
             .build();
     CommandSequence specimenSet = new CommandSequence()
             .addCommand(depositGrab)
             .addWaitCommand(.2)
+            .addCommand(diffy::openClaw)
             .addCommand(this::mSpecimenSet)
             .build();
     CommandSequence basketRelease = new CommandSequence()
@@ -72,11 +82,7 @@ public class Scoring extends Mechanism {
             .addCommand(this::mSlideRest)
             .build();
     CommandSequence specimenRelease = new CommandSequence()
-            .addCommand(depositSpecimen)
-            .addWaitCommand(.3)
-            .addCommand(specimenLock)
-            .addWaitCommand(.2)
-            .addCommand(this::mSlideRest)
+            .addCommand(depositRelease)
             .build();
 
 
@@ -91,11 +97,11 @@ public class Scoring extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        diffy = new Intake(opMode, color);
         drive.init(hwMap);
         slides.init(hwMap);
         deposit.init(hwMap);
         diffy.init(hwMap);
+        diffy.setAlliance(color);
     }
 
     @Override
@@ -109,6 +115,7 @@ public class Scoring extends Mechanism {
             }
         } else if (state == State.INTAKE) {
             retractIntake.trigger();
+            isTransfer = true;
             state = State.TRANSFER;
         }
         if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsM3.CLIMB_SET)) {
@@ -124,6 +131,7 @@ public class Scoring extends Mechanism {
                 for (int i = 0; i < 4; i++) {
                     if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SLIDES[i])) {
                         state = State.SCORING;
+                        isTransfer = false;
                         slidesPos = OuttakeSlides.POSITIONS[i];
                         isBasket = i == 1 || i == 0;
                         if (isBasket) basketSet.trigger();
@@ -132,8 +140,14 @@ public class Scoring extends Mechanism {
                     }
                 }
                 if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SPECIMEN_POS)) {
-                    mSpecimenPickUp();
+                    if (isTransfer){
+                        yeetSample.trigger();
+                    } else {
+                        mSpecimenPickUp();
+                    }
+                    isTransfer = false;
                 }
+
                 break;
             case SCORING:
                 for (int i = 0; i < 4; i++) {
@@ -151,8 +165,11 @@ public class Scoring extends Mechanism {
                 }
                 break;
             case CLIMB:
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.CLIMB))
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.CLIMB)) {
                     slides.ascent();
+                    diffyRetract.run();
+                    diffyTransfer.run();
+                }
                 break;
         }
 
@@ -161,33 +178,36 @@ public class Scoring extends Mechanism {
 
     public void mIntakeExtend() {
         diffy.extendNeutral();
-        diffy.diffySearch();
+        diffy.diffyDown();
         diffy.openClaw();
+        mSlideRest();
     }
 
     public void mSpecimenPickUp() {
-        slides.restPos(); // or something, idk rlly
+        slides.restPos();
         deposit.specimenGrabPos();
         deposit.openClaw();
     }
 
     public void mSpecimenSet() {
         slides.setTarget(slidesPos);
+        diffy.diffyInterposed();
         deposit.specimenPos();
     }
 
     public void mBasketSet() {
         slides.setTarget(slidesPos);
+        diffy.diffyInterposed();
         deposit.basketPos();
     }
 
-    public void mSlideRest(){
+    public void mSlideRest() {
         slides.intakePos();
         deposit.openClaw();
         deposit.transferPos();
     }
 
-    public void mClimbSet(){
+    public void mClimbSet() {
         slides.primeAscent();
         deposit.initPos();
     }

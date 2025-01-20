@@ -19,16 +19,16 @@ public class Deposit extends Mechanism {
     ServoEx claw, wrist1, wrist2;
 
     //Positions to be tuned
-    public static double TRANSFER_POS = 1;
-    public static double INIT_POS = .75;
-    public static double STRAIGHT_UP_POS = .5;
-    public static double BASKET_POS = 0.35;
-    public static double SPECIMEN_SCORE_POS = 0.09;
-    public static double SPECIMEN_SET_POS = .25;
+    public static double TRANSFER_POS = 0;
+    public static double INIT_POS = .25;
+    public static double STRAIGHT_UP_POS = .3;
+    public static double BASKET_POS = 0.5;
+    public static double SPECIMEN_SCORE_POS = 0.6;
+    public static double SPECIMEN_SET_POS = .53;
     public static double SPECIMEN_GRAB_POS = 0.6;
 
-    public static double GRAB = 0.05;
-    public static double RELEASE = .315;
+    public static double GRAB = 0.38;
+    public static double RELEASE = 0.2;
 
     public Deposit(OpMode OpMode) {
         this.opMode = OpMode;

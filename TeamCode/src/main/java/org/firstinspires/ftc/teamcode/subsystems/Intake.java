@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
+import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
@@ -36,16 +38,17 @@ public class Intake extends Mechanism {
     }
     DiffyState intakeState = DiffyState.NEUTRAL;
 
-    public static double c_OPEN = 0.5;
-    public static double c_CLOSE = 0.6;
-    public static double c_SHIFT = 0.55;
-    public static double extendy_IN = 0;
-    public static double maxExtendy = 0.7;
-    public static double extendy_NEUTRAL = maxExtendy/2;
-    public static double dif_TRANSFER = 1;
-    public static double dif_INTERPOSED = .9;
-    public static double dif_DOWN = 0.375;
-    public static double dif_SEARCH = 0.45;
+    public static double c_OPEN = 0.3;
+    public static double c_CLOSE = 0.65;
+    public static double c_SHIFT = 0.57;
+    public static double extendy_IN = 0.9;
+    public static double maxExtendy = 0.4;
+    public static double extendy_NEUTRAL = maxExtendy + (extendy_IN - maxExtendy)/2;
+    public static double dif_TRANSFER = 0.87;
+    public static double dif_INTERPOSED = .4;
+    public static double dif_NEUTRAL = 0.6;
+    public static double dif_DOWN = 0.1;
+    public static double dif_SEARCH = 0.2;
     public static double dif_ROLL = 0;
     public double dif_PITCH = dif_TRANSFER;
 
@@ -53,12 +56,30 @@ public class Intake extends Mechanism {
     public boolean isSearch = false;
     public boolean isExtended = false;
 
+    CommandSequence retract = new CommandSequence()
+            .addCommand(this::diffyDown)
+            .addWaitCommand(.2)
+            .addCommand(this::shiftClaw)
+            .addWaitCommand(.1)
+            .addCommand(this::centerRoll)
+            .addWaitCommand(.2)
+            .addCommand(this::retractExtendy)
+            .addCommand(this::diffyInterposed)
+            .addWaitCommand(.4)
+            .addCommand(this::closeClaw)
+            .addCommand(this::diffyTransfer)
+            .build();
+
     public Intake(OpMode opMode1){
         this(opMode1,Colors.RED);
     }
 
     public Intake(OpMode opMode1, Colors alliance) {
         this.opMode = opMode1;
+        this.alliance = alliance;
+    }
+
+    public void setAlliance(Colors alliance) {
         this.alliance = alliance;
     }
 
@@ -75,12 +96,16 @@ public class Intake extends Mechanism {
         horizontalExtendenator.setPosition(extendy_NEUTRAL);
     }
 
+    public void extendMax(){
+        horizontalExtendenator.setPosition(extendy_NEUTRAL);
+    }
+
     public void retractExtendy(){
         horizontalExtendenator.setPosition(extendy_IN);
     }
 
     public void setExtendinator(double pos){
-            horizontalExtendenator.setPosition(Math.min(maxExtendy,pos));
+            horizontalExtendenator.setPosition(Math.min(Math.max(maxExtendy,pos),extendy_IN));
     }
 
     public void diffyDown(){
@@ -105,6 +130,17 @@ public class Intake extends Mechanism {
         intakeState = DiffyState.NEUTRAL;
     }
 
+    public void diffyNeutral(){
+        dif_PITCH = dif_NEUTRAL;
+        dif_ROLL = 0;
+        intakeState = DiffyState.NEUTRAL;
+    }
+
+    public void centerRoll(){
+        setDif_ROLL(0);
+        autoUpdate();
+    }
+
     public void closeClaw(){
         claw.setPosition(c_CLOSE);
     }
@@ -125,8 +161,7 @@ public class Intake extends Mechanism {
     }
 
     public void teleControl(FoozPad gp){
-        if (isSearch) dif_ROLL = gp.gamepad.right_stick_x/10;
-        if (isExtended && gp.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL * (1 + gp.gamepad.left_stick_y*.9));
+        dif_ROLL = (int)(gp.gamepad.right_stick_x*6)/(double)60;
         diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
         diffyLeft.setPosition(dif_PITCH + dif_ROLL);
     }
@@ -136,26 +171,37 @@ public class Intake extends Mechanism {
         diffyLeft.setPosition(dif_PITCH + dif_ROLL);
     }
 
+    public void setUp(FoozPad gamepad){
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.A)) {
+            claw.setPosition(c_OPEN);
+        } else {
+            claw.setPosition(c_CLOSE);
+        }
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)){
+            setExtendinator(maxExtendy);
+        } else {
+            setExtendinator(0.86);
+        }
+    }
+
     @Override
     public void loop(FoozPad gamepad) {
         if (isPickup||isSearch) dif_ROLL = gamepad.gamepad.right_stick_x/10;
-        if (isExtended && gamepad.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL + gamepad.gamepad.left_stick_y/2.2);
+//        if (isExtended && gamepad.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL + (gamepad.gamepad.left_stick_y*.9) * extendy_NEUTRAL);
         diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
         diffyLeft.setPosition(dif_PITCH + dif_ROLL);
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)){
-            if (colorSensor.isAllowed()){
-                closeClaw();
-                diffyInterposed();
-                retractExtendy();
+//            if (colorSensor.isAllowed()){
+                retract.trigger();
                 isSearch = false;
                 isPickup = false;
                 isExtended = false;
-            } else {
-                gamepad.runRumbleEffect(INCORRECT_COLOR.rumblePattern);
-            }
+//            } else {
+//                gamepad.runRumbleEffect(INCORRECT_COLOR.rumblePattern);
+//            }
         } else if (GamepadStatic.wasJustPressed(gamepad, GamepadStatic.Input.DPAD_LEFT)) {
             if (!isExtended){
-                extendNeutral();
+                extendMax();
                 isExtended = true;
             }
             if (isSearch) {

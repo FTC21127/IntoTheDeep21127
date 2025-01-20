@@ -23,7 +23,7 @@ public class DriveDepositDev extends OpMode {
         slides.init(hardwareMap);
 //        intake.init(hardwareMap);
         slides.restPos();
-        deposit.depositPos();
+        deposit.specimenPos();
         gp1 = new FoozPad(gamepad1);
         gp2 = new FoozPad(gamepad2);
     }
