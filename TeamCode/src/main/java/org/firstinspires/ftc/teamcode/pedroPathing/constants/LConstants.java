@@ -5,21 +5,21 @@ import com.pedropathing.localization.constants.*;
 
 public class LConstants {
     static {
-        ThreeWheelConstants.forwardTicksToInches = .001989436789;
-        ThreeWheelConstants.strafeTicksToInches = .001989436789;
-        ThreeWheelConstants.turnTicksToInches = .001989436789;
-        ThreeWheelConstants.leftY = 1;
-        ThreeWheelConstants.rightY = -1;
-        ThreeWheelConstants.strafeX = -2.5;
+        ThreeWheelConstants.forwardTicksToInches = .002;
+        ThreeWheelConstants.strafeTicksToInches = .002;
+        ThreeWheelConstants.turnTicksToInches = .002;
+        ThreeWheelConstants.leftY = 5.893;
+        ThreeWheelConstants.rightY = -5.893;
+        ThreeWheelConstants.strafeX = 2.933;
         ThreeWheelConstants.leftEncoder_HardwareMapName = "backRight";
         ThreeWheelConstants.rightEncoder_HardwareMapName = "frontRight";
         ThreeWheelConstants.strafeEncoder_HardwareMapName = "backLeft";
-        ThreeWheelConstants.leftEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.rightEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD;
+        ThreeWheelConstants.leftEncoderDirection = Encoder.FORWARD;
+        ThreeWheelConstants.rightEncoderDirection = Encoder.FORWARD;
+        ThreeWheelConstants.strafeEncoderDirection = Encoder.REVERSE;
     }
 }
-
+// front right is right udo
 
 
 
