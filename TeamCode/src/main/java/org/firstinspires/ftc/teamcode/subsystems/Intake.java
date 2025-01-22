@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
@@ -22,7 +23,7 @@ public class Intake extends Mechanism {
     // Roll is the turn the claw side to side
     // pitch is up and down
 
-    Servo horizontalExtendenator;
+    ServoImplEx horizontalExtendenator;
     Servo diffyLeft, diffyRight;
     Servo claw;
 
@@ -153,7 +154,7 @@ public class Intake extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        horizontalExtendenator = hwMap.get(Servo.class, "horizontalExtendy");
+        horizontalExtendenator = hwMap.get(ServoImplEx.class, "horizontalExtendy");
         diffyLeft = hwMap.get(Servo.class, "diffyLeft");
         diffyRight = hwMap.get(Servo.class, "diffyRight");
         claw = hwMap.get(Servo.class, "intakeClaw");
@@ -254,5 +255,9 @@ public class Intake extends Mechanism {
         public boolean isAllowed(){
             return Colors.isColor(getNormRGB()[0],getNormRGB()[1],getNormRGB()[2]) == alliance || Colors.isColor(getNormRGB()[0],getNormRGB()[1],getNormRGB()[2]) == Colors.YELLOW;
         }
+    }
+
+    public void turnOffExtendy(){
+        horizontalExtendenator.setPwmDisable();
     }
 }

@@ -25,4 +25,9 @@ public class IntakeDev extends OpMode {
         foozPad.update();
         intake.loop(foozPad);
     }
+
+    @Override
+    public void stop() {
+        intake.turnOffExtendy();
+    }
 }

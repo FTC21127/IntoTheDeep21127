@@ -4,11 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain2;
 
 @TeleOp(group = "Dev")
 public class DrivetrainDev extends OpMode {
-    Drivetrain drive = new Drivetrain(this);
+    Drivetrain2 drive = new Drivetrain2(this);
     FoozPad gp1;
 
     @Override
