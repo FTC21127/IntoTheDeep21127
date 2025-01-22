@@ -212,4 +212,9 @@ public class Scoring extends Mechanism {
         deposit.initPos();
     }
 
+    public void stop(){
+        diffy.retractExtendy();
+        deposit.transferPos();
+    }
+
 }

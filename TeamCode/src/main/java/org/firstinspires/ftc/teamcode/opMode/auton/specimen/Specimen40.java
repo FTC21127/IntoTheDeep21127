@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opMode.auton.specimen;
 
+import com.arcrobotics.ftclib.util.Timing;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,6 +12,7 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Point;
 
+import org.firstinspires.ftc.teamcode.fissionlib.command.AutoCommandMachine;
 import org.firstinspires.ftc.teamcode.fissionlib.command.Command;
 import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
@@ -20,16 +22,20 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 
+import java.util.concurrent.TimeUnit;
+
 
 @Autonomous(name = "4 + 0'", group = "!specimen", preselectTeleOp = "RedTele")
 public class Specimen40 extends OpMode {
+
+    Timing.Timer startTimer = new Timing.Timer(1000, TimeUnit.SECONDS);
+
     Deposit deposit = new Deposit(this);
     Drivetrain drivetrain = new Drivetrain(this);
     OuttakeSlides slides = new OuttakeSlides(this);
     Intake diffy = new Intake(this);
 
     Follower follower;
-
     Path preload;
     PathChain pickUp1, hp1, pickUp2, hp2, pickUp3, hp3, speci2Set, speci2Score, speci3Set, speci3Score, speci4Set, speci4Score;
 
@@ -125,8 +131,75 @@ public class Specimen40 extends OpMode {
             .addCommand(diffyInterpose)
             .addCommand(diffyRetract)
             .addWaitCommand(.3)
+            .addCommand(s2Score)
             .addCommand(grabIntake)
             .addCommand(diffyTransfer)
+            .addWaitCommand(.2)
+            .addCommand(grabDeposit)
+            .addWaitCommand(.1)
+            .addCommand(this::mSpecimenSet)
+            .build();
+    CommandSequence speci3Grab = new CommandSequence()
+            .addCommand(lockSpecimen)
+            .addWaitCommand(.2)
+            .addCommand(releaseSpecimen)
+            .addCommand(s3Set)
+            .addCommand(this::mSpecimenPickup)
+            .addWaitCommand(.4)
+            .build();
+    CommandSequence scoreSpeci3 = new CommandSequence()
+            .addCommand(difftShift)
+            .addWaitCommand(.2)
+            .addCommand(diffyInterpose)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.3)
+            .addCommand(s3Score)
+            .addCommand(grabIntake)
+            .addCommand(diffyTransfer)
+            .addWaitCommand(.2)
+            .addCommand(grabDeposit)
+            .addWaitCommand(.1)
+            .addCommand(this::mSpecimenSet)
+            .build();
+    CommandSequence speci4Grab = new CommandSequence()
+            .addCommand(lockSpecimen)
+            .addWaitCommand(.2)
+            .addCommand(releaseSpecimen)
+            .addCommand(s4Set)
+            .addCommand(this::mSpecimenPickup)
+            .addWaitCommand(.4)
+            .build();
+    CommandSequence scoreSpeci4 = new CommandSequence()
+            .addCommand(difftShift)
+            .addWaitCommand(.2)
+            .addCommand(diffyInterpose)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.3)
+            .addCommand(s4Score)
+            .addCommand(grabIntake)
+            .addCommand(diffyTransfer)
+            .addWaitCommand(.2)
+            .addCommand(grabDeposit)
+            .addWaitCommand(.1)
+            .addCommand(this::mSpecimenSet)
+            .build();
+
+    AutoCommandMachine runCommands = new AutoCommandMachine()
+            .addCommandSequence(scorePreload)
+            .addCommandSequence(grabSample1)
+            .addCommandSequence(human1)
+            .addCommandSequence(grabSample2)
+            .addCommandSequence(human2)
+            .addCommandSequence(grabSample3)
+            .addCommandSequence(human3)
+            .addCommandSequence(speci2Grab)
+            .addCommandSequence(scoreSpeci2)
+            .addCommandSequence(speci3Grab)
+            .addCommandSequence(scoreSpeci3)
+            .addCommandSequence(speci3Grab)
+            .addCommandSequence(scoreSpeci3)
+            .addCommandSequence(speci4Grab)
+            .addCommandSequence(scoreSpeci4)
             .build();
 
     @Override
@@ -140,12 +213,125 @@ public class Specimen40 extends OpMode {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
+
+        preload = new Path(
+                new BezierLine(
+                        new Point(startPose),
+                        new Point(preloadPose)
+                )
+        );
+        preload.setConstantHeadingInterpolation(Math.toRadians(180));
+
+        pickUp1 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(preloadPose),
+                                gSControl,
+                                new Point(grabPose1)))
+                .setLinearHeadingInterpolation(preloadPose.getHeading(), grabPose1.getHeading()).build();
+
+        hp1 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(grabPose1),
+                                new Point(hpPose)))
+                .setLinearHeadingInterpolation(grabPose1.getHeading(), hpPose.getHeading()).build();
+
+        pickUp2 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(hpPose),
+                                new Point(grabPose2)))
+                .setLinearHeadingInterpolation(hpPose.getHeading(), grabPose2.getHeading()).build();
+
+        hp2 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(grabPose2),
+                                new Point(hpPose)))
+                .setLinearHeadingInterpolation(grabPose2.getHeading(), hpPose.getHeading()).build();
+
+        pickUp3 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(hpPose),
+                                new Point(grabPose3)))
+                .setLinearHeadingInterpolation(hpPose.getHeading(), grabPose3.getHeading()).build();
+
+        hp3 = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(grabPose3),
+                                new Point(hpPose)))
+                .setLinearHeadingInterpolation(grabPose3.getHeading(), hpPose.getHeading()).build();
+
+        speci2Set = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(hpPose),
+                                new Point(pickUpPose)))
+                .setLinearHeadingInterpolation(hpPose.getHeading(), pickUpPose.getHeading()).build();
+
+        speci2Score = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(pickUpPose),
+                                sControl1,
+                                sControl2,
+                                new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading()).build();
+
+        speci3Set = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(hpPose),
+                                new Point(pickUpPose)))
+                .setLinearHeadingInterpolation(hpPose.getHeading(), pickUpPose.getHeading()).build();
+
+        speci3Score = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(pickUpPose),
+                                sControl1,
+                                sControl2,
+                                new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading()).build();
+
+        speci4Set = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(hpPose),
+                                new Point(pickUpPose)))
+                .setLinearHeadingInterpolation(hpPose.getHeading(), pickUpPose.getHeading()).build();
+
+        speci4Score = follower.pathBuilder().addPath(
+                        new BezierCurve(
+                                new Point(pickUpPose),
+                                sControl1,
+                                sControl2,
+                                new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading()).build();
+
+
+        deposit.transferPos();
+        deposit.openClaw();
+        diffy.diffyTransfer();
+        diffy.openClaw();
+    }
+
+    @Override
+    public void init_loop() {
+        if (gamepad1.cross) {
+            deposit.closeClaw();
+        }
+    }
+
+    @Override
+    public void start() {
+        runCommands.run(false);
+        startTimer.start();
+        while (!startTimer.done()) {
+            diffy.autoUpdate();
+            slides.update();
+            follower.update();
+        }
     }
 
     @Override
     public void loop() {
         diffy.autoUpdate();
-
+        slides.update();
+        follower.update();
+        runCommands.run(follower.isBusy() || !slides.isDone());
     }
 
     public void mSampleGrab() {

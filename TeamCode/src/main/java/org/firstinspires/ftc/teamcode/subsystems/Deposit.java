@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 public class Deposit extends Mechanism {
 
     //using ftclib ServoEx wrapper for extra functions.
-    ServoEx claw, wrist1, wrist2;
+    ServoImplEx claw, wrist1, wrist2;
 
     //Positions to be tuned
     public static double TRANSFER_POS = 0;
@@ -36,9 +37,10 @@ public class Deposit extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        wrist1 = new SimpleServo(hwMap,"wRight", 0,90);
-        wrist2 = new SimpleServo(hwMap,"wLeft", 0,90);
-        claw = new SimpleServo(hwMap,"outtakeClaw", -5,40);
+        wrist1 = hwMap.get(ServoImplEx.class, "wRight");
+        wrist2 = hwMap.get(ServoImplEx.class, "wLeft");
+        claw = hwMap.get(ServoImplEx.class, "outtakeClaw");
+
     }
 
     private void setPos(double pos){
@@ -98,5 +100,10 @@ public class Deposit extends Mechanism {
         if (getPos()==INIT_POS){
             gamepad.gamepad.rumble(2);
         }
+    }
+
+    public void turnOffWrist(){
+        wrist1.setPwmDisable();
+        wrist2.setPwmDisable();
     }
 }
