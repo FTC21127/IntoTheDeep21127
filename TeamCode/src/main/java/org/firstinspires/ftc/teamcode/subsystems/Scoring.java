@@ -60,8 +60,9 @@ public class Scoring extends Mechanism {
             .addWaitCommand(.2)
             .addCommand(diffyInterpose)
             .addCommand(diffyRetract)
-            .addWaitCommand(.3)
+            .addWaitCommand(.2)
             .addCommand(diffyGrab)
+            .addWaitCommand(.1)
             .addCommand(diffyTransfer)
             .build();
     CommandSequence basketSet = new CommandSequence()
