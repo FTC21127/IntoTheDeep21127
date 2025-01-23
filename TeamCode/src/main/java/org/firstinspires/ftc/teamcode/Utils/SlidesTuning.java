@@ -19,9 +19,9 @@ public class SlidesTuning extends OpMode {
 
     PIDController controller;
     public static double
-            p = 0.015,
+            p = 0.02,
             i = 0,
-            d = 0.0001,
+            d = 0.0005,
             f = 0;
     public static double TICKSPERDEGREE = (1+(46/11.0)) * 28/360;
     public static int target = 0;

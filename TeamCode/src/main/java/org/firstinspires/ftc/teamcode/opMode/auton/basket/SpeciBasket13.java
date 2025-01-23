@@ -56,7 +56,7 @@ public class SpeciBasket13 extends OpMode {
     private final Command intakeRest = () -> slides.setTarget(OuttakeSlides.INTAKE_POS + 20);
     private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
-    private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET - 100);
+    private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET+40);
     private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.goofyBasketPos();};
     private final Command lockSpecimen = () -> slides.lock();
     // Deposit Commands
@@ -71,7 +71,11 @@ public class SpeciBasket13 extends OpMode {
     // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
+
+    private final Command intakeNeutral = () -> intake.autoIntermediate();
     private final Command dropV4b = () -> intake.autonDown();
+    private final Command intermediateV4b = () -> intake.barIntermediateDown();
+    private final Command pickupV4b = () -> intake.barPickUp();
     private final Command neutralV4b = () -> intake.barNeutral();
     private final Command transferV4b = () -> intake.barTransfer();
 
@@ -94,7 +98,7 @@ public class SpeciBasket13 extends OpMode {
             .addCommand(specimenScorePos)
             .addWaitCommand(.4)
             .addCommand(lockSpecimen)
-            .addWaitCommand(0.8)
+            .addWaitCommand(1)
             .addCommand(outtakeRelease)
             .addCommand(busyFalse)
             .build();
@@ -106,6 +110,7 @@ public class SpeciBasket13 extends OpMode {
             .addCommand(outtakeGrab)
             .addWaitCommand(.3)
             .addCommand(slideRest)
+            .addCommand(intermediateV4b)
             .addWaitCommand(.1)
             .addCommand(dropV4b)
             .addWaitCommand(.45)
@@ -116,20 +121,22 @@ public class SpeciBasket13 extends OpMode {
     private CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(intakeRest)
-            .addWaitCommand(0.1)
             .addCommand(intakeGrab)
-            .addWaitCommand(0.5)
+            .addCommand(pickupV4b)
+            .addWaitCommand(0.4)
             .addCommand(transferV4b)
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
-            .addWaitCommand(1)
+            .addWaitCommand(0.8)
             .addCommand(intakeOpen)
-            .addWaitCommand(.2)
-            .addCommand(neutralV4b)
-            .addWaitCommand(.3)
-            .addCommand(grabTransfer)
-            .addCommand(intakeGrab)
+            .addWaitCommand(.15)
+            .addCommand(intakeNeutral)
             .addWaitCommand(.1)
+            .addCommand(intakeGrab)
+            .addWaitCommand(.15)
+            .addCommand(neutralV4b)
+            .addWaitCommand(.1)
+            .addCommand(grabTransfer)
             .addCommand(slidesIntake)
             .addWaitCommand(.45)
             .addCommand(outtakeGrab)
@@ -161,11 +168,13 @@ public class SpeciBasket13 extends OpMode {
     private CommandSequence move4 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample2Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
             .addWaitCommand(.5)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move5 = new CommandSequence()
@@ -180,11 +189,13 @@ public class SpeciBasket13 extends OpMode {
     private CommandSequence move6 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample3Command)
+            .addCommand(intermediateV4b)
+            .addWaitCommand(.1)
             .addCommand(dropV4b)
             .addWaitCommand(.5)
             .addCommand(slideRest)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move7 = new CommandSequence()
@@ -246,10 +257,10 @@ public class SpeciBasket13 extends OpMode {
 
         specimen = new Path(new BezierLine(
                 new Point(8.1, 80, Point.CARTESIAN),
-                new Point(36.950, 85.000, Point.CARTESIAN))); //old (and working): new Point(36.950, 82.000, Point.CARTESIAN)));
+                new Point(36.850, 83.000, Point.CARTESIAN))); //old (and working): new Point(36.950, 82.000, Point.CARTESIAN)));
         specimen.setConstantHeadingInterpolation(Math.toRadians(180));
         sample1 = new Path(new BezierCurve(
-                new Point(36.950, 85.000, Point.CARTESIAN),
+                new Point(36.950, 83.000, Point.CARTESIAN),
                 new Point(24.138, 91.927, Point.CARTESIAN),
                 new Point(46.3, 120, Point.CARTESIAN)));
         sample1.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));

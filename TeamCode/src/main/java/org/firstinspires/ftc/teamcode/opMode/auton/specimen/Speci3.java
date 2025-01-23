@@ -145,6 +145,7 @@ public class Speci3 extends OpMode {
             .addCommand(highSpecimen)
             .addCommand(highSpecimen)
             .addCommand(specimenPos)
+            .addCommand(specimenPos)
             .addWaitCommand(.5)
             .addCommand(outtakeGrab)
             .addCommand(busyFalse)
@@ -176,6 +177,7 @@ public class Speci3 extends OpMode {
             .addCommand(highSpecimen)
             .addCommand(highSpecimen)
             .addCommand(specimenPos)
+            .addCommand(specimenPos)
             .addWaitCommand(.5)
             .addCommand(outtakeGrab)
             .addWaitCommand(2)
@@ -184,8 +186,8 @@ public class Speci3 extends OpMode {
             .build();
 
     private final CommandSequence holdEnd = new CommandSequence()
+            .addCommand(busyTrue)
             .addCommand(parkCommand)
-            .addCommand(slideRest)
             .addCommand(busyTrue)
             .addCommand(busyTrue)
             .build();

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.FoozFunctions.SimpleMotionProfile;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
@@ -33,12 +34,14 @@ public class OuttakeSlides extends Mechanism {
 
     public Rev2mDistanceSensor resetSensor;
 
+    SimpleMotionProfile hangThing = new SimpleMotionProfile(0.03, 0.9, 5, 0);
+
     //Use voltage sensor
     public VoltageSensor voltage;
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
+    private final double p = 0.02, i = 0, d = 0.0005, f = 0;
 
     // Positions for slides
     public static int REST_POS = 95;
@@ -49,7 +52,7 @@ public class OuttakeSlides extends Mechanism {
     public static int HIGH_CHAMBER_SET = 1450; //3
     public static int CHAMBER_SCORED = 500;
     public static int LEVEL_1_ASCENT = 2000;
-    public static int HANG = -800;
+    public static int HANG = 0;
     public static int ABIT = 100;
 
     public static double target = 0;
@@ -91,19 +94,10 @@ public class OuttakeSlides extends Mechanism {
         reset = true;
     }
 
-    public void downUntil(OpMode mode, FoozPad gp, HardwareMap hwMap) {
-        resetSensor.getDistance(DistanceUnit.CM);
-        Drivetrain dt = new Drivetrain(mode);
-        dt.init(hwMap);
-        gp.update();
-        setSlidePower(-.4);
-        time.start();
-        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.4) { //12V is the minimum required to work fully
-            gp.update();
-            dt.loop(gp);
+    public void hang() {
+        while (resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
+            setSlidePower(hangThing.calculate(slideR.getCurrentPosition()));
         }
-        reset();
-        restPos();
     }
 
     public void setTarget(double target) {
@@ -197,6 +191,8 @@ public class OuttakeSlides extends Mechanism {
             restPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)) {
             downUntil();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
+            hang();
         }
     }
 }

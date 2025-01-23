@@ -147,7 +147,6 @@ public class Scoring extends Mechanism {
             .build();
     private CommandSequence retractIntake = new CommandSequence() // pickup the sample and put into the bucket
             .addCommand(intakeGrab)
-            .addWaitCommand(0.1)
             .addCommand(pickUpV4b)
             .addWaitCommand(0.3)
             .addCommand(neutralV4b)
@@ -292,6 +291,7 @@ public class Scoring extends Mechanism {
                     }
                     break;
                 case CLIMB:
+                    climbV4b.run();
                     if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET)) {
 
                         primeAscent.trigger();
