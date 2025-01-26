@@ -25,7 +25,7 @@ public class Scoring extends Mechanism {
     private Intake intake;
 
     private int slidesPos = 0; // Position to run the slides to
-    public State state = State.INTAKE; // State machine
+    public State state = State.TRANSFER; // State machine
     private Intake.COLOR color; // current alliance color (was never used)
     private HardwareMap hwMap;
 
@@ -44,23 +44,20 @@ public class Scoring extends Mechanism {
         CLIMB
     }
 
+    Command intakeExtend = this::mIntakeExtend;
+    Command specimenSet = this::mSpecimenSet;
+    Command basketSet = this::mBasketSet;
+    Command depositRest = this::mSlideRest;
+
     // Slide Commands
     private final Command slidesUp = () -> slides.setTarget(slidesPos);
     private final Command slidesIntake = () -> slides.intakePos();
-    private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS - 10);
     private final Command lockSpecimen = () -> slides.lock();
-    private final Command upABit = () -> slides.upABit();
-    private final Command downABit = () -> slides.downABit();
-    private final Command primeLevel1Ascent = () -> slides.primeAscent();
-    private final Command Level1Ascent = () -> slides.ascent();
     private final Command reset = slides::downUntil;
     // Deposit Commands
     private final Command depositPos = () -> deposit.depositPos();
-    private final Command grabTransfer = () -> deposit.transferPos();
+    private final Command grabTransfer = this::mGrabSample;
     private final Command basketPos = () -> deposit.basketPos();
-    private final Command goofBasketPos = () -> deposit.goofyBasketPos();
-    private final Command initPos = () -> deposit.initPos();
-    private final Command specimenSetPos = () -> deposit.specimenSetPos();
     private final Command specimenScorePos = () -> deposit.specimenScorePos();
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
@@ -68,66 +65,45 @@ public class Scoring extends Mechanism {
     // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
-    private final Command intermediateV4b = () -> intake.barIntermediateDown();
-    private final Command dropV4b = () -> intake.barDown();
     private final Command pickUpV4b = () -> intake.barPickUp();
     private final Command neutralV4b = () -> intake.barNeutral();
     private final Command transferV4b = () -> intake.barTransfer();
-    private final Command climbV4b = () -> intake.barFold();
 
     // Transfer Slide Command Sequences
     private CommandSequence depositTransferSequence = new CommandSequence() // sets the deposit ontop of the bucket
             .addCommand(grabTransfer)
-            .addCommand(upABit)
-            .addCommand(outtakeRelease)
-            .addWaitCommand(.3)
+            .addWaitCommand(.2)
             .addCommand(slidesIntake)
-            .build();
-    private CommandSequence specimenPickUpSequence = new CommandSequence() // sets the deposit to pickup specimens
-            .addCommand(slideRest)
-            .addCommand(outtakeGrab)
-            .addCommand(depositPos)
-            .addWaitCommand(.4)
-            .addCommand(depositPos)
-            .addCommand(outtakeRelease)
             .build();
     // Non-transfer Slide Command Sequences
     private CommandSequence resetSlide = new CommandSequence()
             .addCommand(reset)
             .build();
 
-    private CommandSequence ejectSampleSequence = new CommandSequence() // yeets sample out
+    private CommandSequence specimenSetSequence = new CommandSequence() // yeets sample out
             .addCommand(outtakeGrab)
-            .addWaitCommand(.2)
-            .addCommand(depositPos)
-            .addWaitCommand(0.35)
+            .addWaitCommand(.4)
+            .addCommand(this::mSpecimenPickUp)
+            .addWaitCommand(0.4)
             .addCommand(outtakeRelease)
             .build();
     private CommandSequence depositSequence = new CommandSequence() // grabs sample from bucket and goes to the set basket height
             .addCommand(outtakeGrab)
             .addWaitCommand(.4)
-            .addCommand(slidesUp)
-            .addCommand(initPos)
-            .addCommand(specimenShift)
-            .addWaitCommand(0.5)
-            .addCommand(outtakeGrab)
-            .addCommand(goofBasketPos)
+            .addCommand(basketSet)
             .build();
     private CommandSequence depositSpecimenSequence = new CommandSequence() // grabs specimen from wall and goes to chamber height
             .addCommand(specimenShift)
-            .addWaitCommand(.5)
-            .addCommand(slidesUp)
-            .addWaitCommand(0.2)
-            .addCommand(outtakeGrab)
-            .addCommand(specimenSetPos)
+            .addWaitCommand(0.3)
+            .addCommand(deposit::closeClaw)
+            .addCommand(specimenSet)
             .build();
     private CommandSequence depositSample = new CommandSequence() // release sample and go down
             .addCommand(basketPos)
-            .addWaitCommand(.175)
+            .addWaitCommand(.15)
             .addCommand(outtakeRelease)
             .addWaitCommand(.2)
-            .addCommand(grabTransfer)
-            .addCommand(slideRest)
+            .addCommand(depositRest)
             .build();
     private CommandSequence depositSpecimen = new CommandSequence() // lock specimen  and release
             .addCommand(outtakeGrab)
@@ -135,40 +111,27 @@ public class Scoring extends Mechanism {
             .addWaitCommand(.4)
             .addCommand(lockSpecimen)
             .addWaitCommand(.3)
-            .addCommand(outtakeRelease)
+//            .addCommand(outtakeRelease)
+            .addCommand(depositRest)
             .build();
     // Intake Command Sequences
     private CommandSequence primeIntakeSequence = new CommandSequence() // drop down the intake
-            .addCommand(intermediateV4b)
-            .addWaitCommand(.1)
-            .addCommand(dropV4b)
+            .addCommand(intakeExtend)
             .addWaitCommand(.2)
             .addCommand(intakeOpen)
+            .addCommand(outtakeRelease)
             .build();
     private CommandSequence retractIntake = new CommandSequence() // pickup the sample and put into the bucket
             .addCommand(intakeGrab)
-            .addWaitCommand(0.1)
             .addCommand(pickUpV4b)
-            .addWaitCommand(0.3)
-            .addCommand(neutralV4b)
             .addWaitCommand(.4)
             .addCommand(transferV4b)
-            .addWaitCommand(.4)
+            .addWaitCommand(1)
             .addCommand(intakeOpen)
             .addWaitCommand(.4)
             .addCommand(neutralV4b)
             .addWaitCommand(.1)
             .addCommand(intakeGrab)
-            .build();
-    // Ascend Command Sequences
-    private CommandSequence primeAscent = new CommandSequence() // folds v4b down for climb and raises slides
-            .addCommand(initPos)
-            .addCommand(primeLevel1Ascent)
-            .addWaitCommand(.2)
-            .addCommand(climbV4b)
-            .build();
-    private CommandSequence ascend = new CommandSequence() // retract slides
-            .addCommand(Level1Ascent)
             .build();
 
     // Constructor to input parameter
@@ -215,13 +178,14 @@ public class Scoring extends Mechanism {
             }
 
             // Quick switch to CLIMB state
-            if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET))
+            if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET)) {
                 state = State.CLIMB;
+                mClimbSet();
+            }
 
             // When left bumper is held, intake is extended
             if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.PRIME_INTAKE)) {
                 if (state != State.INTAKE) {
-                    specimenPickUpSequence.trigger();
                     primeIntakeSequence.trigger();
                     state = State.INTAKE;
                 }
@@ -232,22 +196,30 @@ public class Scoring extends Mechanism {
 
             switch (state) {
                 case INTAKE:
-                    drive.setTp(.8); // Sets turn speed to 80%
-                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_SPECIMEN)) {
+                    drive.setTp(0.77); // Sets turn speed to 80%
+                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_ELEMENT)||GamepadStatic.isButtonPressed(gamepad2.gamepad, GamepadStatic.Input.DPAD_LEFT)) {
+                        if (transferBucket) {
+                            specimenSetSequence.trigger();
+                            transferBucket = false;
+                        }
+                        else {
+                            depositTransferSequence.trigger();
+                            transferBucket = true;
+                        }
                         state = State.TRANSFER;
-                        specimenPickUpSequence.trigger();
                     }
                     break;
 
                 case TRANSFER:
-                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.EJECT) && transferBucket) {
-                        ejectSampleSequence.trigger();
-                    } else if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_TRANSFER)) {
-                        transferBucket = true;
-                        depositTransferSequence.trigger();
-                    } else if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_SPECIMEN)) {
-                        transferBucket = false;
-                        specimenPickUpSequence.trigger();
+                    if (GamepadStatic.wasJustPressed(gamepad2, Controls.GRAB_SPECIMEN)||GamepadStatic.isButtonPressed(gamepad2.gamepad, GamepadStatic.Input.DPAD_LEFT)) {
+                        if (transferBucket) {
+                            specimenSetSequence.trigger();
+                            transferBucket = false;
+                        }
+                        else {
+                            depositTransferSequence.trigger();
+                            transferBucket = true;
+                        }
                     }
                     for (int i = 0; i < 4; i++) {
                         if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.SLIDES[i])) {
@@ -261,27 +233,24 @@ public class Scoring extends Mechanism {
                     }
                     break;
                 case SCORING:
-                    drive.setTp(.9); // Sets turn speed to 90%
+                    drive.setTp(0.77); // Sets turn speed to 80%
 
-                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_TRANSFER)) {
-
-                        depositTransferSequence.trigger();
-
+                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_ELEMENT)||GamepadStatic.isButtonPressed(gamepad2.gamepad, GamepadStatic.Input.DPAD_LEFT)) {
+                            transferBucket = false;
+                            mSpecimenPickUp();
                         state = State.TRANSFER;
-                    } else if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.GRAB_SPECIMEN)) {
-
-                        specimenPickUpSequence.trigger();
-
-                        state = State.TRANSFER;
-                    }
-                    for (int i = 0; i < 4; i++) {
-                        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.SLIDES[i])) {
-                            slidesPos = OuttakeSlides.POSITIONS[i];
-                            isBasket = i == 0 || i == 1;
-                            if (isBasket) depositSequence.trigger();
-                            else depositSpecimenSequence.trigger();
+                        break;
+                    } else {
+                        for (int i = 0; i < 4; i++) {
+                            if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.SLIDES[i])) {
+                                slidesPos = OuttakeSlides.POSITIONS[i];
+                                isBasket = i == 0 || i == 1;
+                                if (isBasket) depositSequence.trigger();
+                                else depositSpecimenSequence.trigger();
+                            }
                         }
                     }
+
                     if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.RELEASE)) {
                         if (isBasket) {
                             depositSample.trigger();
@@ -292,13 +261,15 @@ public class Scoring extends Mechanism {
                     }
                     break;
                 case CLIMB:
+                    deposit.initPos();
+                    intake.closeClaw();
+                    intake.barFold();
                     if (GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB_SET)) {
-
-                        primeAscent.trigger();
+                        mClimbSet();
                         isClimb = true;
                     } else if (isClimb && GamepadStatic.isButtonPressed(gamepad1.gamepad, Controls.CLIMB)) {
 
-                        ascend.trigger();
+                        slides.ascent();
                     }
                     for (int i = 0; i < 4; i++) {
                         if (GamepadStatic.isButtonPressed(gamepad2.gamepad, Controls.SLIDES[i])) {
@@ -315,5 +286,48 @@ public class Scoring extends Mechanism {
         deposit.goofyBasketPos();
         slides.reset();
         slides.restPos();
+    }
+
+    public void mIntakeExtend() {
+        intake.setV4B(Intake.BAR_DOWN+0.02);
+        mSpecimenPickUp();
+    }
+
+    public void mSpecimenPickUp() {
+        slides.restPos();
+        deposit.depositPos();
+        deposit.openClaw();
+    }
+
+    public void mGrabSample() {
+        slides.restPos();
+        deposit.transferPos();
+        deposit.openClaw();
+    }
+
+    public void mSpecimenSet() {
+        slides.setTarget(slidesPos);
+        intake.barNeutral();
+        deposit.specimenSetPos();
+        deposit.closeClaw();
+    }
+
+    public void mBasketSet() {
+        slides.setTarget(slidesPos);
+        intake.barNeutral();
+        deposit.goofyBasketPos();
+    }
+
+    public void mSlideRest() {
+        slides.intakePos();
+        deposit.openClaw();
+        deposit.goofyBasketPos();
+    }
+
+    public void mClimbSet() {
+        slides.primeAscent();
+        deposit.initPos();
+        intake.closeClaw();
+        intake.barFold();
     }
 }

@@ -2,19 +2,17 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.arcrobotics.ftclib.hardware.SensorDistance;
-import com.arcrobotics.ftclib.hardware.SensorDistanceEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.FoozFunctions.SimpleMotionProfile;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
@@ -33,23 +31,25 @@ public class OuttakeSlides extends Mechanism {
 
     public Rev2mDistanceSensor resetSensor;
 
+    SimpleMotionProfile hangThing = new SimpleMotionProfile(0.03, 0.9, 5, 0);
+
     //Use voltage sensor
     public VoltageSensor voltage;
-    Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    Timing.Timer time = new Timing.Timer(2500, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
+    private final double p = 0.02, i = 0, d = 0.0004, f = 0;
 
     // Positions for slides
-    public static int REST_POS = 95;
-    public static int INTAKE_POS = 10;
+    public static int REST_POS = 75;
+    public static int INTAKE_POS = 0;
     public static int LOW_BASKET = 2000; //0
-    public static int HIGH_BASKET = 3800; //1
-    public static int LOW_CHAMBER_SET = 400; //2
-    public static int HIGH_CHAMBER_SET = 1450; //3
-    public static int CHAMBER_SCORED = 500;
+    public static int HIGH_BASKET = 3750; //1
+    public static int LOW_CHAMBER_SET = 350; //2
+    public static int HIGH_CHAMBER_SET = 1350; //3
+    public static int CHAMBER_SCORED = 300;
     public static int LEVEL_1_ASCENT = 2000;
-    public static int HANG = -800;
+    public static int HANG = 0;
     public static int ABIT = 100;
 
     public static double target = 0;
@@ -82,28 +82,19 @@ public class OuttakeSlides extends Mechanism {
     public void downUntil() {
         reset = false;
         resetSensor.getDistance(DistanceUnit.CM);
-        setSlidePower(-.3);
+        setSlidePower(-.4);
         time.start();
-        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
+        while (voltage.getVoltage() > 10 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
         }
         reset();
         intakePos();
         reset = true;
     }
 
-    public void downUntil(OpMode mode, FoozPad gp, HardwareMap hwMap) {
-        resetSensor.getDistance(DistanceUnit.CM);
-        Drivetrain dt = new Drivetrain(mode);
-        dt.init(hwMap);
-        gp.update();
-        setSlidePower(-.4);
-        time.start();
-        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.4) { //12V is the minimum required to work fully
-            gp.update();
-            dt.loop(gp);
+    public void hang() {
+        while (resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
+            setSlidePower(hangThing.calculate(slideR.getCurrentPosition()));
         }
-        reset();
-        restPos();
     }
 
     public void setTarget(double target) {
@@ -197,6 +188,8 @@ public class OuttakeSlides extends Mechanism {
             restPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)) {
             downUntil();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
+            hang();
         }
     }
 }

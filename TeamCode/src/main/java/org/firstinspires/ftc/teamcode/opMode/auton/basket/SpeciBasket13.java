@@ -47,31 +47,23 @@ public class SpeciBasket13 extends OpMode {
     private Command parkCommand = () -> follower.followPath(park);
     private final Command busyTrue = () -> busy = true;
     private final Command busyFalse = () -> busy = false;
-    private final Command highSlideError = () -> SLIDE_ERROR = 100;
-    private final Command lowSlideError = () -> SLIDE_ERROR = 10;
     private final Command FORCE_STOP = this::requestOpModeStop;
 
     // Slide Commands
-    private final Command slidesIntake = () -> slides.intakePos();
-    private final Command intakeRest = () -> slides.setTarget(OuttakeSlides.INTAKE_POS + 20);
     private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
-    private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET - 100);
-    private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.goofyBasketPos();};
     private final Command lockSpecimen = () -> slides.lock();
     // Deposit Commands
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
-    private final Command specimenPos = () -> deposit.specimenSetPos();
     private final Command specimenScorePos = () -> deposit.specimenScorePos();
     private final Command initPos = () -> deposit.initPos();
-    private final Command basketSet = () -> deposit.goofyBasketPos();
+    private final Command basketSet = this::mBasketSet;
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
     // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
-    private final Command dropV4b = () -> intake.autonDown();
     private final Command neutralV4b = () -> intake.barNeutral();
     private final Command transferV4b = () -> intake.barTransfer();
 
@@ -83,18 +75,15 @@ public class SpeciBasket13 extends OpMode {
             .build();
 
     private CommandSequence move1 = new CommandSequence()
-            .addCommand(highSpecimen)
-            .addCommand(outtakeGrab)
-            .addCommand(specimenPos)
+            .addCommand(this::mSpecimenSet)
             .addCommand(specimenCommand)
             .build();
     private CommandSequence scoreSpecimen = new CommandSequence()
             .addCommand(busyTrue)
-            .addWaitCommand(0.1)
             .addCommand(specimenScorePos)
-            .addWaitCommand(.4)
+            .addWaitCommand(.2)
             .addCommand(lockSpecimen)
-            .addWaitCommand(0.8)
+            .addWaitCommand(0.7)
             .addCommand(outtakeRelease)
             .addCommand(busyFalse)
             .build();
@@ -102,26 +91,18 @@ public class SpeciBasket13 extends OpMode {
             .addCommand(busyTrue)
             .addCommand(sample1Command)
             .addWaitCommand(.3)
-            .addCommand(basketSet)
-            .addCommand(outtakeGrab)
+            .addCommand(this::mSlideRest)
             .addWaitCommand(.3)
-            .addCommand(slideRest)
-            .addWaitCommand(.1)
-            .addCommand(dropV4b)
-            .addWaitCommand(.45)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.3)
             .addCommand(busyFalse)
             .build();
     private CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(intakeRest)
-            .addWaitCommand(0.1)
             .addCommand(intakeGrab)
-            .addWaitCommand(0.5)
+            .addWaitCommand(0.4)
             .addCommand(transferV4b)
-            .addCommand(outtakeRelease)
-            .addCommand(outtakeRelease)
             .addWaitCommand(1)
             .addCommand(intakeOpen)
             .addWaitCommand(.2)
@@ -129,21 +110,14 @@ public class SpeciBasket13 extends OpMode {
             .addWaitCommand(.3)
             .addCommand(grabTransfer)
             .addCommand(intakeGrab)
-            .addWaitCommand(.1)
-            .addCommand(slidesIntake)
-            .addWaitCommand(.45)
+            .addWaitCommand(.4)
             .addCommand(outtakeGrab)
-            .addCommand(highSlideError)
-            .addCommand(outtakeGrab)
-            .addWaitCommand(.1)
+            .addWaitCommand(0.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move3 = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(outtakeGrab)
             .addCommand(basketCommand)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
             .addWaitCommand(.1)
             .addCommand(busyFalse)
@@ -151,28 +125,25 @@ public class SpeciBasket13 extends OpMode {
     private CommandSequence scoreBasket = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basketPos)
-            .addWaitCommand(.1)
+            .addWaitCommand(0.1)
             .addCommand(outtakeRelease)
             .addCommand(outtakeRelease)
-            .addWaitCommand(.3)
-            .addCommand(basketSet)
+            .addWaitCommand(0.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move4 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample2Command)
-            .addCommand(dropV4b)
-            .addWaitCommand(.5)
-            .addCommand(slideRest)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(.3)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move5 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basket2Command)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
             .addWaitCommand(.1)
             .addCommand(busyFalse)
@@ -180,37 +151,30 @@ public class SpeciBasket13 extends OpMode {
     private CommandSequence move6 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample3Command)
-            .addCommand(dropV4b)
-            .addWaitCommand(.5)
-            .addCommand(slideRest)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(.3)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move7 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basket3Command)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
             .addWaitCommand(.1)
             .addCommand(busyFalse)
             .build();
-    private CommandSequence move8 = new CommandSequence()
+    private CommandSequence holdEnd = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(parkCommand)
-            .addWaitCommand(1)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(.3)
+            .addCommand(transferV4b)
             .addCommand(slideAscend)
+            .addWaitCommand(.3)
             .addCommand(basketPos)
-            .addWaitCommand(.1)
-            .addCommand(busyFalse)
-            .build();
-    private CommandSequence holdEnd = new CommandSequence()
-            .addCommand(lowSlideError)
-            .addCommand(busyTrue)
-            .addCommand(basketPos)
-            .addWaitCommand(.5)
-            .addCommand(busyTrue)
+            .addWaitCommand(1.5)
             .addCommand(FORCE_STOP)
             .build();
 
@@ -229,7 +193,6 @@ public class SpeciBasket13 extends OpMode {
             .addCommandSequence(transferSequence)
             .addCommandSequence(move7)
             .addCommandSequence(scoreBasket)
-            .addCommandSequence(move8)
             .addCommandSequence(holdEnd)
             .build();
 
@@ -246,32 +209,32 @@ public class SpeciBasket13 extends OpMode {
 
         specimen = new Path(new BezierLine(
                 new Point(8.1, 80, Point.CARTESIAN),
-                new Point(36.950, 85.000, Point.CARTESIAN))); //old (and working): new Point(36.950, 82.000, Point.CARTESIAN)));
+                new Point(36.850, 83.000, Point.CARTESIAN))); //old (and working): new Point(36.950, 82.000, Point.CARTESIAN)));
         specimen.setConstantHeadingInterpolation(Math.toRadians(180));
         sample1 = new Path(new BezierCurve(
-                new Point(36.950, 85.000, Point.CARTESIAN),
-                new Point(24.138, 91.927, Point.CARTESIAN),
-                new Point(46.3, 120, Point.CARTESIAN)));
+                new Point(36.950, 83.000, Point.CARTESIAN),
+                new Point(20, 91.927, Point.CARTESIAN),
+                new Point(46, 119, Point.CARTESIAN)));
         sample1.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
         basket1 = new Path(new BezierLine(
-                new Point(46.3, 120, Point.CARTESIAN),
+                new Point(46, 119, Point.CARTESIAN),
                 new Point(29, 122, Point.CARTESIAN)));
         basket1.setConstantHeadingInterpolation(Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
                 new Point(29, 122, Point.CARTESIAN),
-                new Point(46.5, 130, Point.CARTESIAN)));
+                new Point(47.6, 130, Point.CARTESIAN)));
         sample2.setConstantHeadingInterpolation(Math.toRadians(0));
         basket2 = new Path(new BezierLine(
-                new Point(46, 130, Point.CARTESIAN),
-                new Point(28, 120.5, Point.CARTESIAN)));
+                new Point(47.6, 130, Point.CARTESIAN),
+                new Point(28, 121.5, Point.CARTESIAN)));
         basket2.setConstantHeadingInterpolation(Math.toRadians(-45));
         sample3 = new Path(new BezierCurve(
-                new Point(28, 121.5, Point.CARTESIAN),
-                new Point(37, 115, Point.CARTESIAN),
-                new Point(47.5, 136.3, Point.CARTESIAN)));
+                new Point(28, 122.5, Point.CARTESIAN),
+                new Point(37, 110, Point.CARTESIAN),
+                new Point(48.5, 135, Point.CARTESIAN)));
         sample3.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(30));
         basket3 = new Path(new BezierLine(
-                new Point(47.5, 136.3, Point.CARTESIAN),
+                new Point(48.5, 135, Point.CARTESIAN),
                 new Point(29, 122, Point.CARTESIAN)));
         basket3.setConstantHeadingInterpolation(Math.toRadians(-45));
         park = new Path(new BezierCurve(
@@ -317,4 +280,29 @@ public class SpeciBasket13 extends OpMode {
         telemetry.addData("current error: ", slides.getError());
         telemetry.addData("current pos: ", follower.getPose());
     }
+
+    public void mIntakeExtend() {
+        intake.barDown();
+        mSlideRest();
+    }
+
+    public void mBasketSet() {
+        slides.setTarget(OuttakeSlides.HIGH_BASKET);
+        intake.barNeutral();
+        deposit.goofyBasketPos();
+    }
+
+    public void mSpecimenSet() {
+        slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET);
+        intake.barNeutral();
+        deposit.specimenSetPos();
+        deposit.closeClaw();
+    }
+
+    public void mSlideRest() {
+        slides.intakePos();
+        deposit.openClaw();
+        deposit.goofyBasketPos();
+    }
+
 }

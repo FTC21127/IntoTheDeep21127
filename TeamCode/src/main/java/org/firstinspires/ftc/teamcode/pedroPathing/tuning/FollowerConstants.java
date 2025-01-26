@@ -53,13 +53,19 @@ public class FollowerConstants {
     // Feed forward constant added on to the translational PIDF
     public static double translationalPIDFFeedForward = 0.015;
 
-
     // Heading error PIDF coefficients
     public static CustomPIDFCoefficients headingPIDFCoefficients = new CustomPIDFCoefficients(
             2.2,
             0,
             0.3,
             0);
+
+//    // Heading error PIDF coefficients
+//    public static CustomPIDFCoefficients headingPIDFCoefficients = new CustomPIDFCoefficients(
+//            1.2,
+//            0,
+//            0.02,
+//            0);
 
     // Feed forward constant added on to the heading PIDF
     public static double headingPIDFFeedForward = 0.01;

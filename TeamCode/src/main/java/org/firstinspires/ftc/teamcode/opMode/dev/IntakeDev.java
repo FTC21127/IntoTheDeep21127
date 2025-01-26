@@ -48,13 +48,13 @@ public class IntakeDev extends OpMode {
     @Override
     public void loop() {
         foozPad.update();
-//        intake.loop(foozPad);
-        if (GamepadStatic.isButtonPressed(foozPad.gamepad, GamepadStatic.Input.LEFT_BUMPER)){
-            if (!isIntake) intakeSet.run();
-            isIntake = true;
-        } else if (isIntake){
-            grabSample.trigger();
-            isIntake = false;
-        }
+        intake.loop(foozPad);
+//        if (GamepadStatic.isButtonPressed(foozPad.gamepad, GamepadStatic.Input.LEFT_BUMPER)){
+//            if (!isIntake) intakeSet.run();
+//            isIntake = true;
+//        } else if (isIntake){
+//            grabSample.trigger();
+//            isIntake = false;
+//        }
     }
 }

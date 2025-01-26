@@ -41,35 +41,32 @@ public class Basket04 extends OpMode {
     private Command basketCommand = () -> follower.followPath(basket1, true);
     private Command sample2Command = () -> follower.followPath(sample2, true);
     private Command basket2Command = () -> follower.followPath(basket2, true);
-    private Command sample3Command = () -> {follower.followPath(sample3, true);follower.setMaxPower(.7);};
-    private Command basket3Command = () -> {follower.followPath(basket3, true);follower.setMaxPower(1);};
+    private Command sample3Command = () -> {
+        follower.followPath(sample3, true);
+        follower.setMaxPower(.7);
+    };
+    private Command basket3Command = () -> {
+        follower.followPath(basket3, true);
+        follower.setMaxPower(1);
+    };
     private Command parkCommand = () -> follower.followPath(park);
     private final Command busyTrue = () -> busy = true;
     private final Command busyFalse = () -> busy = false;
-    private final Command highSlideError = () -> SLIDE_ERROR = 50;
-    private final Command lowSlideError = () -> SLIDE_ERROR = 10;
-    private final Command FORCE_STOP = this::requestOpModeStop;
+    private final Command basketSet = this::mBasketSet;
 
-    // Slide Commands
-    private final Command slidesIntake = () -> slides.intakePos();
-    private final Command intakeRest = () -> slides.setTarget(OuttakeSlides.INTAKE_POS + 20);
     private final Command slideAscend = () -> slides.setTarget(OuttakeSlides.REST_POS + 1200);
-    private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
-    private final Command highBasket = () -> {slides.setTarget(OuttakeSlides.HIGH_BASKET); deposit.goofyBasketPos();};
+    private final Command slideRest = () -> slides.restPos();
     // Deposit Commands
     private final Command grabTransfer = () -> deposit.transferPos();
     private final Command basketPos = () -> deposit.basketPos();
-    private final Command specimenPos = () -> deposit.specimenSetPos();
-    private final Command specimenScorePos = () -> deposit.specimenScorePos();
     private final Command initPos = () -> deposit.initPos();
-    private final Command basketSet = () -> deposit.goofyBasketPos();
     private final Command outtakeRelease = () -> deposit.openClaw();
     private final Command outtakeGrab = () -> deposit.closeClaw();
     // Intake Commands
     private final Command intakeGrab = () -> intake.closeClaw();
     private final Command intakeOpen = () -> intake.openClaw();
-    private final Command dropV4b = () -> intake.autonDown();
     private final Command neutralV4b = () -> intake.barNeutral();
+    private final Command autonV4B = () -> intake.barPickUp();
     private final Command transferV4b = () -> intake.barTransfer();
 
     private CommandSequence initSequence = new CommandSequence()
@@ -80,40 +77,32 @@ public class Basket04 extends OpMode {
             .build();
 
     private CommandSequence move1 = new CommandSequence()
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
             .addCommand(preloadCommand)
             .build();
     private CommandSequence scoreBasket = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(basketPos)
+            .addWaitCommand(0.1)
+            .addCommand(outtakeRelease)
+            .addCommand(outtakeRelease)
             .addWaitCommand(.1)
-            .addCommand(outtakeRelease)
-            .addCommand(outtakeRelease)
-            .addWaitCommand(.3)
-            .addCommand(basketSet)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move2 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample1Command)
-            .addCommand(dropV4b)
-            .addWaitCommand(.5)
-            .addCommand(slideRest)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.3)
             .addCommand(busyFalse)
             .build();
     private CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(intakeRest)
-            .addWaitCommand(0.1)
             .addCommand(intakeGrab)
-            .addWaitCommand(0.5)
+            .addCommand(autonV4B)
+            .addWaitCommand(0.4)
             .addCommand(transferV4b)
-            .addCommand(outtakeRelease)
-            .addCommand(outtakeRelease)
             .addWaitCommand(1)
             .addCommand(intakeOpen)
             .addWaitCommand(.2)
@@ -121,79 +110,76 @@ public class Basket04 extends OpMode {
             .addWaitCommand(.3)
             .addCommand(grabTransfer)
             .addCommand(intakeGrab)
-            .addWaitCommand(.1)
-            .addCommand(slidesIntake)
-            .addWaitCommand(.45)
+            .addWaitCommand(.5)
             .addCommand(outtakeGrab)
-            .addCommand(highSlideError)
             .addCommand(outtakeGrab)
-            .addWaitCommand(.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move3 = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(outtakeGrab)
+            .addWaitCommand(0.1)
             .addCommand(basketCommand)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
-            .addWaitCommand(.1)
+            .addWaitCommand(0.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move4 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample2Command)
-            .addCommand(dropV4b)
-            .addWaitCommand(.5)
-            .addCommand(slideRest)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move5 = new CommandSequence()
             .addCommand(busyTrue)
+            .addWaitCommand(0.1)
             .addCommand(basket2Command)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
             .addCommand(basketSet)
-            .addWaitCommand(.1)
+            .addWaitCommand(0.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move6 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(sample3Command)
-            .addCommand(dropV4b)
-            .addWaitCommand(.5)
-            .addCommand(slideRest)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(.2)
             .addCommand(intakeOpen)
-            .addWaitCommand(.5)
             .addCommand(busyFalse)
             .build();
     private CommandSequence move7 = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(basket3Command)
-            .addCommand(highSlideError)
-            .addCommand(highBasket)
-            .addCommand(basketSet)
-            .addWaitCommand(.1)
-            .addCommand(busyFalse)
-            .build();
-    private CommandSequence move8 = new CommandSequence()
-            .addCommand(busyTrue)
-            .addCommand(parkCommand)
+            .addCommand(intakeGrab)
+            .addCommand(autonV4B)
+            .addWaitCommand(0.3)
+            .addCommand(transferV4b)
             .addWaitCommand(1)
-            .addCommand(slideAscend)
-            .addCommand(basketPos)
-            .addWaitCommand(.1)
+            .addCommand(intakeOpen)
+            .addWaitCommand(.2)
+            .addCommand(neutralV4b)
+            .addWaitCommand(.3)
+            .addCommand(grabTransfer)
+            .addCommand(intakeGrab)
+            .addCommand(basket3Command)
+            .addWaitCommand(.5)
+            .addCommand(outtakeGrab)
+            .addWaitCommand(.2)
+            .addCommand(basketSet)
+            .addWaitCommand(0.1)
             .addCommand(busyFalse)
             .build();
     private CommandSequence holdEnd = new CommandSequence()
-            .addCommand(lowSlideError)
             .addCommand(busyTrue)
+            .addCommand(parkCommand)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(.3)
+            .addCommand(transferV4b)
+            .addCommand(slideAscend)
+            .addWaitCommand(.3)
             .addCommand(basketPos)
-            .addWaitCommand(.5)
             .addCommand(busyTrue)
-            .addCommand(FORCE_STOP)
+            .addWaitCommand(2)
+            .addCommand(this::requestOpModeStop)
             .build();
 
     private AutoCommandMachine commandMachine = new AutoCommandMachine()
@@ -208,10 +194,8 @@ public class Basket04 extends OpMode {
             .addCommandSequence(move5)
             .addCommandSequence(scoreBasket)
             .addCommandSequence(move6)
-            .addCommandSequence(transferSequence)
             .addCommandSequence(move7)
             .addCommandSequence(scoreBasket)
-            .addCommandSequence(move8)
             .addCommandSequence(holdEnd)
             .build();
 
@@ -228,37 +212,37 @@ public class Basket04 extends OpMode {
 
         preload = new Path(new BezierLine(
                 new Point(6.9, 102, Point.CARTESIAN),
-                new Point(18, 127, Point.CARTESIAN)));
+                new Point(20, 127, Point.CARTESIAN)));
         preload.setLinearHeadingInterpolation(Math.toRadians(-90), Math.toRadians(-50));
         sample1 = new Path(new BezierLine(
-                new Point(18, 126, Point.CARTESIAN),
+                new Point(20, 126, Point.CARTESIAN),
                 new Point(38.5, 126.5, Point.CARTESIAN)));
         sample1.setLinearHeadingInterpolation(Math.toRadians(-50), Math.toRadians(-10));
         basket1 = new Path(new BezierLine(
                 new Point(38.5, 126.5, Point.CARTESIAN),
-                new Point(20, 126, Point.CARTESIAN)));
+                new Point(21., 126.5, Point.CARTESIAN)));
         basket1.setLinearHeadingInterpolation(Math.toRadians(-10), Math.toRadians(-45));
         sample2 = new Path(new BezierLine(
-                new Point(20, 126, Point.CARTESIAN),
-                new Point(39, 134, Point.CARTESIAN)));
+                new Point(21.5, 126.5, Point.CARTESIAN),
+                new Point(39, 134.7, Point.CARTESIAN)));
         sample2.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0));
         basket2 = new Path(new BezierLine(
-                new Point(39, 134, Point.CARTESIAN),
-                new Point(20, 126, Point.CARTESIAN)));
+                new Point(39, 134.7, Point.CARTESIAN),
+                new Point(22.5, 128, Point.CARTESIAN)));
         basket2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45));
         sample3 = new Path(new BezierCurve(
-                new Point(20, 126, Point.CARTESIAN),
+                new Point(21, 127, Point.CARTESIAN),
                 new Point(34, 120, Point.CARTESIAN),
                 new Point(40, 140, Point.CARTESIAN)));
         sample3.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(30));
         basket3 = new Path(new BezierLine(
                 new Point(40, 140, Point.CARTESIAN),
-                new Point(20, 127, Point.CARTESIAN)));
+                new Point(22, 128, Point.CARTESIAN)));
         basket3.setLinearHeadingInterpolation(Math.toRadians(30), Math.toRadians(-45));
         park = new Path(new BezierCurve(
-                new Point(20, 127, Point.CARTESIAN),
+                new Point(21, 127, Point.CARTESIAN),
                 new Point(68, 140, Point.CARTESIAN),
-                new Point(70, 104 , Point.CARTESIAN)));
+                new Point(66, 103, Point.CARTESIAN)));
         park.setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90));
 
         initSequence.trigger();
@@ -267,7 +251,7 @@ public class Basket04 extends OpMode {
     @Override
     public void init_loop() {
         slides.update();
-        if (gamepad1.cross){
+        if (gamepad1.cross) {
             outtakeGrab.run();
         }
     }
@@ -279,7 +263,7 @@ public class Basket04 extends OpMode {
         slides.update();
         follower.update();
         timer.start();
-        while (!timer.done()){
+        while (!timer.done()) {
             follower.update();
             slides.update();
         }
@@ -291,11 +275,28 @@ public class Basket04 extends OpMode {
         commandMachine.run(busy2 || busy);
         follower.update();
         slides.update();
-        busy2 = follower.isBusy() || Math.abs(slides.getError())>SLIDE_ERROR;
+        busy2 = follower.isBusy() || Math.abs(slides.getError()) > SLIDE_ERROR;
         telemetry.addData("is busy", busy);
         telemetry.addData("follower busy? ", busy2);
         telemetry.addData("current command: ", commandMachine.getCurrentCommandIndex());
         telemetry.addData("current error: ", slides.getError());
         telemetry.addData("current pos: ", follower.getPose());
+    }
+
+    public void mIntakeExtend() {
+        intake.autonDown();
+        mSlideRest();
+    }
+
+    public void mBasketSet() {
+        slides.setTarget(OuttakeSlides.HIGH_BASKET);
+        intake.barNeutral();
+        deposit.goofyBasketPos();
+    }
+
+    public void mSlideRest() {
+        slides.setTarget(OuttakeSlides.INTAKE_POS+10);
+        deposit.openClaw();
+        deposit.goofyBasketPos();
     }
 }

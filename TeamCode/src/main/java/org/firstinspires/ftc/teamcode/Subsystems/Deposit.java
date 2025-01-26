@@ -37,7 +37,7 @@ public class Deposit extends Mechanism {
 //    public static double BASKET_POS = 0.54;
 //    public static double SPECIMEN_POS = 0.47;
 //    public static double SPECIMEN_SCORE_POS = 0.27;
-    public static double GRAB = 0.494;
+    public static double GRAB = 0.497;
     public static double SHIFT = 0.467;
     public static double RELEASE = .3;
 

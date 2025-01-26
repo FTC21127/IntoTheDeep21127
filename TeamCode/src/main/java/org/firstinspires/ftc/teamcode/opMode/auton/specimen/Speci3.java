@@ -38,7 +38,7 @@ public class Speci3 extends OpMode {
     private final Command specimen2Command = () -> {follower.followPath(scoreSpeci2, false);follower.setMaxPower(1);};
     private final Command specimen3Command = () -> follower.followPath(scoreSpeci3, false);
     private final Command alignSampleCommand = () -> follower.followPath(alignSample, true);
-    private final Command ejectCommand = () -> {follower.followPath(yeetSample, true);follower.setMaxPower(1);};
+    private final Command yeetSampleCommand = () -> follower.followPath(yeetSample, true);
     private final Command pickupSpecimen2Command = () -> follower.followPath(pickupSpeci2, true);
     private final Command pickupSpecimen3Command = () -> follower.followPath(pickupSpeci3, true);
     private final Command alignSpecimen3Command = () -> follower.followPath(alignSpeci3, true);
@@ -52,7 +52,7 @@ public class Speci3 extends OpMode {
     private final Command slidesIntake = slides::intakePos;
     private final Command slideRest = () -> slides.setTarget(OuttakeSlides.REST_POS + 200);
     private final Command slideSpecimen = () -> slides.setTarget(OuttakeSlides.REST_POS);
-    private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET - 115);
+    private final Command highSpecimen = () -> slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET);
     private final Command lockSpecimen = slides::lock;
     // Deposit Commands
     private final Command depositPos = deposit::depositPos;
@@ -62,6 +62,7 @@ public class Speci3 extends OpMode {
     private final Command outtakeRelease = deposit::openClaw;
     private final Command outtakeGrab = deposit::closeClaw;
     private final Command clawShift = deposit::clawShift;
+    private final Command initPos = deposit::initPos;
     // Intake Commands
     private final Command intakeGrab = intake::closeClaw;
     private final Command intakeOpen = intake::openClaw;
@@ -72,14 +73,12 @@ public class Speci3 extends OpMode {
 
     private final CommandSequence initSequence = new CommandSequence()
             .addCommand(intakeGrab)
-            .addCommand(grabTransfer)
+            .addCommand(initPos)
             .addCommand(neutralV4b)
             .addCommand(slideRest)
             .build();
     private final CommandSequence specimen1 = new CommandSequence()
-            .addCommand(highSpecimen)
-            .addCommand(outtakeGrab)
-            .addCommand(specimenPos)
+            .addCommand(this::mSpecimenSet)
             .addCommand(preloadCommand)
             .addWaitCommand(.2)
             .build();
@@ -97,54 +96,33 @@ public class Speci3 extends OpMode {
             .addCommand(busyFalse)
             .build();
     private final CommandSequence samplePickUp = new CommandSequence()
-            .addCommand(alignSampleCommand)
-            .addWaitCommand(.3)
-            .addCommand(autonV4b)
-            .addCommand(depositPos)
-            .addWaitCommand(.4)
-            .addCommand(slideSpecimen)
-            .addCommand(intakeOpen)
-            .build();
-    private final CommandSequence transferSequence = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(slidesIntake)
-            .addCommand(pickUpV4b)
-            .addCommand(intakeGrab)
-            .addWaitCommand(0.4)
-            .addCommand(transferV4b)
-            .addCommand(outtakeRelease)
-            .addCommand(ejectCommand)
-            .addWaitCommand(.9)
-            .addCommand(intakeOpen)
-            .addWaitCommand(.2)
-            .addCommand(neutralV4b)
-            .addWaitCommand(.3)
-            .addCommand(grabTransfer)
-            .addCommand(intakeGrab)
+            .addCommand(alignSampleCommand)
             .addWaitCommand(.4)
-            .addCommand(outtakeGrab)
-            .addWaitCommand(.2)
-            .addCommand(slideSpecimen)
+            .addCommand(this::mSlideRest)
+            .addCommand(busyFalse)
+            .build();
+    private final CommandSequence push = new CommandSequence()
+            .addCommand(busyTrue)
+            .addCommand(yeetSampleCommand)
+            .addWaitCommand(0.3)
             .addCommand(busyFalse)
             .build();
     private final CommandSequence alignSpecimen2  = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(depositPos)
-            .addWaitCommand(.3)
+            .addWaitCommand(0.5)
+            .addCommand(outtakeRelease)
             .addCommand(pickupSpecimen2Command)
             .addCommand(outtakeRelease)
+            .addWaitCommand(0.4)
             .addCommand(busyFalse)
             .build();
     private final CommandSequence speci2 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(clawShift)
             .addWaitCommand(.2)
-            .addCommand(specimenPos)
-            .addWaitCommand(.1)
             .addCommand(specimen2Command)
-            .addCommand(highSpecimen)
-            .addCommand(highSpecimen)
-            .addCommand(specimenPos)
+            .addCommand(this::mSpecimenSet)
             .addWaitCommand(.5)
             .addCommand(outtakeGrab)
             .addCommand(busyFalse)
@@ -152,41 +130,35 @@ public class Speci3 extends OpMode {
     private final CommandSequence alignSpecimen3  = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(alignSpecimen3Command)
-            .addCommand(depositPos)
-            .addWaitCommand(.3)
-            .addCommand(slideSpecimen)
+            .addWaitCommand(.4)
+            .addCommand(this::mSlideRest)
             .addCommand(busyFalse)
             .build();
     private final CommandSequence pickUpSpecimen3  = new CommandSequence()
             .addCommand(busyTrue)
-            .addCommand(pickupSpecimen3Command)
-            .addWaitCommand(.3)
-            .addCommand(slideSpecimen) // just in case
-            .addCommand(depositPos)
             .addCommand(outtakeRelease)
+            .addWaitCommand(.6)
+            .addCommand(pickupSpecimen3Command)
+            .addWaitCommand(.1)
             .addCommand(busyFalse)
             .build();
     private final CommandSequence speci3 = new CommandSequence()
             .addCommand(busyTrue)
             .addCommand(clawShift)
-            .addWaitCommand(.2)
-            .addCommand(specimenPos)
+            .addWaitCommand(.1)
+            .addCommand(this::mSpecimenSet)
             .addWaitCommand(.1)
             .addCommand(specimen3Command)
-            .addCommand(highSpecimen)
-            .addCommand(highSpecimen)
-            .addCommand(specimenPos)
             .addWaitCommand(.5)
             .addCommand(outtakeGrab)
-            .addWaitCommand(2)
-            .addCommand(forceQuit)
             .addCommand(busyFalse)
             .build();
 
     private final CommandSequence holdEnd = new CommandSequence()
-            .addCommand(parkCommand)
-            .addCommand(slideRest)
             .addCommand(busyTrue)
+            .addCommand(parkCommand)
+            .addWaitCommand(.4)
+            .addCommand(this::mSlideRest)
             .addCommand(busyTrue)
             .build();
 
@@ -194,7 +166,7 @@ public class Speci3 extends OpMode {
             .addCommandSequence(specimen1)
             .addCommandSequence(scoreSpecimen)
             .addCommandSequence(samplePickUp)
-            .addCommandSequence(transferSequence)
+            .addCommandSequence(push)
             .addCommandSequence(alignSpecimen2)
             .addCommandSequence(speci2)
             .addCommandSequence(scoreSpecimen)
@@ -217,54 +189,55 @@ public class Speci3 extends OpMode {
 
         preload = new Path(new BezierLine(
                 new Point(8.100, 64.000, Point.CARTESIAN),
-                new Point(37.00, 60.000, Point.CARTESIAN)));
+                new Point(37.00, 62.000, Point.CARTESIAN)));
         preload.setConstantHeadingInterpolation(Math.toRadians(180));
 
         alignSample = new Path(new BezierCurve(
-                new Point(37.00, 60.000, Point.CARTESIAN),
-                new Point(28.000, 58.000, Point.CARTESIAN),
-                new Point(45.50, 25.00, Point.CARTESIAN)));
-        alignSample.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(-20));
+                new Point(37.000, 62.000, Point.CARTESIAN),
+                new Point(10.995, 35.394, Point.CARTESIAN),
+                new Point(72, 26, Point.CARTESIAN),
+                new Point(68.000, 22.000, Point.CARTESIAN)));
+        alignSample.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
 
         yeetSample = new Path(new BezierLine(
-                new Point(45.50, 25.00, Point.CARTESIAN),
-                new Point(40.000, 30.000, Point.CARTESIAN)));
-        yeetSample.setLinearHeadingInterpolation(Math.toRadians(-20), Math.toRadians(0));
+                new Point(68.000, 22.000, Point.CARTESIAN),
+                new Point(34.000, 20.000, Point.CARTESIAN)));
+        yeetSample.setConstantHeadingInterpolation(Math.toRadians(0));
 
         pickupSpeci2 = new Path(new BezierLine(
-                new Point(40.000, 30.000, Point.CARTESIAN),
-                new Point(26.000, 30.000, Point.CARTESIAN)));
+                new Point(34.000, 20.00, Point.CARTESIAN),
+                new Point(25.500, 20.000, Point.CARTESIAN)));
         pickupSpeci2.setConstantHeadingInterpolation(Math.toRadians(0));
 
         scoreSpeci2 = new Path(new BezierCurve(
-                new Point(26.000, 30.000, Point.CARTESIAN),
+                new Point(25.500, 20.000, Point.CARTESIAN),
                 new Point(10.000, 40.000, Point.CARTESIAN),
                 new Point(20.000, 75.000, Point.CARTESIAN),
-                new Point(38.000, 66.000, Point.CARTESIAN)));
+                new Point(38.000, 64.000, Point.CARTESIAN)));
         scoreSpeci2.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
 
         alignSpeci3 = new Path(new BezierCurve(
-                new Point(38.000, 66.000, Point.CARTESIAN),
+                new Point(38.000, 64.000, Point.CARTESIAN),
                 new Point(24.000, 50.000, Point.CARTESIAN),
                 new Point(30.000, 29.000, Point.CARTESIAN)));
         alignSpeci3.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
 
         pickupSpeci3 = new Path(new BezierLine(
                 new Point(30.000, 29.000, Point.CARTESIAN),
-                new Point(26.000, 29.000, Point.CARTESIAN)));
+                new Point(25.700, 29.000, Point.CARTESIAN)));
         pickupSpeci3.setConstantHeadingInterpolation(Math.toRadians(0));
 
         scoreSpeci3 = new Path(new BezierCurve(
-                new Point(26.000, 29.000, Point.CARTESIAN),
+                new Point(25.700, 29.000, Point.CARTESIAN),
                 new Point(10.000, 40.000, Point.CARTESIAN),
                 new Point(20.000, 75.000, Point.CARTESIAN),
-                new Point(38.000, 69.000, Point.CARTESIAN)));
+                new Point(38.000, 65.000, Point.CARTESIAN)));
         scoreSpeci3.setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180));
 
         park = new Path(new BezierCurve(
-                new Point(38.000, 69.000, Point.CARTESIAN),
-                new Point(10.000, 35.000, Point.CARTESIAN),
-                new Point(28.000, 15.000, Point.CARTESIAN)));
+                new Point(38.000, 65.000, Point.CARTESIAN),
+                new Point(20.000, 35.000, Point.CARTESIAN),
+                new Point(27.000, 20.000, Point.CARTESIAN)));
         park.setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0));
 
         initSequence.trigger();
@@ -304,5 +277,18 @@ public class Speci3 extends OpMode {
         telemetry.addData("current error: ", slides.getError());
         telemetry.addData("current pos: ", follower.getPose().getX());
         telemetry.addData("Current Path: ", follower.getCurrentPath());
+    }
+
+    public void mSpecimenSet() {
+        slides.setTarget(OuttakeSlides.HIGH_CHAMBER_SET);
+        intake.barNeutral();
+        deposit.specimenSetPos();
+        deposit.clawShift();
+    }
+
+    public void mSlideRest() {
+        slides.setTarget(OuttakeSlides.REST_POS);
+        deposit.openClaw();
+        deposit.depositPos();
     }
 }
