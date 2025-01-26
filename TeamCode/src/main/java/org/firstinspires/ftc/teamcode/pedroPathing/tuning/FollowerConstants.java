@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomFilteredPIDFCoefficients;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.CustomPIDFCoefficients;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.KalmanFilterParameters;
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/4/2024
  */
+@Disabled
 @Config
 public class FollowerConstants {
 
