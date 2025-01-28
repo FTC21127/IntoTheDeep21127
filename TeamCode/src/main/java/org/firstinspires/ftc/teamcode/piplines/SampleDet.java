@@ -6,7 +6,6 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class SampleDet extends OpenCvPipeline {
