@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
 import org.firstinspires.ftc.teamcode.opMode.auton.utils.Colors;
-import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsSemis;
 
 public class Scoring extends Mechanism {
 
@@ -37,7 +37,6 @@ public class Scoring extends Mechanism {
     Command diffyGrab = () -> {diffy.closeClaw();};
     Command diffyRetract = () -> {diffy.retractExtendy();};
     Command diffyTransfer = () -> {diffy.diffyTransfer();};
-    Command difftShift = () -> {diffy.shiftClaw();};
     // Deposit commands
     Command depositGrab = deposit::closeClaw;
     Command depositRelease = deposit::openClaw;
@@ -56,14 +55,9 @@ public class Scoring extends Mechanism {
             .addCommand(diffyDown)
             .addCommand(this::mSlideRest)
             .addWaitCommand(.2)
-            .addCommand(difftShift)
-            .addWaitCommand(.2)
-            .addCommand(diffyInterpose)
-            .addCommand(diffyRetract)
-            .addWaitCommand(.2)
             .addCommand(diffyGrab)
-            .addWaitCommand(.1)
-            .addCommand(diffyTransfer)
+            .addWaitCommand(.2)
+            .addCommand(this::mIntakeRetract)
             .build();
     CommandSequence basketSet = new CommandSequence()
             .addCommand(depositGrab)
@@ -108,8 +102,9 @@ public class Scoring extends Mechanism {
     @Override
     public void loop(FoozPad gamepad1, FoozPad gamepad2) {
         slides.update();
+        diffy.autoUpdate();
 
-        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.INTAKE)) {
+        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.INTAKE)) {
             if (state != State.INTAKE) {
                 mIntakeExtend();
                 state = State.INTAKE;
@@ -119,7 +114,7 @@ public class Scoring extends Mechanism {
             isTransfer = true;
             state = State.TRANSFER;
         }
-        if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsM3.CLIMB_SET)) {
+        if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsSemis.CLIMB_SET)) {
             mClimbSet();
             state = State.CLIMB;
         }
@@ -130,7 +125,7 @@ public class Scoring extends Mechanism {
                 break;
             case TRANSFER:
                 for (int i = 0; i < 4; i++) {
-                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SLIDES[i])) {
+                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.SLIDES[i])) {
                         state = State.SCORING;
                         isTransfer = false;
                         slidesPos = OuttakeSlides.POSITIONS[i];
@@ -140,7 +135,7 @@ public class Scoring extends Mechanism {
                         break;
                     }
                 }
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SPECIMEN_POS)) {
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.SPECI_EJECT)) {
                     if (isTransfer){
                         yeetSample.trigger();
                     } else {
@@ -152,21 +147,21 @@ public class Scoring extends Mechanism {
                 break;
             case SCORING:
                 for (int i = 0; i < 4; i++) {
-                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.SLIDES[i])) {
+                    if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.SLIDES[i])) {
                         slidesPos = OuttakeSlides.POSITIONS[i];
                         isBasket = i == 1 || i == 0;
                         if (isBasket) basketSet.trigger();
                         else specimenSet.trigger();
                     }
                 }
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.RELEASE)) {
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.RELEASE)) {
                     if (isBasket) basketRelease.trigger();
                     else specimenRelease.trigger();
                     state = State.TRANSFER;
                 }
                 break;
             case CLIMB:
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsM3.CLIMB)) {
+                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.CLIMB)) {
                     slides.ascent();
                     diffyRetract.run();
                     diffyTransfer.run();
@@ -174,7 +169,12 @@ public class Scoring extends Mechanism {
                 break;
         }
 
+    }
 
+    public void mIntakeRetract() {
+        diffy.retractExtendy();
+        diffy.diffyTransfer();
+        diffy.shiftClaw();
     }
 
     public void mIntakeExtend() {
