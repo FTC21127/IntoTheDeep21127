@@ -39,13 +39,13 @@ public class Intake extends Mechanism {
     }
     DiffyState intakeState = DiffyState.NEUTRAL;
 
-    public static double c_OPEN = 0.3;
-    public static double c_CLOSE = 0.65;
-    public static double c_SHIFT = 0.57;
-    public static double extendy_IN = 0.9;
-    public static double maxExtendy = 0.4;
+    public static double c_OPEN = 0.5;
+    public static double c_CLOSE = 0.88;
+    public static double c_SHIFT = 0.84;
+    public static double extendy_IN = 0.68;
+    public static double maxExtendy = 0.25;
     public static double extendy_NEUTRAL = maxExtendy + (extendy_IN - maxExtendy)/2;
-    public static double dif_TRANSFER = 0.87;
+    public static double dif_TRANSFER = 0.8;
     public static double dif_INTERPOSED = .4;
     public static double dif_NEUTRAL = 0.6;
     public static double dif_DOWN = 0.1;
@@ -60,14 +60,12 @@ public class Intake extends Mechanism {
     CommandSequence retract = new CommandSequence()
             .addCommand(this::diffyDown)
             .addWaitCommand(.2)
-            .addCommand(this::shiftClaw)
+            .addCommand(this::closeClaw)
             .addWaitCommand(.1)
             .addCommand(this::centerRoll)
-            .addWaitCommand(.2)
+            .addWaitCommand(.1)
             .addCommand(this::retractExtendy)
-            .addCommand(this::diffyInterposed)
-            .addWaitCommand(.4)
-            .addCommand(this::closeClaw)
+            .addCommand(this::shiftClaw)
             .addCommand(this::diffyTransfer)
             .build();
 
@@ -181,7 +179,7 @@ public class Intake extends Mechanism {
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.DPAD_UP)){
             setExtendinator(maxExtendy);
         } else {
-            setExtendinator(0.86);
+            setExtendinator(extendy_IN);
         }
     }
 

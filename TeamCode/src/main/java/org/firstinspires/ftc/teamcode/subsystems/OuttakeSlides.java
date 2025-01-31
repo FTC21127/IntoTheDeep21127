@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsSemis;
 
 import java.util.concurrent.TimeUnit;
 
@@ -66,8 +66,8 @@ public class OuttakeSlides extends Mechanism {
     @Override
     public void init(HardwareMap hwMap) {
         resetSensor = hwMap.get(Rev2mDistanceSensor.class, "slideReset");
-        slideR = new MotorEx(hwMap, "rightSlide", Motor.GoBILDA.RPM_312);
-        slideL = new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_312);
+        slideR = new MotorEx(hwMap, "rightSlide", Motor.GoBILDA.RPM_435);
+        slideL = new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_435);
         voltage = hwMap.get(VoltageSensor.class, "Control Hub");
 
         slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -165,17 +165,17 @@ public class OuttakeSlides extends Mechanism {
     public void loop(FoozPad gamepad) {
         update();
         devBool = GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER);
-        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.LOW_BASKET)) {
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.LOW_BASKET)) {
             goToPos(0);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.HIGH_BASKET)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.HIGH_BASKET)) {
             goToPos(1);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.LOW_SPECIMEN)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.LOW_SPECIMEN)) {
             goToPos(2);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.HIGH_SPECIMEN)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.HIGH_SPECIMEN)) {
             goToPos(3);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.RELEASE)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.RELEASE)) {
             lock();
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPECIMEN_POS)) {
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPECI_EJECT)) {
             restPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)) {
             downUntil();

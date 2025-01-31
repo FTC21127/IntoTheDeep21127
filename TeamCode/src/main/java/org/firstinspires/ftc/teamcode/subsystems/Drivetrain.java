@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.fissionlib.input.FoozPad;
 import org.firstinspires.ftc.teamcode.fissionlib.input.GamepadStatic;
 import org.firstinspires.ftc.teamcode.fissionlib.util.Mechanism;
-import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsM3;
+import org.firstinspires.ftc.teamcode.opMode.teleop.Utils.ControlsSemis;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
@@ -43,9 +43,9 @@ public class Drivetrain extends Mechanism {
         x = x * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
         r = r * (1-gamepad.gamepad.left_trigger);
 
-        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_CLOCKWISE)){
+        if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPIN_CLOCKWISE)){
             follower.setTeleOpMovementVectors(0, 0, 1);
-        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsM3.SPIN_COUNTER)){
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPIN_COUNTER)){
             follower.setTeleOpMovementVectors(0, 0, -1);
         } else {
             follower.setTeleOpMovementVectors(y, x, r);
