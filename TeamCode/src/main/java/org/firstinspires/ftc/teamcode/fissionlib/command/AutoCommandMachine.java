@@ -20,6 +20,10 @@ public class AutoCommandMachine {
         return this;
     }
 
+    public CommandSequence getCurrentCommand() {
+        return commandSequences.get(getCurrentCommandIndex());
+    }
+
     public AutoCommandMachine build() { return this; }
 
     public int getCurrentCommandIndex() { return currentCommandIndex; }

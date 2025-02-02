@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.opMode.teleop.Utils.FoozPadUtils.FoozPadRumble.*;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -40,12 +41,12 @@ public class Intake extends Mechanism {
     DiffyState intakeState = DiffyState.NEUTRAL;
 
     public static double c_OPEN = 0.5;
-    public static double c_CLOSE = 0.88;
-    public static double c_SHIFT = 0.84;
-    public static double extendy_IN = 0.68;
+    public static double c_CLOSE = 0.9;
+    public static double c_SHIFT = 0.87;
+    public static double extendy_IN = 0.7;
     public static double maxExtendy = 0.25;
-    public static double extendy_NEUTRAL = maxExtendy + (extendy_IN - maxExtendy)/2;
-    public static double dif_TRANSFER = 0.8;
+    public static double extendy_NEUTRAL = (extendy_IN + maxExtendy)/2;
+    public static double dif_TRANSFER = 0.76;
     public static double dif_INTERPOSED = .4;
     public static double dif_NEUTRAL = 0.6;
     public static double dif_DOWN = 0.1;
@@ -160,14 +161,13 @@ public class Intake extends Mechanism {
     }
 
     public void teleControl(FoozPad gp){
-        dif_ROLL = (int)(gp.gamepad.right_stick_x*6)/(double)60;
-        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
-        diffyLeft.setPosition(dif_PITCH + dif_ROLL);
+        dif_ROLL = (int)(gp.gamepad.right_stick_x*5)/50.0;
+        setExtendinator(maxExtendy + Math.abs(gp.gamepad.left_stick_y)*(extendy_IN-maxExtendy)*.9);
     }
 
     public void autoUpdate(){
-        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
-        diffyLeft.setPosition(dif_PITCH + dif_ROLL);
+        diffyRight.setPosition(MathUtils.clamp(1 - dif_PITCH + dif_ROLL,0,1));
+        diffyLeft.setPosition(MathUtils.clamp(dif_PITCH + dif_ROLL,0,1));
     }
 
     public void setUp(FoozPad gamepad){
@@ -187,8 +187,8 @@ public class Intake extends Mechanism {
     public void loop(FoozPad gamepad) {
         if (isPickup||isSearch) dif_ROLL = gamepad.gamepad.right_stick_x/10;
 //        if (isExtended && gamepad.gamepad.left_stick_y != 0) setExtendinator(extendy_NEUTRAL + (gamepad.gamepad.left_stick_y*.9) * extendy_NEUTRAL);
-        diffyRight.setPosition(1 - dif_PITCH + dif_ROLL);
-        diffyLeft.setPosition(dif_PITCH + dif_ROLL);
+        diffyRight.setPosition(MathUtils.clamp(1 - dif_PITCH + dif_ROLL,0,1));
+        diffyLeft.setPosition(MathUtils.clamp(dif_PITCH + dif_ROLL,0,1));
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)){
 //            if (colorSensor.isAllowed()){
                 retract.trigger();

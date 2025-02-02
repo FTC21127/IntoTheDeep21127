@@ -31,20 +31,19 @@ public class OuttakeSlides extends Mechanism {
     public Rev2mDistanceSensor resetSensor;
 
     //Use voltage sensor
-    public VoltageSensor voltage;
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    private final double p = 0.0175, i = 0, d = 0.0005, f = 0;
+    public static double p = 0.02, i = 0, d = 0.0005, f = 0;
 
     // Positions for slides
     public static int REST_POS = 95;
-    public static int INTAKE_POS = 0;
-    public static int LOW_BASKET = 2000; //0
-    public static int HIGH_BASKET = 3800; //1
-    public static int LOW_CHAMBER_SET = 400; //2
-    public static int HIGH_CHAMBER_SET = 1450; //3
-    public static int CHAMBER_SCORED = 500;
+    public static int INTAKE_POS = 15 ;
+    public static int LOW_BASKET = 1200; //0
+    public static int HIGH_BASKET = 2500; //1
+    public static int LOW_CHAMBER_SET = 200; //2
+    public static int HIGH_CHAMBER_SET = 775; //3
+    public static int CHAMBER_SCORED = 100;
     public static int LEVEL_1_ASCENT = 2000;
     public static int HANG = 0;
     public static int ABIT = 100;
@@ -68,7 +67,6 @@ public class OuttakeSlides extends Mechanism {
         resetSensor = hwMap.get(Rev2mDistanceSensor.class, "slideReset");
         slideR = new MotorEx(hwMap, "rightSlide", Motor.GoBILDA.RPM_435);
         slideL = new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_435);
-        voltage = hwMap.get(VoltageSensor.class, "Control Hub");
 
         slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
@@ -81,7 +79,7 @@ public class OuttakeSlides extends Mechanism {
         resetSensor.getDistance(DistanceUnit.CM);
         setSlidePower(-.3);
         time.start();
-        while (voltage.getVoltage() > 10.5 && !time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
+        while (!time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
         }
         reset();
         intakePos();
@@ -157,7 +155,6 @@ public class OuttakeSlides extends Mechanism {
         telemetry.addData("Target= ", target);
         telemetry.addData("Pos1= ", slideR.getCurrentPosition());
         telemetry.addData("is thingy work?", devBool);
-        telemetry.addData("Current voltage: ", voltage.getVoltage());
         telemetry.addData("Distance (CM): ", resetSensor.getDistance(DistanceUnit.CM));
     }
 
@@ -178,7 +175,7 @@ public class OuttakeSlides extends Mechanism {
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPECI_EJECT)) {
             restPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)) {
-            downUntil();
+            intakePos();
         }
     }
 }

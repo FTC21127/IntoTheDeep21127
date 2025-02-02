@@ -18,25 +18,22 @@ import org.firstinspires.ftc.teamcode.fissionlib.command.CommandSequence;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.subsystems.Deposit;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 
 import java.util.concurrent.TimeUnit;
 
-
 @Autonomous(name = "4 + 0'", group = "!specimen", preselectTeleOp = "RedTele")
 public class Specimen40 extends OpMode {
 
-    Timing.Timer startTimer = new Timing.Timer(1000, TimeUnit.SECONDS);
+    Timing.Timer startTimer = new Timing.Timer(250, TimeUnit.MILLISECONDS);
 
     Deposit deposit = new Deposit(this);
-    Drivetrain drivetrain = new Drivetrain(this);
     OuttakeSlides slides = new OuttakeSlides(this);
     Intake diffy = new Intake(this);
 
     Follower follower;
-    Path preload;
+    Path preload, park;
     PathChain pickUp1, hp1, pickUp2, hp2, pickUp3, hp3, speci2Set, speci2Score, speci3Set, speci3Score, speci4Set, speci4Score;
 
     private final Pose startPose = new Pose(7.48, 55, Math.toRadians(180));
@@ -47,6 +44,7 @@ public class Specimen40 extends OpMode {
     private final Pose grabPose3 = new Pose(35, 18, Math.toRadians(-45));
     private final Pose hpPose = new Pose(26, 30, Math.toRadians(-135));
     private final Pose pickUpPose = new Pose(13, 40, Math.toRadians(-90));
+    private final Pose parkPose = new Pose(13, 20, Math.toRadians(0));
 
     private final Point gSControl = new Point(24, 53, Point.CARTESIAN);
     private final Point sControl1 = new Point(20, 45, Point.CARTESIAN);
@@ -66,6 +64,7 @@ public class Specimen40 extends OpMode {
     Command s2Score = () -> follower.followPath(speci2Score);
     Command s3Score = () -> follower.followPath(speci3Score);
     Command s4Score = () -> follower.followPath(speci4Score);
+    Command parkCommand = () -> follower.followPath(park);
     // Deposit Commands
     Command grabDeposit = () -> deposit.closeClaw();
     Command releaseSpecimen = () -> deposit.openClaw();
@@ -73,10 +72,10 @@ public class Specimen40 extends OpMode {
     // Intake Commands
     Command grabIntake = () -> diffy.closeClaw();
     Command releaseSample = () -> diffy.openClaw();
-    Command diffyInterpose = () -> diffy.diffyInterposed();
     Command diffyRetract = () -> diffy.retractExtendy();
     Command diffyTransfer = () -> diffy.diffyTransfer();
-    Command difftShift = () -> diffy.shiftClaw();
+    Command diffyInterposed = () -> diffy.diffyInterposed();
+    Command diffyShift = () -> diffy.shiftClaw();
 
     CommandSequence scorePreload = new CommandSequence()
             .addCommand(this::mSpecimenSet)
@@ -94,21 +93,25 @@ public class Specimen40 extends OpMode {
     CommandSequence human1 = new CommandSequence()
             .addCommand(grabIntake)
             .addWaitCommand(.2)
+            .addCommand(diffyInterposed)
             .addCommand(hp1Command)
             .build();
     CommandSequence grabSample2 = new CommandSequence()
             .addCommand(releaseSample)
             .addWaitCommand(.2)
+            .addCommand(this::mSampleGrab)
             .addCommand(pickUp2Command)
             .build();
     CommandSequence human2 = new CommandSequence()
             .addCommand(grabIntake)
             .addWaitCommand(.2)
+            .addCommand(diffyInterposed)
             .addCommand(hp2Command)
             .build();
     CommandSequence grabSample3 = new CommandSequence()
             .addCommand(releaseSample)
             .addWaitCommand(.2)
+            .addCommand(this::mSampleGrab)
             .addCommand(pickUp3Command)
             .build();
     CommandSequence human3 = new CommandSequence()
@@ -126,14 +129,13 @@ public class Specimen40 extends OpMode {
             .addWaitCommand(.4)
             .build();
     CommandSequence scoreSpeci2 = new CommandSequence()
-            .addCommand(difftShift)
+            .addCommand(diffyShift)
             .addWaitCommand(.2)
-            .addCommand(diffyInterpose)
-            .addCommand(diffyRetract)
-            .addWaitCommand(.3)
-            .addCommand(s2Score)
-            .addCommand(grabIntake)
             .addCommand(diffyTransfer)
+            .addWaitCommand(.1)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.2)
+            .addCommand(s2Score)
             .addWaitCommand(.2)
             .addCommand(grabDeposit)
             .addWaitCommand(.1)
@@ -148,14 +150,13 @@ public class Specimen40 extends OpMode {
             .addWaitCommand(.4)
             .build();
     CommandSequence scoreSpeci3 = new CommandSequence()
-            .addCommand(difftShift)
+            .addCommand(diffyShift)
             .addWaitCommand(.2)
-            .addCommand(diffyInterpose)
-            .addCommand(diffyRetract)
-            .addWaitCommand(.3)
-            .addCommand(s3Score)
-            .addCommand(grabIntake)
             .addCommand(diffyTransfer)
+            .addWaitCommand(.1)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.2)
+            .addCommand(s3Score)
             .addWaitCommand(.2)
             .addCommand(grabDeposit)
             .addWaitCommand(.1)
@@ -170,20 +171,27 @@ public class Specimen40 extends OpMode {
             .addWaitCommand(.4)
             .build();
     CommandSequence scoreSpeci4 = new CommandSequence()
-            .addCommand(difftShift)
+            .addCommand(diffyShift)
             .addWaitCommand(.2)
-            .addCommand(diffyInterpose)
-            .addCommand(diffyRetract)
-            .addWaitCommand(.3)
-            .addCommand(s4Score)
-            .addCommand(grabIntake)
             .addCommand(diffyTransfer)
+            .addWaitCommand(.1)
+            .addCommand(diffyRetract)
+            .addWaitCommand(.2)
+            .addCommand(s4Score)
             .addWaitCommand(.2)
             .addCommand(grabDeposit)
             .addWaitCommand(.1)
             .addCommand(this::mSpecimenSet)
             .build();
-
+    CommandSequence parkSequence = new CommandSequence()
+            .addCommand(lockSpecimen)
+            .addWaitCommand(.2)
+            .addCommand(releaseSpecimen)
+            .addWaitCommand(.2)
+            .addCommand(parkCommand)
+            .addWaitCommand(0.8)
+            .addCommand(this::mSpecimenPickup)
+            .build();
     AutoCommandMachine runCommands = new AutoCommandMachine()
             .addCommandSequence(scorePreload)
             .addCommandSequence(grabSample1)
@@ -200,12 +208,12 @@ public class Specimen40 extends OpMode {
             .addCommandSequence(scoreSpeci3)
             .addCommandSequence(speci4Grab)
             .addCommandSequence(scoreSpeci4)
+            .addCommandSequence(parkSequence)
             .build();
 
     @Override
     public void init() {
         deposit.init(hardwareMap);
-        drivetrain.init(hardwareMap);
         slides.init(hardwareMap);
         diffy.init(hardwareMap);
 
@@ -301,6 +309,14 @@ public class Specimen40 extends OpMode {
                                 new Point(scorePose)))
                 .setLinearHeadingInterpolation(pickUpPose.getHeading(), scorePose.getHeading()).build();
 
+        park = new Path(
+                new BezierCurve(
+                        new Point(scorePose),
+                        sControl1,
+                        new Point(parkPose)
+                )
+        );
+        park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
 
         deposit.transferPos();
         deposit.openClaw();
@@ -328,10 +344,11 @@ public class Specimen40 extends OpMode {
 
     @Override
     public void loop() {
+        if (runCommands.hasCompleted()) requestOpModeStop();
         diffy.autoUpdate();
         slides.update();
         follower.update();
-        runCommands.run(follower.isBusy() || !slides.isDone());
+        runCommands.run(follower.isBusy() || !slides.isDone() || !runCommands.getCurrentCommand().hasCompleted);
     }
 
     public void mSampleGrab() {
@@ -352,11 +369,6 @@ public class Specimen40 extends OpMode {
         diffy.extendMax();
         diffy.centerRoll();
         diffy.openClaw();
-    }
-
-    public void mITransfer() {
-        diffy.openClaw();
-        diffy.diffyInterposed();
     }
 
     public void mSpecimenSet() {

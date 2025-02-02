@@ -4,9 +4,12 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 
 @Config
@@ -15,37 +18,34 @@ public class SlidesTuning extends OpMode {
 
     PIDController controller;
     public static double
-            p = 0.015,
+            p = 0.02,
             i = 0,
-            d = 0.0001,
+            d = 0.0005,
             f = 0;
-    public static double TICKSPERDEGREE = (1+(46/11.0)) * 28/360;
-    public static int target;
+    MotorEx slideR, slideL;
 
-    private Motor motor1;
-    private Motor.Encoder encoder;
-
+    public static double target = 0;
 
     @Override
     public void init() {
-        motor1 = new Motor(hardwareMap, "rightSlide");
-        motor1.setInverted(true);
-        encoder = motor1.encoder;
-        encoder.reset();
+        slideR = new MotorEx(hardwareMap, "rightSlide", Motor.GoBILDA.RPM_435);
+        slideL = new MotorEx(hardwareMap, "leftSlide", Motor.GoBILDA.RPM_435);
+        slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
         controller = new PIDController(p, i, d);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        controller.setTolerance(5);
+
+        controller.setTolerance(5); // set tolerance for PID controller
     }
 
     @Override
     public void loop() {
         controller.setPID(p, i, d);
-        controller.setSetPoint(encoder.getPosition());
-        double pid = controller.calculate(target);
-        double power = pid - f;
-        motor1.set(power);
-        telemetry.addData("pos", motor1.getCurrentPosition());
+        controller.setSetPoint(target);
+        double power = controller.calculate(slideR.getCurrentPosition());
+        slideR.set(power);
+        slideL.set(-power);
+        telemetry.addData("pos", slideR.getCurrentPosition());
         telemetry.addData("target", target);
-        telemetry.addData("pid value from controller", pid);
     }
 }

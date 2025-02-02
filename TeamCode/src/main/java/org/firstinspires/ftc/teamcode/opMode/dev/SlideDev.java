@@ -19,7 +19,7 @@ public class SlideDev extends OpMode {
     public void init() {
         slides = new OuttakeSlides(this);
         slides.init(hardwareMap);
-        slides.restPos();
+        slides.reset();
         gp1 = new FoozPad(gamepad1);
         telemetry1 = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
@@ -27,7 +27,6 @@ public class SlideDev extends OpMode {
     @Override
     public void loop() {
         gp1.update();
-        slides.update();
         slides.loop(gp1);
         slides.telemetry(telemetry);
     }

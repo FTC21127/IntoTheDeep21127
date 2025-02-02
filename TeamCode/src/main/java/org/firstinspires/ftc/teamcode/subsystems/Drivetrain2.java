@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Constants;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -22,9 +23,9 @@ public class Drivetrain2 extends Mechanism {
 
     private Follower follower;
     private PIDController headingController = new PIDController(
-            2,
+            0.5,
             0,
-            0.1
+            0
     );
     private IMU imu;
 
@@ -62,6 +63,7 @@ public class Drivetrain2 extends Mechanism {
     public void loop(FoozPad gamepad) {
         gamepad.update();
         currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        desiredHeading = normalizeAngleDegrees(desiredHeading);
 
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.X)) {
             follower.setTeleOpMovementVectors(0, 0, 1);
@@ -87,8 +89,15 @@ public class Drivetrain2 extends Mechanism {
         }
 
         if (GamepadStatic.wasJustPressed(gamepad, ControlsSemis.FLIP)){
-            headingController.setSetPoint(desiredHeading-180);
+            desiredHeading-=180;
         }
         follower.update();
+    }
+    public static double normalizeAngleDegrees(double angle) {
+        angle %= 360;
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
     }
 }

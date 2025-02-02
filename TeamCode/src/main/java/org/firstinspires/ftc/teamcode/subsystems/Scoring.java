@@ -34,46 +34,49 @@ public class Scoring extends Mechanism {
     //Intake commands
     Command diffyDown = () -> {diffy.diffyDown();};
     Command diffyInterpose = () -> {diffy.diffyInterposed();};
-    Command diffyGrab = () -> {diffy.closeClaw();};
+    Command diffyShift = () -> {diffy.shiftClaw();};
     Command diffyRetract = () -> {diffy.retractExtendy();};
     Command diffyTransfer = () -> {diffy.diffyTransfer();};
     // Deposit commands
     Command depositGrab = deposit::closeClaw;
+    Command basketPos = deposit::basketPos;
     Command depositRelease = deposit::openClaw;
 
     CommandSequence yeetSample = new CommandSequence()
-            .addCommand(diffy::extendNeutral)
+            .addCommand(diffy::extendMax)
+            .addWaitCommand(.3)
             .addCommand(diffyInterpose)
-            .addWaitCommand(.5)
+            .addWaitCommand(.2)
             .addCommand(diffy::openClaw)
             .addWaitCommand(.2)
-            .addCommand(diffyRetract)
-            .addCommand(diffyTransfer)
+            .addCommand(this::mIntakeRetract)
             .build();
 
     CommandSequence retractIntake = new CommandSequence()
             .addCommand(diffyDown)
             .addCommand(this::mSlideRest)
             .addWaitCommand(.2)
-            .addCommand(diffyGrab)
+            .addCommand(diffyShift)
             .addWaitCommand(.2)
+            .addCommand(diffyTransfer)
+            .addWaitCommand(.1)
             .addCommand(this::mIntakeRetract)
             .build();
     CommandSequence basketSet = new CommandSequence()
             .addCommand(depositGrab)
-            .addWaitCommand(.5)
-            .addCommand(diffy::openClaw)
+            .addWaitCommand(.3)
             .addCommand(this::mBasketSet)
             .build();
     CommandSequence specimenSet = new CommandSequence()
             .addCommand(depositGrab)
-            .addWaitCommand(.2)
-            .addCommand(diffy::openClaw)
+            .addWaitCommand(.3)
             .addCommand(this::mSpecimenSet)
             .build();
     CommandSequence basketRelease = new CommandSequence()
+            .addCommand(basketPos)
+            .addWaitCommand(.2)
             .addCommand(depositRelease)
-            .addWaitCommand(.3)
+            .addWaitCommand(.2)
             .addCommand(this::mSlideRest)
             .build();
     CommandSequence specimenRelease = new CommandSequence()
@@ -97,11 +100,14 @@ public class Scoring extends Mechanism {
         deposit.init(hwMap);
         diffy.init(hwMap);
         diffy.setAlliance(color);
+        diffy.diffyTransfer();
+        slides.reset();
     }
 
     @Override
     public void loop(FoozPad gamepad1, FoozPad gamepad2) {
         slides.update();
+        drive.loop(gamepad1);
         diffy.autoUpdate();
 
         if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.INTAKE)) {
@@ -161,7 +167,7 @@ public class Scoring extends Mechanism {
                 }
                 break;
             case CLIMB:
-                if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.CLIMB)) {
+                if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsSemis.CLIMB)) {
                     slides.ascent();
                     diffyRetract.run();
                     diffyTransfer.run();
@@ -172,13 +178,13 @@ public class Scoring extends Mechanism {
     }
 
     public void mIntakeRetract() {
-        diffy.retractExtendy();
         diffy.diffyTransfer();
         diffy.shiftClaw();
+        diffy.retractExtendy();
     }
 
     public void mIntakeExtend() {
-        diffy.extendNeutral();
+        diffy.extendMax();
         diffy.diffyDown();
         diffy.openClaw();
         mSlideRest();
@@ -192,14 +198,14 @@ public class Scoring extends Mechanism {
 
     public void mSpecimenSet() {
         slides.setTarget(slidesPos);
-        diffy.diffyInterposed();
+        diffy.diffyNeutral();
         deposit.specimenPos();
     }
 
     public void mBasketSet() {
         slides.setTarget(slidesPos);
-        diffy.diffyInterposed();
-        deposit.basketPos();
+        diffy.diffyNeutral();
+        deposit.initPos();
     }
 
     public void mSlideRest() {
