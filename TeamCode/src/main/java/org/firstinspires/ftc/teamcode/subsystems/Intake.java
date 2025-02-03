@@ -37,20 +37,23 @@ public class Intake extends Mechanism {
         TRANSFER,
         SEARCH,
         NEUTRAL,
+        CLIMB,
     }
     DiffyState intakeState = DiffyState.NEUTRAL;
 
     public static double c_OPEN = 0.5;
     public static double c_CLOSE = 0.9;
     public static double c_SHIFT = 0.87;
-    public static double extendy_IN = 0.7;
-    public static double maxExtendy = 0.25;
+    public static double extendy_IN = 0.85;
+    public static double extendy_FOLD = 0.9;
+    public static double maxExtendy = 0.42;
     public static double extendy_NEUTRAL = (extendy_IN + maxExtendy)/2;
     public static double dif_TRANSFER = 0.76;
     public static double dif_INTERPOSED = .4;
     public static double dif_NEUTRAL = 0.6;
     public static double dif_DOWN = 0.1;
     public static double dif_SEARCH = 0.2;
+    public static double dif_FOLD = 0.8;
     public static double dif_ROLL = 0;
     public double dif_PITCH = dif_TRANSFER;
 
@@ -106,6 +109,13 @@ public class Intake extends Mechanism {
 
     public void setExtendinator(double pos){
             horizontalExtendenator.setPosition(Math.min(Math.max(maxExtendy,pos),extendy_IN));
+    }
+
+    public void foldIntake(){
+        horizontalExtendenator.setPosition(extendy_FOLD);
+        dif_PITCH = dif_FOLD;
+        intakeState = DiffyState.CLIMB;
+        closeClaw();
     }
 
     public void diffyDown(){

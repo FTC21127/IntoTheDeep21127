@@ -35,12 +35,12 @@ public class Drivetrain extends Mechanism {
     @Override
     public void loop(FoozPad gamepad) {
         gamepad.update();
-        double y = -gamepad.gamepad.left_stick_y * .8;
-        double x = -gamepad.gamepad.left_stick_x * .65;
+        double y = -gamepad.gamepad.left_stick_y;
+        double x = -gamepad.gamepad.left_stick_x;
         double r = -gamepad.gamepad.right_stick_x * .5;
 
-        y = y * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
-        x = x * (1+gamepad.gamepad.right_trigger*.25) * (1-gamepad.gamepad.left_trigger);
+        y = y * (1-gamepad.gamepad.left_trigger);
+        x = x * (1-gamepad.gamepad.left_trigger);
         r = r * (1-gamepad.gamepad.left_trigger);
 
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPIN_CLOCKWISE)){

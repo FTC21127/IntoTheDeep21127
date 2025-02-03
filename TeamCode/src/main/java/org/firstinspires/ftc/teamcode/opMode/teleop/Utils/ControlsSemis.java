@@ -6,7 +6,7 @@ public class ControlsSemis {
     // extendy control is left stick y
     // diffy control is right stick x
     public static final Input RELEASE = Input.RIGHT_BUMPER;
-    public static final Input INTAKE = Input.LEFT_TRIGGER;
+    public static final Input INTAKE = Input.LEFT_BUMPER;
     public static final Input SPECI_EJECT = Input.DPAD_UP;
     public static final Input RESET = Input.DPAD_DOWN;
     public static final Input LOW_BASKET = Input.X;

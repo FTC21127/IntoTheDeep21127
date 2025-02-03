@@ -35,7 +35,11 @@ public class SlidesTuning extends OpMode {
 
         controller = new PIDController(p, i, d);
 
-        controller.setTolerance(5); // set tolerance for PID controller
+        controller.setTolerance(2); // set tolerance for PID controller
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        slideR.resetEncoder();
     }
 
     @Override

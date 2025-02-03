@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -28,24 +29,24 @@ public class OuttakeSlides extends Mechanism {
 
     MotorEx slideR, slideL;
 
-    public Rev2mDistanceSensor resetSensor;
+    public RevColorSensorV3 resetSensor;
 
     //Use voltage sensor
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
-    public static double p = 0.02, i = 0, d = 0.0005, f = 0;
+    public static double p = 0.025, i = 0, d = 0.0003, f = 0;
 
     // Positions for slides
-    public static int REST_POS = 95;
+    public static int REST_POS = 170;
     public static int INTAKE_POS = 15 ;
     public static int LOW_BASKET = 1200; //0
     public static int HIGH_BASKET = 2500; //1
     public static int LOW_CHAMBER_SET = 200; //2
     public static int HIGH_CHAMBER_SET = 775; //3
     public static int CHAMBER_SCORED = 100;
-    public static int LEVEL_1_ASCENT = 2000;
-    public static int HANG = 0;
+    public static int LEVEL_1_ASCENT = 1500;
+    public static int HANG = -200;
     public static int ABIT = 100;
 
     public static double target = 0;
@@ -64,7 +65,7 @@ public class OuttakeSlides extends Mechanism {
 
     @Override
     public void init(HardwareMap hwMap) {
-        resetSensor = hwMap.get(Rev2mDistanceSensor.class, "slideReset");
+        resetSensor = hwMap.get(RevColorSensorV3.class, "slideReset");
         slideR = new MotorEx(hwMap, "rightSlide", Motor.GoBILDA.RPM_435);
         slideL = new MotorEx(hwMap, "leftSlide", Motor.GoBILDA.RPM_435);
 
@@ -79,7 +80,7 @@ public class OuttakeSlides extends Mechanism {
         resetSensor.getDistance(DistanceUnit.CM);
         setSlidePower(-.3);
         time.start();
-        while (!time.done() && resetSensor.getDistance(DistanceUnit.CM) > 7.5) { //12V is the minimum required to work fully
+        while (!time.done() && resetSensor.getDistance(DistanceUnit.CM) > 5.7) { //12V is the minimum required to work fully
         }
         reset();
         intakePos();
@@ -128,9 +129,7 @@ public class OuttakeSlides extends Mechanism {
     }
 
     public void lock(){
-        if (target == HIGH_CHAMBER_SET || target == LOW_CHAMBER_SET) {
-            setTarget(target - CHAMBER_SCORED);
-        }
+        setTarget(target - CHAMBER_SCORED);
     }
 
     public void setSlidePower(double slidePower){
@@ -176,6 +175,8 @@ public class OuttakeSlides extends Mechanism {
             restPos();
         } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.RIGHT_BUMPER)) {
             intakePos();
+        } else if (GamepadStatic.isButtonPressed(gamepad.gamepad, GamepadStatic.Input.LEFT_BUMPER)) {
+            downUntil();
         }
     }
 }

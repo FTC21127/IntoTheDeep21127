@@ -31,7 +31,7 @@ public class Scoring extends Mechanism {
         CLIMB
     }
 
-    //Intake commands
+    // Intake commands
     Command diffyDown = () -> {diffy.diffyDown();};
     Command diffyInterpose = () -> {diffy.diffyInterposed();};
     Command diffyShift = () -> {diffy.shiftClaw();};
@@ -41,14 +41,17 @@ public class Scoring extends Mechanism {
     Command depositGrab = deposit::closeClaw;
     Command basketPos = deposit::basketPos;
     Command depositRelease = deposit::openClaw;
+    // Slide commands
+    Command slideLock = slides::lock;
+    Command slideReset = slides::downUntil;
 
     CommandSequence yeetSample = new CommandSequence()
             .addCommand(diffy::extendMax)
-            .addWaitCommand(.3)
+            .addWaitCommand(.4)
             .addCommand(diffyInterpose)
-            .addWaitCommand(.2)
+            .addWaitCommand(.15)
             .addCommand(diffy::openClaw)
-            .addWaitCommand(.2)
+            .addWaitCommand(.25)
             .addCommand(this::mIntakeRetract)
             .build();
 
@@ -81,6 +84,7 @@ public class Scoring extends Mechanism {
             .build();
     CommandSequence specimenRelease = new CommandSequence()
             .addCommand(depositRelease)
+            .addCommand(slideLock)
             .build();
 
 
@@ -106,9 +110,11 @@ public class Scoring extends Mechanism {
 
     @Override
     public void loop(FoozPad gamepad1, FoozPad gamepad2) {
-        slides.update();
         drive.loop(gamepad1);
         diffy.autoUpdate();
+        if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.RESET)) slideReset.run();
+
+        if (slides.reset) slides.update();
 
         if (GamepadStatic.isButtonPressed(gamepad2.gamepad, ControlsSemis.INTAKE)) {
             if (state != State.INTAKE) {
@@ -170,7 +176,6 @@ public class Scoring extends Mechanism {
                 if (GamepadStatic.isButtonPressed(gamepad1.gamepad, ControlsSemis.CLIMB)) {
                     slides.ascent();
                     diffyRetract.run();
-                    diffyTransfer.run();
                 }
                 break;
         }
@@ -199,12 +204,14 @@ public class Scoring extends Mechanism {
     public void mSpecimenSet() {
         slides.setTarget(slidesPos);
         diffy.diffyNeutral();
+        diffy.openClaw();
         deposit.specimenPos();
     }
 
     public void mBasketSet() {
         slides.setTarget(slidesPos);
         diffy.diffyNeutral();
+        diffy.openClaw();
         deposit.initPos();
     }
 
@@ -216,7 +223,9 @@ public class Scoring extends Mechanism {
 
     public void mClimbSet() {
         slides.primeAscent();
-        deposit.initPos();
+        deposit.closeClaw();
+        diffy.foldIntake();
+        deposit.transferPos();
     }
 
     public void stop(){
