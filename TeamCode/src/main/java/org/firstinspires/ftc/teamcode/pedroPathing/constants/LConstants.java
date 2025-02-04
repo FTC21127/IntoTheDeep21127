@@ -5,9 +5,9 @@ import com.pedropathing.localization.constants.*;
 
 public class LConstants {
     static {
-        ThreeWheelConstants.forwardTicksToInches = .002;
-        ThreeWheelConstants.strafeTicksToInches = .002;
-        ThreeWheelConstants.turnTicksToInches = .002;
+        ThreeWheelConstants.forwardTicksToInches = 0.0019696644521299;
+        ThreeWheelConstants.strafeTicksToInches = 0.001968668395756754;
+        ThreeWheelConstants.turnTicksToInches = 0.00196536865157028778444659683039;
         ThreeWheelConstants.leftY = 5.893;
         ThreeWheelConstants.rightY = -5.893;
         ThreeWheelConstants.strafeX = 2.933;
