@@ -7,6 +7,7 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.fissionlib.command.AutoCommandMachine;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Deposit;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 
-
+@Disabled
 @Autonomous(name = "3 + 0'", group = "!specimen", preselectTeleOp = "RedTele")
 public class Specimen30 extends OpMode {
 

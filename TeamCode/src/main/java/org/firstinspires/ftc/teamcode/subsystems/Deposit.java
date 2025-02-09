@@ -25,11 +25,11 @@ public class Deposit extends Mechanism {
     public static double STRAIGHT_UP_POS = .3;
     public static double BASKET_POS = 0.5;
     public static double SPECIMEN_SCORE_POS = 0.6;
-    public static double SPECIMEN_SET_POS = .51;
-    public static double SPECIMEN_GRAB_POS = 0.66;
-    public static double PARK_POS = 0.4;
+    public static double SPECIMEN_SET_POS = .54;
+    public static double SPECIMEN_GRAB_POS = 0.72;
+    public static double PARK_POS = 0.35;
 
-    public static double GRAB = 0.32;
+    public static double GRAB = 0.34;
     public static double RELEASE = 0.14;
 
     public Deposit(OpMode OpMode) {

@@ -42,17 +42,20 @@ public class Intake extends Mechanism {
     DiffyState intakeState = DiffyState.NEUTRAL;
 
     public static double c_OPEN = 0.5;
-    public static double c_CLOSE = 0.9;
-    public static double c_SHIFT = 0.87;
+    public static double c_CLOSE = 0.81;
+    public static double c_SHIFT = 0.77;
+    public static double c_S_SHIFT = 0.76;
+
     public static double extendy_IN = 0.85;
     public static double extendy_FOLD = 0.9;
     public static double maxExtendy = 0.42;
     public static double extendy_NEUTRAL = (extendy_IN + maxExtendy)/2;
+
     public static double dif_TRANSFER = 0.76;
     public static double dif_INTERPOSED = .4;
     public static double dif_NEUTRAL = 0.6;
     public static double dif_DOWN = 0.1;
-    public static double dif_SEARCH = 0.2;
+    public static double dif_SEARCH = 0.12;
     public static double dif_FOLD = 0.8;
     public static double dif_ROLL = 0;
     public double dif_PITCH = dif_TRANSFER;
@@ -100,7 +103,7 @@ public class Intake extends Mechanism {
     }
 
     public void extendMax(){
-        horizontalExtendenator.setPosition(extendy_NEUTRAL);
+        horizontalExtendenator.setPosition(maxExtendy);
     }
 
     public void retractExtendy(){
@@ -116,6 +119,10 @@ public class Intake extends Mechanism {
         dif_PITCH = dif_FOLD;
         intakeState = DiffyState.CLIMB;
         closeClaw();
+    }
+
+    public void foldIRetract() {
+        horizontalExtendenator.setPosition(extendy_FOLD);
     }
 
     public void diffyDown(){
@@ -160,6 +167,9 @@ public class Intake extends Mechanism {
     public void shiftClaw(){
         claw.setPosition(c_SHIFT);
     }
+    public void speciShiftClaw(){
+        claw.setPosition(c_S_SHIFT);
+    }
 
     @Override
     public void init(HardwareMap hwMap) {
@@ -172,7 +182,7 @@ public class Intake extends Mechanism {
 
     public void teleControl(FoozPad gp){
         dif_ROLL = (int)(gp.gamepad.right_stick_x*5)/50.0;
-        setExtendinator(maxExtendy + Math.abs(gp.gamepad.left_stick_y)*(extendy_IN-maxExtendy)*.9);
+        setExtendinator(maxExtendy + Math.abs((int)(gp.gamepad.left_stick_y*20)*(extendy_IN-maxExtendy)*0.045));
     }
 
     public void autoUpdate(){

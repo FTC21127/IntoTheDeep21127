@@ -33,18 +33,19 @@ public class OuttakeSlides extends Mechanism {
 
     //Use voltage sensor
     Timing.Timer time = new Timing.Timer(2000, TimeUnit.MILLISECONDS);
+    Timing.Timer goofTime = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
 
     // PID controller coefficients
     public static double p = 0.025, i = 0, d = 0.0003, f = 0;
 
     // Positions for slides
-    public static int REST_POS = 170;
+    public static int REST_POS = 135;
     public static int INTAKE_POS = 15 ;
     public static int LOW_BASKET = 1200; //0
     public static int HIGH_BASKET = 2500; //1
     public static int LOW_CHAMBER_SET = 200; //2
-    public static int HIGH_CHAMBER_SET = 775; //3
-    public static int CHAMBER_SCORED = 100;
+    public static int HIGH_CHAMBER_SET = 750; //3
+    public static int CHAMBER_SCORED = 50;
     public static int LEVEL_1_ASCENT = 1500;
     public static int HANG = -200;
     public static int ABIT = 100;
@@ -81,6 +82,17 @@ public class OuttakeSlides extends Mechanism {
         setSlidePower(-.3);
         time.start();
         while (!time.done() && resetSensor.getDistance(DistanceUnit.CM) > 5.7) { //12V is the minimum required to work fully
+        }
+        reset();
+        intakePos();
+        reset = true;
+    }
+
+    public void goofReset() {
+        reset = false;
+        setSlidePower(-.6);
+        time.start();
+        while (!time.done()) { //12V is the minimum required to work fully
         }
         reset();
         intakePos();

@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
+import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
+import static com.pedropathing.follower.FollowerConstants.rightFrontMotorName;
+import static com.pedropathing.follower.FollowerConstants.rightRearMotorName;
+
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,10 +30,26 @@ public class Drivetrain extends Mechanism {
         this.opMode = OpMode;
     }
 
+    private DcMotorEx leftFront;
+    private DcMotorEx leftRear;
+    private DcMotorEx rightFront;
+    private DcMotorEx rightRear;
+
     @Override
     public void init(HardwareMap hwMap) {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hwMap);
+
+        leftFront = hwMap.get(DcMotorEx.class, leftFrontMotorName);
+        leftRear = hwMap.get(DcMotorEx.class, leftRearMotorName);
+        rightRear = hwMap.get(DcMotorEx.class, rightRearMotorName);
+        rightFront = hwMap.get(DcMotorEx.class, rightFrontMotorName);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         follower.startTeleopDrive();
     }
 
@@ -39,9 +60,15 @@ public class Drivetrain extends Mechanism {
         double x = -gamepad.gamepad.left_stick_x;
         double r = -gamepad.gamepad.right_stick_x * .5;
 
-        y = y * (1-gamepad.gamepad.left_trigger);
-        x = x * (1-gamepad.gamepad.left_trigger);
-        r = r * (1-gamepad.gamepad.left_trigger);
+        if (gamepad.gamepad.left_trigger>0.9){
+            x *= -0.1;
+            y *= -0.1;
+            r = 0;
+        } else {
+            y = y * (1-gamepad.gamepad.left_trigger);
+            x = x * (1-gamepad.gamepad.left_trigger);
+            r = r * (1-gamepad.gamepad.left_trigger);
+        }
 
         if (GamepadStatic.isButtonPressed(gamepad.gamepad, ControlsSemis.SPIN_CLOCKWISE)){
             follower.setTeleOpMovementVectors(0, 0, 1);

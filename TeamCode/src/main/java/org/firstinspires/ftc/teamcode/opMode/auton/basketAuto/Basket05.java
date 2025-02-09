@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.OuttakeSlides;
 
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "0 + 4'", group = "!basket", preselectTeleOp = "Robot")
-public class Basket04 extends OpMode {
+@Autonomous(name = "0 + 5'", group = "!basket", preselectTeleOp = "Robot")
+public class Basket05 extends OpMode {
     Timing.Timer startTimer = new Timing.Timer(250, TimeUnit.MILLISECONDS);
 
     Deposit deposit = new Deposit(this);
@@ -36,17 +36,17 @@ public class Basket04 extends OpMode {
     boolean stop = false;
 
     private final Pose startPose = new Pose(7, 103, Math.toRadians(270));
-    private final Pose scorePose = new Pose(18, 126, Math.toRadians(315));
-    private final Pose grab1Pose = new Pose(23, 121, Math.toRadians(0));
-    private final Pose grab2Pose = new Pose(22, 129.3, Math.toRadians(0));
-    private final Pose grab3Pose = new Pose(45, 119.9, Math.toRadians(90));
+    private final Pose scorePose = new Pose(19, 126, Math.toRadians(315));
+    private final Pose grab1Pose = new Pose(24, 121, Math.toRadians(0));
+    private final Pose grab2Pose = new Pose(23, 129.3, Math.toRadians(0));
+    private final Pose grab3Pose = new Pose(34, 122.5, Math.toRadians(65));
+    private final Pose preload2Pose = new Pose(8, 95.5, Math.toRadians(270));
     private final Pose parkPose = new Pose(63, 96, Math.toRadians(90));
 
     private final Point parkControl = new Point(60, 130, Point.CARTESIAN);
 
     private Path scorePreload, park;
-    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
-
+    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, partnerPreload, scorePreload2;
 
     // Path Commands
     Command preloadCommand = () -> follower.followPath(scorePreload);
@@ -56,6 +56,8 @@ public class Basket04 extends OpMode {
     Command s2Score = () -> follower.followPath(scorePickup1);
     Command s3Score = () -> follower.followPath(scorePickup2);
     Command s4Score = () -> follower.followPath(scorePickup3);
+    Command preload2 = () -> follower.followPath(partnerPreload);
+    Command preloadCommand2 = () -> follower.followPath(scorePreload2);
     Command parkCommand = () -> follower.followPath(park);
     // Deposit Commands
     Command grabDeposit = () -> deposit.closeClaw();
@@ -66,7 +68,7 @@ public class Basket04 extends OpMode {
     Command diffyTransfer = () -> diffy.diffyTransfer();
     Command diffyDown = () -> diffy.diffyDown();
     Command diffyShift = () -> diffy.shiftClaw();
-    Command diffyClose = () -> diffy.closeClaw();
+    Command diffyClose = () -> diffy.shiftClaw();
 
     CommandSequence preloadMove = new CommandSequence()
             .addCommand(this::mBasketSet)
@@ -74,9 +76,10 @@ public class Basket04 extends OpMode {
             .build();
     CommandSequence scoreBasket1 = new CommandSequence()
             .addCommand(basketPos)
-            .addWaitCommand(0.15)
+            .addWaitCommand(0.2)
             .addCommand(releaseSample)
-            .addWaitCommand(0.23)
+            .addWaitCommand(0.15)
+            .addCommand(this::mSlideRest)
             .addCommand(this::mIntakeExtend)
             .addWaitCommand(0.2)
             .addCommand(pickUp1Command)
@@ -87,7 +90,7 @@ public class Basket04 extends OpMode {
             .addCommand(diffyShift)
             .addWaitCommand(.2)
             .addCommand(diffyTransfer)
-            .addWaitCommand(.25)
+            .addWaitCommand(.3)
             .addCommand(this::mIntakeRetract)
             .addWaitCommand(0.5)
             .addCommand(grabDeposit)
@@ -98,13 +101,14 @@ public class Basket04 extends OpMode {
             .addWaitCommand(0.2)
             .addCommand(openIntake)
             .addCommand(this::mBasketSet)
+            .addCommand(this::mIntakeExtend)
             .build();
     CommandSequence scoreBasket2 = new CommandSequence()
             .addCommand(basketPos)
-            .addWaitCommand(0.18)
-            .addCommand(releaseSample)
             .addWaitCommand(0.2)
-            .addCommand(this::mIntakeExtend)
+            .addCommand(releaseSample)
+            .addWaitCommand(0.1)
+            .addCommand(this::mSlideRest)
             .addWaitCommand(0.2)
             .addCommand(pickUp2Command)
             .build();
@@ -114,7 +118,7 @@ public class Basket04 extends OpMode {
             .addCommand(diffyShift)
             .addWaitCommand(.2)
             .addCommand(diffyTransfer)
-            .addWaitCommand(.25)
+            .addWaitCommand(.3)
             .addCommand(this::mIntakeRetract)
             .addWaitCommand(0.5)
             .addCommand(grabDeposit)
@@ -125,13 +129,14 @@ public class Basket04 extends OpMode {
             .addWaitCommand(0.2)
             .addCommand(openIntake)
             .addCommand(this::mBasketSet)
+            .addCommand(this::mIntakeExtend3)
             .build();
     CommandSequence scoreBasket3 = new CommandSequence()
             .addCommand(basketPos)
-            .addWaitCommand(0.18)
-            .addCommand(releaseSample)
             .addWaitCommand(0.2)
-            .addCommand(this::mIntakeExtend3)
+            .addCommand(releaseSample)
+            .addWaitCommand(0.1)
+            .addCommand(this::mSlideRest)
             .addWaitCommand(0.2)
             .addCommand(pickUp3Command)
             .build();
@@ -142,7 +147,7 @@ public class Basket04 extends OpMode {
             .addWaitCommand(.2)
             .addCommand(diffy::extendNeutral)
             .addCommand(diffyTransfer)
-            .addWaitCommand(0.2)
+            .addWaitCommand(0.3)
             .build();
     CommandSequence spike3Move = new CommandSequence()
             .addCommand(s4Score)
@@ -155,9 +160,36 @@ public class Basket04 extends OpMode {
             .build();
     CommandSequence scoreBasket4 = new CommandSequence()
             .addCommand(basketPos)
-            .addWaitCommand(0.15)
+            .addCommand(this::mIntakeExtend)
+            .addWaitCommand(0.2)
             .addCommand(releaseSample)
-            .addWaitCommand(0.25)
+            .addWaitCommand(0.1)
+            .addCommand(this::mSlideRest)
+            .addWaitCommand(0.2)
+            .addCommand(preload2)
+            .build();
+    CommandSequence grabPreload2 = new CommandSequence()
+            .addCommand(diffyDown)
+            .addWaitCommand(.2)
+            .addCommand(diffyShift)
+            .addWaitCommand(.2)
+            .addCommand(diffyTransfer)
+            .addWaitCommand(.3)
+            .addCommand(this::mIntakeRetract)
+            .build();
+    CommandSequence preloadMove2 = new CommandSequence()
+            .addCommand(preloadCommand2)
+            .addWaitCommand(0.4)
+            .addCommand(grabDeposit)
+            .addWaitCommand(0.2)
+            .addCommand(openIntake)
+            .addCommand(this::mBasketSet)
+            .build();
+    CommandSequence scoreBasket5 = new CommandSequence()
+            .addCommand(basketPos)
+            .addWaitCommand(0.2)
+            .addCommand(releaseSample)
+            .addWaitCommand(0.15)
             .addCommand(parkCommand)
             .addWaitCommand(0.2)
             .addCommand(this::mParkSet)
@@ -175,6 +207,9 @@ public class Basket04 extends OpMode {
             .addCommandSequence(grabSpike3)
             .addCommandSequence(spike3Move)
             .addCommandSequence(scoreBasket4)
+            .addCommandSequence(grabPreload2)
+            .addCommandSequence(preloadMove2)
+            .addCommandSequence(scoreBasket5)
             .build();
 
     @Override
@@ -232,6 +267,18 @@ public class Basket04 extends OpMode {
                                 new Point(scorePose)))
                 .setLinearHeadingInterpolation(grab3Pose.getHeading(), scorePose.getHeading()).build();
 
+        partnerPreload = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Point(scorePose),
+                                new Point(preload2Pose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), preload2Pose.getHeading()).build();
+
+        scorePreload2 = follower.pathBuilder().addPath(
+                        new BezierLine(
+                                new Point(preload2Pose),
+                                new Point(scorePose)))
+                .setLinearHeadingInterpolation(preload2Pose.getHeading(), scorePose.getHeading()).build();
+
         park = new Path(
                 new BezierCurve(
                         new Point(scorePose),
@@ -283,15 +330,14 @@ public class Basket04 extends OpMode {
     public void mIntakeExtend() {
         diffy.extendMax();
         diffy.openClaw();
-        mSlideRest();
+        diffy.diffyDown();
     }
 
     public void mIntakeExtend3() {
         diffy.extendMax();
         diffy.diffyDown();
-        diffy.setDif_ROLL(9);
+        diffy.setDif_ROLL(6.5);
         diffy.openClaw();
-        mSlideRest();
     }
 
     public void mBasketSet() {
